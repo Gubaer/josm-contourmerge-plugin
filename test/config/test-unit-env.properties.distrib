@@ -1,0 +1,15 @@
+#
+# This file includes properties which are used by all contouralign unit tests 
+#
+
+#### 
+# josm.home - the home directory of the JOSM installation to be used in unit tests
+#
+# Test scripts will read/write the preferences files in ${josm.home}\\preferences
+# Test scripts will rely on a JOSM instance using plugins from the plugin directory
+#   ${josm.home}\\plugins\\*.jar
+#
+# See test/josm.home for supplied environment in the source tree with a default
+# preferences file.
+# 
+josm.home=/full/path/to/your/josm/home

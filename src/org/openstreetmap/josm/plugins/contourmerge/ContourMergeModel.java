@@ -487,9 +487,14 @@ public class ContourMergeModel implements DataSetListener{
 	/* interface DataSetListener                                                       */
 	/* ------------------------------------------------------------------------------- */
 
+	
+	
 	@Override
-	public void primtivesRemoved(PrimitivesRemovedEvent event) {
-		ensureSelectedNodesConsistent();
+	public void primitivesAdded(PrimitivesAddedEvent arg0) {/* ignore */}
+
+	@Override
+	public void primitivesRemoved(PrimitivesRemovedEvent arg0) {
+		ensureSelectedNodesConsistent();		
 	}
 
 	@Override
