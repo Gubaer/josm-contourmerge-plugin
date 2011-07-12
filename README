@@ -48,13 +48,12 @@ steps:
     % git tag for-josm-1234  HEAD   # tag the latest commit 
     % git push origin for-josm-1234 # makes sure the latest build is tagged with 'for-josm-1234'
     
-This ensure, that the latest contourmerge plugin is available from 
+This ensures, that the latest contourmerge plugin is available from 
     <http://github.com/Gubaer/josm-contourmerge-plugin/raw/deploy/dist/contourmerge.jar>
     
 The contourmerge plugin requiring JOSM 1234 is available from
-    <http://github.com/Gubaer/josm-contourmerge-plugin/raw/for-josm-4223/dist/contourmerge.jar>
+    <http://github.com/Gubaer/josm-contourmerge-plugin/raw/for-josm-1234/dist/contourmerge.jar>
 
-        
 AUTHOR
 ======
 Karl Guggisberg <karl.guggisberg@guggis.ch>      
