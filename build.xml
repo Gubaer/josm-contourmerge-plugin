@@ -54,7 +54,7 @@
 				<attribute name="Plugin-Link" value="http://wiki.openstreetmap.org/index.php/JOSM/Plugins/ContourMerge" />
 				<attribute name="Plugin-Mainversion" value="${josm.required.version}" />
 				<attribute name="Plugin-Version" value="${plugin.version}" />
-				<attribute name="4223-Plugin-Url" value="1000;http://github.com/Gubaer/josm-contourmerge-plugin/blob/for-josm-4223/dist/contourmerge.jar?raw=true" />
+				<attribute name="4223-Plugin-Url" value="1000;http://github.com/Gubaer/josm-contourmerge-plugin/raw/for-josm-4223/dist/contourmerge.jar" />
 			</manifest>
 		</jar>
 	</target>
