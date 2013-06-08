@@ -7,7 +7,9 @@ import java.awt.Point;
 import java.awt.dnd.DragSource;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -16,6 +18,7 @@ import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -79,7 +82,9 @@ public class ContourMergeMode extends MapMode {
          * selection might interfere with our  understanding of "selected" nodes
          * and way slices in this map mode.
          */
-        selection = model.getLayer().data.getSelected();
+        selection = new ArrayList<OsmPrimitive>(
+                model.getLayer().data.getSelected()
+         );
         model.getLayer().data.clearSelection();
 	}
 
@@ -94,8 +99,17 @@ public class ContourMergeMode extends MapMode {
 	    if (model != null) {
         	model.reset();
     	    /*
-    	     * Restore the last selection.
+    	     * Restore the last selection, but remove primitives from the
+    	     * selection which are not in the dataset anymore.
     	     */
+        	DataSet ds = model.getLayer().data;
+        	Iterator<OsmPrimitive> it = selection.iterator();
+        	while(it.hasNext()) {
+        	    OsmPrimitive p = it.next();
+        	    if (ds.getPrimitiveById(p) == null) {
+        	        it.remove();
+        	    }
+        	}
         	model.getLayer().data.setSelected(selection);
      	    selection = null;
         }
