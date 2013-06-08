@@ -353,12 +353,13 @@ public class ContourMergeModel implements DataSetListener{
 			for (int pos=li+1; pos <=lastPos; pos++){
 				if (selIndices.contains(pos)) {upper = pos; break;}
 			}
+			if (lower == upper) return null;
 			return new WaySlice(referenceSegment.way, lower, upper);
 		}
 	}
 
 	/**
-	 * <p>Replies the way slice we are currently dragging, or null, if if we
+	 * <p>Replies the way slice we are currently dragging, or null, if we
 	 * aren't in a drag operation.</p>
 	 *
 	 * @return the way slice or null
