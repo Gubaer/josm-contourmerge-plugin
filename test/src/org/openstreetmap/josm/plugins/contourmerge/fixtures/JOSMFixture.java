@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.data.projection.Mercator;
+import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.I18n;
 
@@ -22,7 +22,7 @@ public class JOSMFixture {
     }
 
     private Properties testProperties;
-    private String testPropertiesResourceName;
+    private final String testPropertiesResourceName;
 
     public JOSMFixture(String testPropertiesResourceName) {
         this.testPropertiesResourceName = testPropertiesResourceName;
@@ -30,7 +30,7 @@ public class JOSMFixture {
 
     public void init() {
         testProperties = new Properties();
-     
+
         // load properties
         //
         try {
@@ -62,7 +62,7 @@ public class JOSMFixture {
         Main.pref.init(false);
 
         // init projection
-        Main.setProjection(new Mercator());
+        ProjectionPreference.setProjection("core:mercator", null);
 
         // make sure we don't upload to or test against production
         //
