@@ -506,7 +506,9 @@ public class ContourMergeModel implements DataSetListener{
 		Iterator<Node> it = selectedNodes.iterator();
 		while(it.hasNext()) {
 			Node n = it.next();
-			if (OsmPrimitive.getFilteredSet(n.getReferrers(),
+			if (!layer.data.getNodes().contains(n)) {
+			    it.remove();
+			} else if (OsmPrimitive.getFilteredSet(n.getReferrers(),
 			        Way.class).isEmpty()) {
 				it.remove();
 			} else if (n.isDeleted()) {
@@ -523,8 +525,8 @@ public class ContourMergeModel implements DataSetListener{
 	public void primitivesAdded(PrimitivesAddedEvent arg0) {/* ignore */}
 
 	@Override
-	public void primitivesRemoved(PrimitivesRemovedEvent arg0) {
-		ensureSelectedNodesConsistent();
+	public void primitivesRemoved(PrimitivesRemovedEvent event) {
+	    ensureSelectedNodesConsistent();
 	}
 
 	@Override
