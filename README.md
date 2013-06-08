@@ -1,7 +1,8 @@
-The `contourmerge` plugin provides an editing mode to merge (or align) two contours on 
-an OSM map, i.e.
+The `contourmerge` plugin provides an editing mode to merge (or align) two 
+contours on an OSM map, i.e.
 
-* a section of a lake outline and an a section of neighboring area representing a forest
+* a section of a lake outline and an a section of neighboring area representing 
+  a forest
 * a section of a coast line and a section of a residential area
 * two border sections 
 
@@ -12,6 +13,9 @@ an OSM map, i.e.
 * Download the list of available plugins
 * Search the plugin `contourmerge`
 * Check it, click OK in the preferences dialog and restart JOSM
+
+## User Guide
+See this short [user guide on the JOSM wiki](http://josm.openstreetmap.de/wiki/Help/Plugin/ContourMerge).
 
 ## License
 Published under GPL Version 3 and higher. See included LICENSE file.
