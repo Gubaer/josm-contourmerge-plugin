@@ -1,0 +1,53 @@
+#
+# Template for build.properties. 
+#
+# Copy to 'build.properties' in the root directory of the contour merge plugin and
+# adjust the properties
+#
+
+######
+# 
+# the full path of the JOSM jar which we build the plugins against
+#
+josm.jar=/path/to/josm-custom.jar
+
+######
+# the lowest JOSM version this plugin requires
+# 
+josm.required.version=4223
+
+#####
+# the plugin version
+#
+plugin.version=1000
+
+#####
+# the full path to the Groovy jar. This is required for test cases written in Groovy.
+# If you're working with Eclipse and if the Eclipe Groovy Plugin is installed, you can
+# find groovy-all-{x.y.z}.jar in your plugins directory.
+#
+# Otherwise you can download it from: http://groovy.codehaus.org/Download
+#
+groovy.all.jar=/path/to/groovy_all_x_y_z.jar
+
+#####
+# the full path to the junit jar. 
+# If your're working with Eclipse, you may find junit.jar in your plugins directory.
+#
+# Otherwise download it from: http://www.junit.org/
+#
+junit.jar=/path/to/junit.jar
+
+#####
+# the directory where the plugin is installed locally
+#
+local.install.dir=/path/to/your/local/josm/installation
+
+# the full path to the groovy-all-{x.y.y}.jar
+# Required for test cases written in groovy.
+#
+# If working with Eclipse, can be found somewhere in the
+# eclipse/plugin directory. Search for "groovy-all*.jar".
+# Or download from http://groovy.codehaus.org/Download
+#
+groovy.jar=/full/path/to/jar
