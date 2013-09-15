@@ -279,6 +279,13 @@ public class ContourMergeModel implements DataSetListener{
 	        WaySegment referenceSegment){
 		if (referenceSegment == null) return null;
 		Way way = referenceSegment.way;
+		if (way == null || way.getNodesCount() == 0) {
+		    // shouldn't happen, but consistency of a dataset is sometimes
+		    // violated, after undo/redo/merge/etc. operations
+		    // This is a workaround for potential defects similar to
+		    // https://github.com/Gubaer/josm-contourmerge-plugin/issues/4
+		    return null;
+		}
 		if (way.isClosed()){
 			/*
 			 * This is a closed way. We need at least two selected nodes to
