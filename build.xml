@@ -159,7 +159,7 @@
            }
            def versionInfo = josmVersions.collect {josm ->
               def bestPlugin = bestPluginVersion(josm);
-              return "${josm}-Plugin-Url: ${bestPlugin};https://raw.github.com/Gubaer/josm-contourmerge-plugin/for-josm-${josm}/dist/contourmerge.jar"
+              return "${josm}_Plugin-Url: ${bestPlugin};https://raw.github.com/Gubaer/josm-contourmerge-plugin/for-josm-${josm}/dist/contourmerge.jar"
            }.join("\n");            
            def mf = new File("version-information.MF")
            mf.text = versionInfo;
