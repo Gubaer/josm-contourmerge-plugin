@@ -15,7 +15,7 @@ and then pushed to GitHub.
 The following steps mimic the deployment infrastructure JOSM uses for plugins maintained
 on the OSM SVN site, see <http://josm.openstreetmap.de/wiki/DevelopersGuide/DevelopingPlugins>
 for more info. JOSM reads meta-data about available plugins from <http://josm.openstreetmap.de/plugin>
-and the following steps ensure that the 'contourmerge' plugin is properly listed in this
+and the following steps ensure that the `contourmerge` plugin is properly listed in this
 plugin directory. 
 
 There is a special branch `deploy` for deploying.   
