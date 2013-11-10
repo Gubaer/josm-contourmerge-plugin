@@ -142,7 +142,6 @@ tasks.create(name: "deploy.commit-jar", type: GitCommit) {
     description = "Commits the jar"
     commitAll = true
     message = "commited plugin build ${currentPluginVersion()}"
-    commit()
     /*
     //Note: not using GitSubmit from the Git plugin, doesn't seem to work
     doLast {
