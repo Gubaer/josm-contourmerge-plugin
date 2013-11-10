@@ -28,7 +28,7 @@ buildscript {
 dependencies {
 	compile files("contrib/josm-latest.jar")
 	testCompile group: 'junit', name: 'junit', version: '4.+' 
-	//groovy localGroovy()
+	groovy localGroovy()
 }
 
 def currentPluginVersion() {
