@@ -140,8 +140,21 @@ tasks["deploy.copy-to-dist"].dependsOn "deploy.create-dist"
 
 tasks.create(name: "deploy.commit-jar", type: GitCommit) {
     description = "Commits the jar"
-	include "./dist/contourmerge.jar"
-	message = "Testing: commited plugin build ${currentPluginVersion()}"
+    commitAll = true
+    message = "commited plugin build ${currentPluginVersion()}"
+    commit()
+    /*
+    //Note: not using GitSubmit from the Git plugin, doesn't seem to work
+    doLast {
+    	def cmd = "git commit -m 'commited plugin build ${currentPluginVersion()}' dist/contourmerge.jar"
+    	println cmd
+    	def sout = new StringBuffer(), serr = new StringBuffer()
+    	def proc = cmd.execute()
+    	proc.consumeProcessOutput(sout, serr)
+		proc.waitForOrKill(1000)
+		println "out> $sout err> $serr"
+    }
+    */
 }
 tasks["deploy.commit-jar"].dependsOn "deploy.copy-to-dist"
 
