@@ -1,5 +1,5 @@
-apply plugin: "groovy"
 apply plugin: "java"
+apply plugin: "groovy"
 
 /*
  * Add an entry for every published build. Increment the plugin version
@@ -120,10 +120,7 @@ task  getJosm {
 }
 compileJava.dependsOn "getJosm"
 
-
-
 import org.ajoberstar.gradle.git.tasks.*
-
 
 tasks.create(name: "deploy.create-dist", type: GitAdd) {
 	description = "Creates the 'dist' directory"
@@ -148,12 +145,14 @@ tasks.create(name: "deploy.commit-jar", type: GitCommit) {
 }
 tasks["deploy.commit-jar"].dependsOn "deploy.copy-to-dist"
 
+
 tasks.create(name: "deploy.tag", type: GitTag) {
 	description = "Creates a tag for the JOSM version this plugin is compatible with"
 	force = true
 	tagName = "for-josm-${currentPluginMainVersion()}"
 }
 tasks["deploy.tag"].dependsOn "deploy.commit-jar"
+
 
 tasks.create(name: "deploy.push") {
 	description = "Pushes the jar an the relevant tags to GitHub"
@@ -162,12 +161,13 @@ tasks.create(name: "deploy.push") {
 		def cmd ="git push origin gradle-build"
 		cmd.execute().text		
 		def tagName = "for-josm-${currentPluginMainVersion()}"
-		println "Pushing tag $tagName"	
-		cmd ="git push origin tagName"
+		println "Pushing tag $tagName ..."	
+		cmd ="git push origin $tagName"
 		cmd.execute().text		
 	}
 }
 tasks["deploy.push"].dependsOn "deploy.tag"
+
 
 task deploy
 deploy.dependsOn "deploy.push"
