@@ -173,7 +173,7 @@ tasks.create(name: "deploy.push") {
 	description = "Pushes the jar an the relevant tags to GitHub"
 	doLast {
 		println "Pushing current build ..."	
-		def cmd ="git push origin gradle-build"
+		def cmd ="git push origin deploy"
 		cmd.execute().text		
 		def tagName = "for-josm-${currentPluginMainVersion()}"
 		println "Pushing tag $tagName ..."	
