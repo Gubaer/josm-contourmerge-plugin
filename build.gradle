@@ -95,6 +95,9 @@ sourceSets {
 
 
 test {
+	doFirst {
+		println "testClassesDir: " + testClassesDir
+	}
 	useJUnit()
 	systemProperty "josm.home", file("test/josm.home")
 
