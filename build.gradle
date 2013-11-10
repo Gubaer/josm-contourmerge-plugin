@@ -1,0 +1,123 @@
+apply plugin: "groovy"
+apply plugin: "java"
+
+
+pluginVersions = [
+    /* plugin version,  required JOSM version */
+    [1009,              6317],
+    [1008,              6317],
+    [1007,              4394],
+    [1005,              4394],
+    [1004,              4394],
+    [1003,              4394],
+    [1000,              4223]
+]
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	compile files("contrib/josm-latest.jar")
+	testCompile group: 'junit', name: 'junit', version: '4.+' 
+
+	groovy localGroovy()
+}
+
+def currentPluginVersion() {
+	return pluginVersions.collect{it[0]}.max()
+}
+
+def currentPluginMainVersion() {
+	return pluginVersions.collect{it[1]}.max()
+}
+
+def bestPluginVersion(josmVersion) {
+    return pluginVersions
+    	.findAll{it[1] == josmVersion}   
+    	.collect{it[0]}
+    	.max()
+}
+
+jar.baseName = "contourmerge"
+
+jar {
+	manifest {
+		attributes(
+			"Plugin-Date": new Date().format("yyyy-MM-dd HH:mm"),
+			"Plugin-Version": currentPluginVersion(),
+			"Plugin-Mainversion": currentPluginMainVersion(),
+			'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')',
+            'Built-With': "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
+            'Plugin-Class' : "org.openstreetmap.josm.plugins.contourmerge.ContourMergePlugin",
+			"Plugin-Description": "Merges the contours of two areas",
+			"Plugin-Icon" : "images/mapmode/contourmerge.png",
+			"Plugin-Link" : "http://wiki.openstreetmap.org/index.php/JOSM/Plugins/ContourMerge"
+		)
+		pluginVersions.collect{it[1]}.unique().sort().each {jv -> 
+			def dv = bestPluginVersion(jv)
+			def key = "${dv}_Plugin-Url".toString()
+			def value = "${jv};https://raw.github.com/Gubaer/josm-contourmerge-plugin/for-josm-${dv}/dist/contourmerge.jar".toString()
+			attributes([(key):value]) 
+		}
+	}
+}
+
+sourceSets {
+    main {
+        java.srcDirs = ["src"]
+        output.classesdir = "build"
+        resources {
+            srcDir file(".")
+        	include "README.md"
+        	include "LICENSE"
+        	include "images/**/*"
+        	exclude "images/*.svg"
+        	exclude "images/**/*.svg"
+        }
+    }
+    test {
+    	java.srcDirs = ["test"]
+    	groovy.srcDirs = ["test"]
+    	output.classesdir = "test/build"
+    	resources {
+    		srcDir file("test/config")
+    	}
+    }
+}
+
+compileJava.dependsOn "getJosm"
+compileJava {
+	doFirst {
+		println "compiling java ...."
+	}
+}
+
+test {
+	useJUnit()
+	systemProperty "josm.home", file("test/josm.home")
+
+	doFirst {
+		println "running tests ..."
+	}
+	afterTest { desc, result -> 
+        println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
+    }
+}
+
+josmUrl = "http://josm.openstreetmap.de/josm-latest.jar"
+
+task  getJosm {
+    description = "Download the latest JOSM build jar from the JOSM website"
+	doLast {
+		if (! file("contrib").exists()) {
+			file("contrib").mkdir()
+		}
+		if (!file("contrib/josm-latest.jar").exists()) {	
+			println "Downloading JOSM from <${josmUrl}> ..."	
+			def cmd ="wget ${josmUrl} -O contrib/josm-latest.jar"
+			cmd.execute().text
+		}
+	}
+}
+
