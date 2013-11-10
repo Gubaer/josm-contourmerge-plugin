@@ -1,8 +1,11 @@
 apply plugin: "groovy"
 apply plugin: "java"
 
-
-pluginVersions = [
+/*
+ * Add an entry for every published build. Increment the plugin version
+ * and set the lowest JOSM version this plugin version is compatible with.
+ */
+project.ext.pluginVersions = [
     /* plugin version,  required JOSM version */
     [1009,              6317],
     [1008,              6317],
@@ -17,23 +20,27 @@ repositories {
     mavenCentral()
 }
 
+buildscript {
+  repositories { mavenCentral() }
+  dependencies { classpath 'org.ajoberstar:gradle-git:0.6.3' }
+}
+
 dependencies {
 	compile files("contrib/josm-latest.jar")
 	testCompile group: 'junit', name: 'junit', version: '4.+' 
-
-	groovy localGroovy()
+	//groovy localGroovy()
 }
 
 def currentPluginVersion() {
-	return pluginVersions.collect{it[0]}.max()
+	return project.ext.pluginVersions.collect{it[0]}.max()
 }
 
 def currentPluginMainVersion() {
-	return pluginVersions.collect{it[1]}.max()
+	return project.ext.pluginVersions.collect{it[1]}.max()
 }
 
 def bestPluginVersion(josmVersion) {
-    return pluginVersions
+    return project.ext.pluginVersions
     	.findAll{it[1] == josmVersion}   
     	.collect{it[0]}
     	.max()
@@ -66,7 +73,7 @@ jar {
 sourceSets {
     main {
         java.srcDirs = ["src"]
-        output.classesdir = "build"
+        output.classesDir = "build"
         resources {
             srcDir file(".")
         	include "README.md"
@@ -79,34 +86,25 @@ sourceSets {
     test {
     	java.srcDirs = ["test"]
     	groovy.srcDirs = ["test"]
-    	output.classesdir = "test/build"
+    	output.classesDir = "test/build"
     	resources {
     		srcDir file("test/config")
     	}
     }
 }
 
-compileJava.dependsOn "getJosm"
-compileJava {
-	doFirst {
-		println "compiling java ...."
-	}
-}
 
 test {
 	useJUnit()
 	systemProperty "josm.home", file("test/josm.home")
 
-	doFirst {
-		println "running tests ..."
-	}
 	afterTest { desc, result -> 
         println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
     }
 }
 
-josmUrl = "http://josm.openstreetmap.de/josm-latest.jar"
 
+project.ext.josmUrl = "http://josm.openstreetmap.de/josm-latest.jar"
 task  getJosm {
     description = "Download the latest JOSM build jar from the JOSM website"
 	doLast {
@@ -114,10 +112,62 @@ task  getJosm {
 			file("contrib").mkdir()
 		}
 		if (!file("contrib/josm-latest.jar").exists()) {	
-			println "Downloading JOSM from <${josmUrl}> ..."	
-			def cmd ="wget ${josmUrl} -O contrib/josm-latest.jar"
+			println "Downloading JOSM from <${project.ext.josmUrl}> ..."	
+			def cmd ="wget ${project.ext.josmUrl} -O contrib/josm-latest.jar"
 			cmd.execute().text
 		}
 	}
 }
+compileJava.dependsOn "getJosm"
 
+
+
+import org.ajoberstar.gradle.git.tasks.*
+
+
+tasks.create(name: "deploy.create-dist", type: GitAdd) {
+	description = "Creates the 'dist' directory"
+	doFirst {
+		file("dist").mkdirs()
+	}
+	include "./dist"
+}
+
+tasks.create(name: "deploy.copy-to-dist", type: Copy) {
+	description "Copies the jar to the local dist directory"
+	from file("build/libs")
+	into file("dist")
+	include "contourmerge.jar"
+}
+tasks["deploy.copy-to-dist"].dependsOn "deploy.create-dist"
+
+tasks.create(name: "deploy.commit-jar", type: GitCommit) {
+    description = "Commits the jar"
+	include "./dist/contourmerge.jar"
+	message = "Testing: commited plugin build ${currentPluginVersion()}"
+}
+tasks["deploy.commit-jar"].dependsOn "deploy.copy-to-dist"
+
+tasks.create(name: "deploy.tag", type: GitTag) {
+	description = "Creates a tag for the JOSM version this plugin is compatible with"
+	force = true
+	tagName = "for-josm-${currentPluginMainVersion()}"
+}
+tasks["deploy.tag"].dependsOn "deploy.commit-jar"
+
+tasks.create(name: "deploy.push") {
+	description = "Pushes the jar an the relevant tags to GitHub"
+	doLast {
+		println "Pushing current build ..."	
+		def cmd ="git push origin gradle-build"
+		cmd.execute().text		
+		def tagName = "for-josm-${currentPluginMainVersion()}"
+		println "Pushing tag $tagName"	
+		cmd ="git push origin tagName"
+		cmd.execute().text		
+	}
+}
+tasks["deploy.push"].dependsOn "deploy.tag"
+
+task deploy
+deploy.dependsOn "deploy.push"
