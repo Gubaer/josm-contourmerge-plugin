@@ -1,6 +1,6 @@
 .classpath
 .project
-.settings/
-build.properties
-build/
-version-information.MF
+.settings
+build
+.gradle
+contrib
