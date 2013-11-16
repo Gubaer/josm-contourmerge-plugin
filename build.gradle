@@ -21,48 +21,48 @@ repositories {
 }
 
 dependencies {
-	compile files("contrib/josm-latest.jar")
-	testCompile group: 'junit', name: 'junit', version: '4.+' 
-	testCompile localGroovy()
+    compile files("contrib/josm-latest.jar")
+    testCompile group: 'junit', name: 'junit', version: '4.+' 
+    testCompile localGroovy()
 }
 
 def currentPluginVersion() {
-	return project.ext.pluginVersions.collect{it[0]}.max()
+    return project.ext.pluginVersions.collect{it[0]}.max()
 }
 
 def currentPluginMainVersion() {
-	return project.ext.pluginVersions.collect{it[1]}.max()
+    return project.ext.pluginVersions.collect{it[1]}.max()
 }
 
 def bestPluginVersion(josmVersion) {
     return project.ext.pluginVersions
-    	.findAll{it[1] == josmVersion}   
-    	.collect{it[0]}
-    	.max()
+        .findAll{it[1] == josmVersion}   
+        .collect{it[0]}
+        .max()
 }
 
 jar.baseName = "contourmerge"
 
 jar {
-	manifest {
-		attributes(
-			"Plugin-Date": new Date().format("yyyy-MM-dd HH:mm"),
-			"Plugin-Version": currentPluginVersion(),
-			"Plugin-Mainversion": currentPluginMainVersion(),
-			'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')',
+    manifest {
+        attributes(
+            "Plugin-Date": new Date().format("yyyy-MM-dd HH:mm"),
+            "Plugin-Version": currentPluginVersion(),
+            "Plugin-Mainversion": currentPluginMainVersion(),
+            'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')',
             'Built-With': "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
             'Plugin-Class' : "org.openstreetmap.josm.plugins.contourmerge.ContourMergePlugin",
-			"Plugin-Description": "Merges the contours of two areas",
-			"Plugin-Icon" : "images/mapmode/contourmerge.png",
-			"Plugin-Link" : "http://wiki.openstreetmap.org/index.php/JOSM/Plugins/ContourMerge"
-		)
-		pluginVersions.collect{it[1]}.unique().sort().each {jv -> 
-			def dv = bestPluginVersion(jv)
-			def key = "${dv}_Plugin-Url".toString()
-			def value = "${jv};https://raw.github.com/Gubaer/josm-contourmerge-plugin/for-josm-${dv}/dist/contourmerge.jar".toString()
-			attributes([(key):value]) 
-		}
-	}
+            "Plugin-Description": "Merges the contours of two areas",
+            "Plugin-Icon" : "images/mapmode/contourmerge.png",
+            "Plugin-Link" : "http://wiki.openstreetmap.org/index.php/JOSM/Plugins/ContourMerge"
+        )
+        pluginVersions.collect{it[1]}.unique().sort().each {jv -> 
+            def dv = bestPluginVersion(jv)
+            def key = "${dv}_Plugin-Url".toString()
+            def value = "${jv};https://raw.github.com/Gubaer/josm-contourmerge-plugin/for-josm-${dv}/dist/contourmerge.jar".toString()
+            attributes([(key):value]) 
+        }
+    }
 }
 
 sourceSets {
@@ -71,32 +71,32 @@ sourceSets {
         output.classesDir = "build"
         resources {
             srcDir file(".")
-        	include "README.md"
-        	include "LICENSE"
-        	include "images/**/*"
-        	exclude "images/*.svg"
-        	exclude "images/**/*.svg"
+            include "README.md"
+            include "LICENSE"
+            include "images/**/*"
+            exclude "images/*.svg"
+            exclude "images/**/*.svg"
         }
     }
     test {
-    	java.srcDirs = ["test"]
-    	groovy.srcDirs = ["test"]
-    	output.classesDir = "test/build"
-    	resources {
-    		srcDir file("test/config")
-    	}
+        java.srcDirs = ["test"]
+        groovy.srcDirs = ["test"]
+        output.classesDir = "test/build"
+        resources {
+            srcDir file("test/config")
+        }
     }
 }
 
 
 test {
-	doFirst {
-		println "testClassesDir: " + testClassesDir
-	}
-	useJUnit()
-	systemProperty "josm.home", file("test/josm.home")
+    doFirst {
+        println "testClassesDir: " + testClassesDir
+    }
+    useJUnit()
+    systemProperty "josm.home", file("test/josm.home")
 
-	afterTest { desc, result -> 
+    afterTest { desc, result -> 
         println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
     }
 }
@@ -105,79 +105,79 @@ test {
 project.ext.josmUrl = "http://josm.openstreetmap.de/josm-latest.jar"
 task  getJosm {
     description = "Download the latest JOSM build jar from the JOSM website"
-	doLast {
-		if (! file("contrib").exists()) {
-			file("contrib").mkdir()
-		}
-		if (!file("contrib/josm-latest.jar").exists()) {	
-			println "Downloading JOSM from <${project.ext.josmUrl}> ..."	
-			def cmd ="wget ${project.ext.josmUrl} -O contrib/josm-latest.jar"
-			cmd.execute().text
-		}
-	}
+    doLast {
+        if (! file("contrib").exists()) {
+            file("contrib").mkdir()
+        }
+        if (!file("contrib/josm-latest.jar").exists()) {    
+            println "Downloading JOSM from <${project.ext.josmUrl}> ..."    
+            def cmd ="wget ${project.ext.josmUrl} -O contrib/josm-latest.jar"
+            cmd.execute().text
+        }
+    }
 }
 compileJava.dependsOn "getJosm"
 
 task deploy {
-	doLast {
-		def deployBranch = "deploy"
-		def jar = "dist/contourmerge.jar";
-		file("dist").mkdirs()
-		ant.copy(todir: "dist") {
-	        fileset(dir : "build/libs") {
-	              include(name:"contourmerge.jar")
-	   		}
-	   	}
-	   	Git.ensureOnBranch(deployBranch)
-		Git.add(jar)
-		Git.commit(jar, "commited plugin build ${currentPluginVersion()}") 
-		def tag = "for-josm-${currentPluginMainVersion()}"
-		Git.tagHead(tag)
-		Git.push("origin", deployBranch)
-		Git.pushTags()
-	}
+    doLast {
+        def deployBranch = "deploy"
+        def jar = "dist/contourmerge.jar";
+        file("dist").mkdirs()
+        ant.copy(todir: "dist") {
+            fileset(dir : "build/libs") {
+                  include(name:"contourmerge.jar")
+            }
+        }
+        Git.ensureOnBranch(deployBranch)
+        Git.add(jar)
+        Git.commit(jar, "commited plugin build ${currentPluginVersion()}") 
+        def tag = "for-josm-${currentPluginMainVersion()}"
+        Git.tagHead(tag)
+        Git.push("origin", deployBranch)
+        Git.pushTags()
+    }
 }
 //deploy.dependsOn "deploy.push"
 
 
 class Git {
 
-	static private def executeAndLog(cmd) {
-		def proc = cmd.execute()
-		proc.waitFor()
-		println "Exit Value: ${proc.exitValue()}"
-		println "Output: ${proc.in.text}"
-		println "Error: ${proc.err.text}"
-		if (proc.exitValue() != 0) {
-			throw new Error("git command failed. command was <$cmd>")
-		}
-	}
+    static private def executeAndLog(cmd) {
+        def proc = cmd.execute()
+        proc.waitFor()
+        println "Exit Value: ${proc.exitValue()}"
+        println "Output: ${proc.in.text}"
+        println "Error: ${proc.err.text}"
+        if (proc.exitValue() != 0) {
+            throw new Error("git command failed. command was <$cmd>")
+        }
+    }
 
-	static def ensureOnBranch(branch) {
-		def proc = "git rev-parse --abbrev-ref HEAD".execute()	
-		def ret = proc.in.text.trim()
-		if (ret != branch) {
-			throw new Error("currently on branch '$ret', but expected branch '$branch'")
-		}
-	}
+    static def ensureOnBranch(branch) {
+        def proc = "git rev-parse --abbrev-ref HEAD".execute()  
+        def ret = proc.in.text.trim()
+        if (ret != branch) {
+            throw new Error("currently on branch '$ret', but expected branch '$branch'")
+        }
+    }
 
-	static def add(file) {
-		executeAndLog(["git", "add", file])
-	}
+    static def add(file) {
+        executeAndLog(["git", "add", file])
+    }
 
-	static def commit(file, message) {
-		executeAndLog(["git", "commit", "-m", message, file])
-	}
+    static def commit(file, message) {
+        executeAndLog(["git", "commit", "-m", message, file])
+    }
 
-	static def push(remote, branch) {
-		executeAndLog("git push $remote $branch")
-	}
+    static def push(remote, branch) {
+        executeAndLog("git push $remote $branch")
+    }
 
-	static def tagHead(tag) {
-		executeAndLog(["git", "tag", "-f", tag, "HEAD"])
-	}
+    static def tagHead(tag) {
+        executeAndLog(["git", "tag", "-f", tag, "HEAD"])
+    }
 
-	static def pushTags() {
-		executeAndLog("git push --tags -f")	
-	}
+    static def pushTags() {
+        executeAndLog("git push --tags -f") 
+    }
 }
