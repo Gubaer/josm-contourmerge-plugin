@@ -7,6 +7,7 @@ apply plugin: "groovy"
  */
 project.ext.pluginVersions = [
     /* plugin version,  required JOSM version */
+    [1010,              6317],  // recompiled for Java 1.6
     [1009,              6317],
     [1008,              6317],
     [1007,              4394],
@@ -63,6 +64,11 @@ jar {
             attributes([(key):value]) 
         }
     }
+}
+
+compileJava {
+  sourceCompatibility = 1.6
+  targetCompatibility = 1.6
 }
 
 sourceSets {
@@ -137,8 +143,6 @@ task deploy {
         Git.pushTags()
     }
 }
-//deploy.dependsOn "deploy.push"
-
 
 class Git {
 
