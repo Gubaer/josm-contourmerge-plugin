@@ -57,10 +57,10 @@ jar {
             "Plugin-Icon" : "images/mapmode/contourmerge.png",
             "Plugin-Link" : "http://wiki.openstreetmap.org/index.php/JOSM/Plugins/ContourMerge"
         )
-        pluginVersions.collect{it[1]}.unique().sort().each {jv -> 
+        pluginVersions.collect{it[0]}.unique().sort().each {jv -> 
             def dv = bestPluginVersion(jv)
-            def key = "${dv}_Plugin-Url".toString()
-            def value = "${jv};https://raw.github.com/Gubaer/josm-contourmerge-plugin/for-josm-${dv}/dist/contourmerge.jar".toString()
+            def key = "${jv}_Plugin-Url".toString()
+            def value = "${dv};https://raw.github.com/Gubaer/josm-contourmerge-plugin/for-josm-${jv}/dist/contourmerge.jar".toString()
             attributes([(key):value]) 
         }
     }
