@@ -59,8 +59,8 @@ jar {
         )
         pluginVersions.collect{it[1]}.unique().sort().each {jv -> 
             def dv = bestPluginVersion(jv)
-            def key = "${dv}_Plugin-Url".toString()
-            def value = "${jv};https://raw.github.com/Gubaer/josm-contourmerge-plugin/for-josm-${dv}/dist/contourmerge.jar".toString()
+            def key = "${jv}_Plugin-Url".toString()
+            def value = "${dv};https://raw.github.com/Gubaer/josm-contourmerge-plugin/for-josm-${jv}/dist/contourmerge.jar".toString()
             attributes([(key):value]) 
         }
     }
