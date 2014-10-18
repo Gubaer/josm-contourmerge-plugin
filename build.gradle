@@ -7,6 +7,7 @@ apply plugin: "groovy"
  */
 project.ext.pluginVersions = [
     /* plugin version,  required JOSM version */
+    [1012,              6317],  // recompiled because of #9 
     [1011,              6317],  // recompiled because of #9 
     [1010,              6317],  // recompiled for Java 1.6
     [1009,              6317],
