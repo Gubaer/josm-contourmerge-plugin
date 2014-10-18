@@ -103,7 +103,10 @@ sourceSets {
 
 
 test {
-    classpath = project.sourceSets.test.runtimeClasspath  + files("contrib/josm-latest.jar") + files("test/build")
+    doFirst {
+        println("test.runtimeClasspath: " + project.sourceSets.test.runtimeClasspath.join("\n"))
+    }
+    //classpath = project.sourceSets.test.runtimeClasspath  + files("contrib/josm-latest.jar")
     useJUnit()
     systemProperty "josm.home", file("test/josm.home")
 
