@@ -27,6 +27,7 @@ dependencies {
     compile files("contrib/josm-latest.jar")
     testCompile group: 'junit', name: 'junit', version: '4.+' 
     testCompile localGroovy()
+    testCompile files("contrib/josm-latest.jar")
 }
 
 def currentPluginVersion() {
@@ -102,9 +103,8 @@ sourceSets {
 
 
 test {
-    doFirst {
-        println "testClassesDir: " + testClassesDir
-    }
+    //classpath.add(files("contrib/josm-latest.jar"))
+    classpath = project.sourceSets.test.runtimeClasspath + files("contrib/josm-latest.jar")
     useJUnit()
     systemProperty "josm.home", file("test/josm.home")
 
