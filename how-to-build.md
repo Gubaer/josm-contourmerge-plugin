@@ -2,7 +2,7 @@
 
 ```bash
 # this will download and install gradle if necessary 
-% gradlew build
+% ./gradlew build
 ```
 
 ## Deploy and publish
@@ -11,7 +11,7 @@ The latest build for the `contourmerge` plugin should always be built on the bra
 and then pushed to GitHub. 
 
 The following steps mimic the deployment infrastructure JOSM uses for plugins maintained
-on the OSM SVN site, see [doc](http://josm.openstreetmap.de/wiki/DevelopersGuide/DevelopingPlugins=
+on the OSM SVN site, see [doc](http://josm.openstreetmap.de/wiki/DevelopersGuide/DevelopingPlugins)
 for more info. JOSM reads meta-data about available plugins from http://josm.openstreetmap.de/plugin
 and the following steps ensure that the `contourmerge` plugin is properly listed there.
 
