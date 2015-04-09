@@ -94,8 +94,7 @@ sourceSets {
         }
     }
     test {
-        java.srcDirs = ["test"]
-        groovy.srcDirs = ["test"]
+        groovy.srcDirs = ["test/src"]
         output.classesDir = "test/build"
         resources {
             srcDir file("test/config")
