@@ -62,7 +62,8 @@ jar {
             'Plugin-Class' : "org.openstreetmap.josm.plugins.contourmerge.ContourMergePlugin",
             "Plugin-Description": "Merges the contours of two areas",
             "Plugin-Icon" : "images/mapmode/contourmerge.png",
-            "Plugin-Link" : "http://wiki.openstreetmap.org/index.php/JOSM/Plugins/ContourMerge"
+            "Plugin-Link" : "http://wiki.openstreetmap.org/index.php/JOSM/Plugins/ContourMerge",
+            "Plugin-Canloadatruntime" : "true"
         )
         pluginVersions.collect{it[1]}.unique().sort().each {jv -> 
             def dv = bestPluginVersion(jv)
