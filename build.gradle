@@ -102,7 +102,6 @@ sourceSets {
     }
 }
 
-
 test {
     useJUnit()
     systemProperty "josm.home", file("test/josm.home")
@@ -141,7 +140,7 @@ task deploy {
         }
         Git.ensureOnBranch(deployBranch)
         Git.add(jar)
-        Git.commit(jar, "commited plugin build ${currentPluginVersion()}") 
+        Git.commit(jar, "committed plugin build ${currentPluginVersion()}") 
         def tag = "for-josm-${currentPluginMainVersion()}"
         Git.tagHead(tag)
         Git.push("origin", deployBranch)
