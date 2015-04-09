@@ -10,7 +10,6 @@ import org.openstreetmap.josm.plugins.PluginInformation;
  * <tt>contourmerge</tt> plugin.
  */
 public class ContourMergePlugin extends Plugin{
-	private ContourMergeMode mode;
 
 	public ContourMergePlugin(PluginInformation info) {
 		super(info);
@@ -23,7 +22,7 @@ public class ContourMergePlugin extends Plugin{
 			ContourMergeView.getInstance().unwireFromJOSM();
 		} else {
 			newFrame.addMapMode(new IconToggleButton(
-			        mode = new ContourMergeMode(newFrame)));
+			        new ContourMergeMode(newFrame)));
 			ContourMergeModelManager.getInstance().wireToJOSM();
 			ContourMergeView.getInstance().wireToJOSM();
 		}
