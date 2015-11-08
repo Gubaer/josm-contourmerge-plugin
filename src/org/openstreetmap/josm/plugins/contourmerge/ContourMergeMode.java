@@ -76,16 +76,16 @@ public class ContourMergeMode extends MapMode {
                 .getActiveModel();
         if (model != null) {
         	model.reset();
+            /*
+             * Remind the current selection and clear it; otherwise the
+             * rendered selection might interfere with our understanding of
+             * "selected" nodes and way slices in this map mode.
+             */
+            selection = new ArrayList<OsmPrimitive>(
+                    model.getLayer().data.getSelected()
+             );
+            model.getLayer().data.clearSelection();
         }
-        /*
-         * Remind the current selection and clear it; otherwise the rendered
-         * selection might interfere with our  understanding of "selected" nodes
-         * and way slices in this map mode.
-         */
-        selection = new ArrayList<OsmPrimitive>(
-                model.getLayer().data.getSelected()
-         );
-        model.getLayer().data.clearSelection();
 	}
 
 	@Override
