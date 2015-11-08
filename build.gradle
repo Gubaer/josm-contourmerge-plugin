@@ -47,7 +47,7 @@ def bestPluginVersion(josmVersion) {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.1'
+    gradleVersion = '2.8'
 }
 
 jar.baseName = "contourmerge"
