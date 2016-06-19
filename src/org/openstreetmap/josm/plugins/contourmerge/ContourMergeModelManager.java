@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.plugins.contourmerge.util.Assert;
 
@@ -33,12 +35,12 @@ public class ContourMergeModelManager implements LayerChangeListener{
 
 	public void wireToJOSM(){
 		models.clear();
-		MapView.addLayerChangeListener(this);
+		Main.getLayerManager().addLayerChangeListener(this);
 	}
 
 	public void unwireFromJOSM() {
 		models.clear();
-		MapView.removeLayerChangeListener(this);
+		Main.getLayerManager().removeLayerChangeListener(this);
 	}
 
 	/**
@@ -65,7 +67,7 @@ public class ContourMergeModelManager implements LayerChangeListener{
 	public ContourMergeModel getActiveModel() {
 		if (Main.map == null) return null;
 		if (Main.map.mapView == null) return null;
-		OsmDataLayer layer = Main.map.mapView.getEditLayer();
+		OsmDataLayer layer = Main.getLayerManager().getEditLayer();
 		if (layer == null) return null;
 		return getModel(layer);
 	}
@@ -74,25 +76,29 @@ public class ContourMergeModelManager implements LayerChangeListener{
 	/* --------------------------------------------------------------------- */
 	/* interface LayerChangeListener                                         */
 	/* --------------------------------------------------------------------- */
-	@Override
-	public void activeLayerChange(Layer oldLayer, Layer newLayer)
-	{/* ignore */}
 
-	@Override
-	public void layerAdded(Layer newLayer) {
-		if (! (newLayer instanceof OsmDataLayer)) return;
-		OsmDataLayer dl = (OsmDataLayer)newLayer;
-		ContourMergeModel model = new  ContourMergeModel(dl);
-		dl.data.addDataSetListener(model);
-		models.put((OsmDataLayer)newLayer, model);
-	}
+    @Override
+    public void layerAdded(LayerAddEvent event) {
+        Layer newLayer = event.getAddedLayer();
+        if (! (newLayer instanceof OsmDataLayer)) return;
+        OsmDataLayer dl = (OsmDataLayer)newLayer;
+        ContourMergeModel model = new  ContourMergeModel(dl);
+        dl.data.addDataSetListener(model);
+        models.put((OsmDataLayer)newLayer, model);
+    }
 
-	@Override
-	public void layerRemoved(Layer oldLayer) {
-		if (! (oldLayer instanceof OsmDataLayer)) return;
-		OsmDataLayer dl = (OsmDataLayer)oldLayer;
-		ContourMergeModel model = models.get(dl);
-		dl.data.removeDataSetListener(model);
-		models.remove(dl);
-	}
+    @Override
+    public void layerOrderChanged(LayerOrderChangeEvent event) {
+        /* ignore */
+    }
+
+    @Override
+    public void layerRemoving(LayerRemoveEvent event) {
+        Layer oldLayer = event.getRemovedLayer();
+        if (! (oldLayer instanceof OsmDataLayer)) return;
+        OsmDataLayer dl = (OsmDataLayer)oldLayer;
+        ContourMergeModel model = models.get(dl);
+        dl.data.removeDataSetListener(model);
+        models.remove(dl);
+    }
 }
