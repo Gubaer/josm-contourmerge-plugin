@@ -1,9 +1,9 @@
 package org.openstreetmap.josm.plugins.contourmerge;
 
-import org.openstreetmap.josm.gui.IconToggleButton;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.plugins.Plugin;
 import org.openstreetmap.josm.plugins.PluginInformation;
+
+
 
 /**
  * <strong>ContourMergePlugin</strong> is the main class for the
@@ -11,21 +11,10 @@ import org.openstreetmap.josm.plugins.PluginInformation;
  */
 public class ContourMergePlugin extends Plugin{
 
-	public ContourMergePlugin(PluginInformation info) {
+    public ContourMergePlugin(PluginInformation info) {
 		super(info);
-	}
-
-	@Override
-	public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
-		if (newFrame == null){
-			ContourMergeModelManager.getInstance().unwireFromJOSM();
-			ContourMergeView.getInstance().unwireFromJOSM();
-		} else {
-			newFrame.addMapMode(new IconToggleButton(
-			        new ContourMergeMode(newFrame)));
-			ContourMergeModelManager.getInstance().wireToJOSM();
-			ContourMergeView.getInstance().wireToJOSM();
-		}
+        ContourMergeModelManager.getInstance().wireToJOSM();
+        ContourMergeView.getInstance().wireToJOSM();
 	}
 
 	static private boolean modeEnabled;
