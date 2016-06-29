@@ -129,6 +129,10 @@ task  getJosm {
 }
 compileJava.dependsOn "getJosm"
 
+clean.doFirst {
+    delete "contrib/josm-latest.jar"
+}
+
 task deploy {
     doLast {
         def deployBranch = "deploy"
