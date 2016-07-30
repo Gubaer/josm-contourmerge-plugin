@@ -45,18 +45,18 @@ public class ContourMergeMode extends MapMode {
 
     public ContourMergeMode(MapFrame mapFrame) {
         super(
-                tr("Contour Merge"),  // name
-                "contourmerge",       // icon name
-                tr("Merge the contour of an area with the contour of "
-                        + "another area"), // tooltip
-                Shortcut.registerShortcut("contourmerge:activate",
-                        tr("Contour Merge: Activate Mode"),
-                        KeyEvent.VK_B,
-                        Shortcut.NONE // don't assign an action group, let the
-                                      // user assign it in the preferences
-                ),
-                mapFrame,
-                Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)
+            tr("Contour Merge"),  // name
+            "contourmerge",       // icon name
+            tr("Merge the contour of an area with the contour of "
+                    + "another area"), // tooltip
+            Shortcut.registerShortcut("contourmerge:activate",
+                    tr("Contour Merge: Activate Mode"),
+                    KeyEvent.VK_B,
+                    Shortcut.NONE // don't assign an action group, let the
+                                  // user assign it in the preferences
+            ),
+            mapFrame,
+            Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)
         );
         putValue("help", HelpUtil.ht("Plugin/ContourMerge"));
     }
