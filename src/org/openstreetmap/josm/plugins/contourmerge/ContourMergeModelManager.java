@@ -22,60 +22,60 @@ import org.openstreetmap.josm.plugins.contourmerge.util.Assert;
  */
 public class ContourMergeModelManager implements LayerChangeListener{
 
-	static private ContourMergeModelManager instance;
-	static public ContourMergeModelManager getInstance() {
-		if (instance == null){
-			instance = new ContourMergeModelManager();
-		}
-		return instance;
-	}
+    static private ContourMergeModelManager instance;
+    static public ContourMergeModelManager getInstance() {
+        if (instance == null){
+            instance = new ContourMergeModelManager();
+        }
+        return instance;
+    }
 
-	private final Map<OsmDataLayer, ContourMergeModel> models =
-	        new HashMap<OsmDataLayer, ContourMergeModel>();
+    private final Map<OsmDataLayer, ContourMergeModel> models =
+            new HashMap<OsmDataLayer, ContourMergeModel>();
 
-	public void wireToJOSM(){
-		models.clear();
-		Main.getLayerManager().addLayerChangeListener(this);
-	}
+    public void wireToJOSM(){
+        models.clear();
+        Main.getLayerManager().addLayerChangeListener(this);
+    }
 
-	public void unwireFromJOSM() {
-		models.clear();
-		Main.getLayerManager().removeLayerChangeListener(this);
-	}
+    public void unwireFromJOSM() {
+        models.clear();
+        Main.getLayerManager().removeLayerChangeListener(this);
+    }
 
-	/**
-	 * <p>Replies the contour merge model for the data layer {@code layer},
-	 * or null, if no such model exists.</p>
-	 *
-	 * @param layer the data layer. Must not be null.
-	 * @return the model
-	 * @throws IllegalArgumentException thrown if {@code layer} is null
-	 */
-	public ContourMergeModel getModel(OsmDataLayer layer)
-	        throws IllegalArgumentException{
-		Assert.checkArgNotNull(layer, "layer");
-		return models.get(layer);
-	}
+    /**
+     * <p>Replies the contour merge model for the data layer {@code layer},
+     * or null, if no such model exists.</p>
+     *
+     * @param layer the data layer. Must not be null.
+     * @return the model
+     * @throws IllegalArgumentException thrown if {@code layer} is null
+     */
+    public ContourMergeModel getModel(OsmDataLayer layer)
+            throws IllegalArgumentException{
+        Assert.checkArgNotNull(layer, "layer");
+        return models.get(layer);
+    }
 
-	/**
-	 * <p>Replies the contour model for the currently active data layer
-	 * (the "edit layer"), or null, if the currently active layer isn't
-	 * a data layer.</p>
-	 *
-	 * @return the model
-	 */
-	public ContourMergeModel getActiveModel() {
-		if (Main.map == null) return null;
-		if (Main.map.mapView == null) return null;
-		OsmDataLayer layer = Main.getLayerManager().getEditLayer();
-		if (layer == null) return null;
-		return getModel(layer);
-	}
+    /**
+     * <p>Replies the contour model for the currently active data layer
+     * (the "edit layer"), or null, if the currently active layer isn't
+     * a data layer.</p>
+     *
+     * @return the model
+     */
+    public ContourMergeModel getActiveModel() {
+        if (Main.map == null) return null;
+        if (Main.map.mapView == null) return null;
+        OsmDataLayer layer = Main.getLayerManager().getEditLayer();
+        if (layer == null) return null;
+        return getModel(layer);
+    }
 
 
-	/* --------------------------------------------------------------------- */
-	/* interface LayerChangeListener                                         */
-	/* --------------------------------------------------------------------- */
+    /* --------------------------------------------------------------------- */
+    /* interface LayerChangeListener                                         */
+    /* --------------------------------------------------------------------- */
 
     @Override
     public void layerAdded(LayerAddEvent event) {
