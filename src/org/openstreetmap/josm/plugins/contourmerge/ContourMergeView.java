@@ -24,8 +24,8 @@ import org.openstreetmap.josm.gui.layer.MapViewPaintable;
  *
  */
 public class ContourMergeView implements MapViewPaintable{
-	//static private final Logger logger
-    // = Logger.getLogger(ContourMergeView.class.getName());
+//	static private final Logger logger =
+//	        Logger.getLogger(ContourMergeView.class.getName());
 
 	static private ContourMergeView instance;
 

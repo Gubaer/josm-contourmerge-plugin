@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
@@ -32,15 +31,15 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
- * <p>ContourMergeMode</p> is the {@link MapMode} for merging the contours of
+ * <p>ContourMergeMode is the {@link MapMode} for merging the contours of
  * two areas.</p>
  *
  */
 @SuppressWarnings("serial")
 public class ContourMergeMode extends MapMode {
-	@SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(
-            ContourMergeMode.class.getName());
+//	@SuppressWarnings("unused")
+//    static private final Logger logger = Logger.getLogger(
+//            ContourMergeMode.class.getName());
 
 	private Collection<OsmPrimitive> selection;
 
@@ -54,7 +53,7 @@ public class ContourMergeMode extends MapMode {
 			            tr("Contour Merge: Activate Mode"),
 			            KeyEvent.VK_B,
 			            Shortcut.NONE // don't assign an action group, let the
-			                          // the user assign it in the preferences
+			                          // user assign it in the preferences
 			    ),
 				mapFrame,
 				Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)
@@ -155,7 +154,7 @@ public class ContourMergeMode extends MapMode {
 				model.toggleSelected(candidates.get(0));
 			}
 		}
-		Main.map.mapView.repaint();
+		getMapView().repaint();
 	}
 
 	protected BBox buildSnapBBox(Point p){
