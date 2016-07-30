@@ -1,64 +1,50 @@
+plugins {
+    id "de.undercouch.download" version "3.1.1"
+}
+
 apply plugin: "java"
 apply plugin: "groovy"
-
-/*
- * Add an entry for every published build. Increment the plugin version
- * and set the lowest JOSM version this plugin version is compatible with.
- */
-project.ext.pluginVersions = [
-    /* plugin version,  required JOSM version */
-    [1014,              8024],  // fix #10 NPE in contourmerge plugin
-    [1013,              8024],  // plugin installation without restart
-    [1012,              6317],  // recompiled because of #9 
-    [1011,              6317],  // recompiled because of #9 
-    [1010,              6317],  // recompiled for Java 1.6
-    [1009,              6317],
-    [1008,              6317],
-    [1007,              4394],
-    [1005,              4394],
-    [1004,              4394],
-    [1003,              4394],
-    [1000,              4223]
-]
+apply plugin: "eclipse"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile files("contrib/josm-latest.jar")
+    compile files("contrib/josm.jar")
     testCompile group: 'junit', name: 'junit', version: '4.+' 
     testCompile localGroovy()
-    testCompile files("contrib/josm-latest.jar")
+    testCompile files("contrib/josm.jar")
 }
 
-def currentPluginVersion() {
-    return project.ext.pluginVersions.collect{it[0]}.max()
+def currentPluginVersion(config) {
+    return config.releases.collect {it.pluginVersion}.max()
 }
 
-def currentPluginMainVersion() {
-    return project.ext.pluginVersions.collect{it[1]}.max()
+def currentPluginMainVersion(config) {
+    return config.releases.collect {it.josmVersion}.max()
 }
 
-def bestPluginVersion(josmVersion) {
-    return project.ext.pluginVersions
-        .findAll{it[1] == josmVersion}   
-        .collect{it[0]}
+def bestPluginVersion(config, josmVersion) {
+    return config.releases
+        .findAll{it.josmVersion == josmVersion}   
+        .collect{it.pluginVersion}
         .max()
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.8'
+    gradleVersion = '2.14.1'
 }
 
 jar.baseName = "contourmerge"
 
 jar {
     manifest {
+        def config = new ConfigSlurper().parse(file("releases.conf").text)
         attributes(
             "Plugin-Date": new Date().format("yyyy-MM-dd HH:mm"),
-            "Plugin-Version": currentPluginVersion(),
-            "Plugin-Mainversion": currentPluginMainVersion(),
+            "Plugin-Version": currentPluginVersion(config),
+            "Plugin-Mainversion": currentPluginMainVersion(config),
             'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')',
             'Built-With': "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
             'Plugin-Class' : "org.openstreetmap.josm.plugins.contourmerge.ContourMergePlugin",
@@ -67,8 +53,8 @@ jar {
             "Plugin-Link" : "http://wiki.openstreetmap.org/index.php/JOSM/Plugins/ContourMerge",
             "Plugin-Canloadatruntime" : "true"
         )
-        pluginVersions.collect{it[1]}.unique().sort().each {jv -> 
-            def dv = bestPluginVersion(jv)
+        config.releases.collect{it.josmVersion}.unique().sort().each {jv -> 
+            def dv = bestPluginVersion(config, jv)
             def key = "${jv}_Plugin-Url".toString()
             def value = "${dv};https://raw.github.com/Gubaer/josm-contourmerge-plugin/for-josm-${jv}/dist/contourmerge.jar".toString()
             attributes([(key):value]) 
@@ -77,8 +63,8 @@ jar {
 }
 
 compileJava {
-  sourceCompatibility = 1.7
-  targetCompatibility = 1.7
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 sourceSets {
@@ -112,25 +98,30 @@ test {
     }
 }
 
-
-project.ext.josmUrl = "http://josm.openstreetmap.de/josm-latest.jar"
 task  getJosm {
-    description = "Download the latest JOSM build jar from the JOSM website"
+    description = "Download a JOSM jar from the JOSM website"
     doLast {
         if (! file("contrib").exists()) {
             file("contrib").mkdir()
         }
-        if (!file("contrib/josm-latest.jar").exists()) {    
-            println "Downloading JOSM from <${project.ext.josmUrl}> ..."    
-            def cmd ="wget ${project.ext.josmUrl} -O contrib/josm-latest.jar"
-            cmd.execute().text
+        if (!file("contrib/josm.jar").exists()) {    
+            println "Downloading JOSM from <${josmDownloadUrl}> ..."    
+            download {
+                src josmDownloadUrl
+                dest "contrib/josm.jar"
+            }
         }
     }
 }
 compileJava.dependsOn "getJosm"
 
+clean.doFirst {
+    delete "contrib/josm.jar"
+}
+
 task deploy {
     doLast {
+        def config = new ConfigSlurper().parse(file("releases.conf").text)
         def deployBranch = "deploy"
         def jar = "dist/contourmerge.jar";
         file("dist").mkdirs()
@@ -141,8 +132,8 @@ task deploy {
         }
         Git.ensureOnBranch(deployBranch)
         Git.add(jar)
-        Git.commit(jar, "committed plugin build ${currentPluginVersion()}") 
-        def tag = "for-josm-${currentPluginMainVersion()}"
+        Git.commit(jar, "committed plugin build ${currentPluginVersion(config)}") 
+        def tag = "for-josm-${currentPluginMainVersion(config)}"
         Git.tagHead(tag)
         Git.push("origin", deployBranch)
         Git.pushTags()
@@ -150,7 +141,6 @@ task deploy {
 }
 
 class Git {
-
     static private def executeAndLog(cmd) {
         def proc = cmd.execute()
         proc.waitFor()
