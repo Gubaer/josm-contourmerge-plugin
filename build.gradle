@@ -1,3 +1,7 @@
+plugins {
+    id "de.undercouch.download" version "3.1.1"
+}
+
 apply plugin: "java"
 apply plugin: "groovy"
 
@@ -122,8 +126,10 @@ task  getJosm {
         }
         if (!file("contrib/josm-latest.jar").exists()) {    
             println "Downloading JOSM from <${project.ext.josmUrl}> ..."    
-            def cmd ="wget ${project.ext.josmUrl} -O contrib/josm-latest.jar"
-            cmd.execute().text
+            download {
+                src project.ext.josmUrl
+                dest "contrib"
+            }
         }
     }
 }
