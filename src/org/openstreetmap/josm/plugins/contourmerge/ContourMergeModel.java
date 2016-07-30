@@ -127,7 +127,8 @@ public class ContourMergeModel implements DataSetListener{
     /**
      * <p>Deselects the node {@code node}.</p>
      *
-     * @param node the node. Must not be null. Must be owned by this models layer.
+     * @param node the node. Must not be null. Must be owned by this models
+     *  layer.
      * @throws IllegalArgumentException
      */
     public void deselectNode(Node node) throws IllegalArgumentException{
@@ -141,7 +142,8 @@ public class ContourMergeModel implements DataSetListener{
     /**
      * <p>Toggles whether the node {@code node} is selected or not.</p>
      *
-     * @param node the node. Must not be null. Must be owned by this models layer.
+     * @param node the node. Must not be null. Must be owned by this models
+     *  layer.
      * @throws IllegalArgumentException
      */
     public void toggleSelected(Node node) throws IllegalArgumentException {
@@ -178,15 +180,16 @@ public class ContourMergeModel implements DataSetListener{
      * <p>Sets the way segment which would be affected by the next drag/drop
      * operation.</p>
      *
-     * @param segment the way segment. null, if there is no feedback way segment
+     * @param segment the way segment. null, if there is no feedback
+         segment
      */
     public void setDragStartFeedbackWaySegment(WaySegment segment){
         this.dragStartFeedbackSegment = segment;
     }
 
     /**
-     * <p>Replies the current feedback way segment or null, if there is currently
-     * no such segment
+     * <p>Replies the current feedback way segment or null, if there is
+     * currently no such segment
      *
      * @return the feedback way segment
      */
@@ -378,7 +381,8 @@ public class ContourMergeModel implements DataSetListener{
 
     /**
      * <p>Replies the way slice we are currently hovering over and which is
-     * suitable as drop target, or null, if no such way slice is currently known.</p>
+     * suitable as drop target, or null, if no such way slice is currently
+     * known.</p>
      *
      * @return the way slice or null
      */
@@ -488,8 +492,10 @@ public class ContourMergeModel implements DataSetListener{
         EastNorth t1 = n2.get(0).getEastNorth();
         EastNorth t2 = n2.get(n2.size()-1).getEastNorth();
 
-        Line2D l1 = new Line2D.Double(s1.getX(), s1.getY(), t1.getX(),t1.getY());
-        Line2D l2 = new Line2D.Double(s2.getX(), s2.getY(), t2.getX(),t2.getY());
+        Line2D l1 = new Line2D.Double(s1.getX(), s1.getY(), t1.getX(),
+                t1.getY());
+        Line2D l2 = new Line2D.Double(s2.getX(), s2.getY(), t2.getX(),
+                t2.getY());
         return ! l1.intersectsLine(l2);
     }
 
