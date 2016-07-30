@@ -273,7 +273,7 @@ public class ContourMergeMode extends MapMode {
              * target way slice
              */
             getMapView().setCursor(DragSource.DefaultLinkDrop);
-            showHelpText(tr("Drop to align to the the target segment"));
+            showHelpText(tr("Drop to align to the target segment"));
             newDropTargetFeedbackSegment = ws;
         }
         Point offset = new Point(current.x - dragStart.x, current.y - dragStart.y);
