@@ -225,7 +225,7 @@ public class ContourMergeMode extends MapMode {
         onStepDrag(e.getPoint());
     }
 
-    /* -----------------------------------------------------------------------/
+    /* ----------------------------------------------------------------------*/
     /* drag and drop                                                         */
     /* --------------------------------------------------------------------- */
     protected Point dragStart = null;
@@ -237,8 +237,10 @@ public class ContourMergeMode extends MapMode {
                 OsmPrimitive.isSelectablePredicate);
         if (ws != null && model.isWaySegmentDragable(ws)) {
             this.dragStart = start;
-            getMapView().setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-            showHelpText(tr("Drag the way segment and drop it on a target segment"));
+            getMapView().setCursor(Cursor.getPredefinedCursor(
+                 Cursor.MOVE_CURSOR));
+            showHelpText(tr(
+                "Drag the way segment and drop it on a target segment"));
             model.setDragOffset(new Point(0,0));
             model.setDragStartFeedbackWaySegment(ws);
             model.setDropFeedbackSegment(null);
@@ -256,8 +258,10 @@ public class ContourMergeMode extends MapMode {
             /*
              * mouse pointer isn't close to another way, continue dragging
              */
-            getMapView().setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-            showHelpText(tr("Drag the way segment and drop it on a target segment"));
+            getMapView().setCursor(Cursor.getPredefinedCursor(
+                Cursor.MOVE_CURSOR));
+            showHelpText(tr(
+                "Drag the way segment and drop it on a target segment"));
             newDropTargetFeedbackSegment = null;
         } else if (! model.isPotentialDropTarget(ws)) {
             /*
@@ -265,7 +269,9 @@ public class ContourMergeMode extends MapMode {
              * a potential target way slice
              */
             getMapView().setCursor(DragSource.DefaultLinkNoDrop);
-            showHelpText(tr("Drag the way segment and drop it on a target segment"));
+            showHelpText(tr(
+                "Drag the way segment and drop it on a target segment"
+            ));
             newDropTargetFeedbackSegment = null;
         } else {
             /*
@@ -276,7 +282,10 @@ public class ContourMergeMode extends MapMode {
             showHelpText(tr("Drop to align to the target segment"));
             newDropTargetFeedbackSegment = ws;
         }
-        Point offset = new Point(current.x - dragStart.x, current.y - dragStart.y);
+        Point offset = new Point(
+            current.x - dragStart.x,
+            current.y - dragStart.y
+        );
         model.setDragOffset(offset);
         model.setDropFeedbackSegment(newDropTargetFeedbackSegment);
         Main.map.mapView.repaint();
