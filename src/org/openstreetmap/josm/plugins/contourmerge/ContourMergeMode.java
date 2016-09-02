@@ -143,7 +143,7 @@ public class ContourMergeMode extends MapMode {
         if (model == null) return;
 
         List<Node> candidates = getMapView().getNearestNodes(e.getPoint(),
-                OsmPrimitive.isSelectablePredicate);
+                OsmPrimitive::isSelectable);
         if (!candidates.isEmpty()){
             if (!OsmPrimitive.getFilteredList(candidates.get(0).getReferrers(),
                     Way.class).isEmpty()) {
@@ -175,14 +175,14 @@ public class ContourMergeMode extends MapMode {
             return;
         if (e.getButton() != MouseEvent.NOBUTTON) return;
         List<Node> candidates = getMapView().getNearestNodes(e.getPoint(),
-                OsmPrimitive.isSelectablePredicate);
+                OsmPrimitive::isSelectable);
         ContourMergeModel model = ContourMergePlugin.getModelManager()
                 .getActiveModel();
         showHelpText("");
         if (candidates.isEmpty()){
             model.setFeedbackNode(null);
             WaySegment ws = getMapView().getNearestWaySegment(e.getPoint(),
-                    OsmPrimitive.isSelectablePredicate);
+                    OsmPrimitive::isSelectable);
             if (ws == null){
                 getMapView().setCursor(Cursor.getDefaultCursor());
                 model.setDragStartFeedbackWaySegment(null);
@@ -234,7 +234,7 @@ public class ContourMergeMode extends MapMode {
         ContourMergeModel model = ContourMergePlugin.getModelManager()
                 .getActiveModel();
         WaySegment ws = getMapView().getNearestWaySegment(start,
-                OsmPrimitive.isSelectablePredicate);
+                OsmPrimitive::isSelectable);
         if (ws != null && model.isWaySegmentDragable(ws)) {
             this.dragStart = start;
             getMapView().setCursor(Cursor.getPredefinedCursor(
@@ -250,7 +250,7 @@ public class ContourMergeMode extends MapMode {
     protected void onStepDrag(Point current){
         if (dragStart == null) return;  // drag initiated outside of map view ?
         WaySegment ws = getMapView().getNearestWaySegment(current,
-                OsmPrimitive.isSelectablePredicate);
+                OsmPrimitive::isSelectable);
         ContourMergeModel model = ContourMergePlugin.getModelManager()
                 .getActiveModel();
         WaySegment newDropTargetFeedbackSegment;
@@ -294,7 +294,7 @@ public class ContourMergeMode extends MapMode {
     protected void onDrop(Point target){
         if (dragStart == null) return;  // drag initiated outside of map view ?
         WaySegment ws = getMapView().getNearestWaySegment(target,
-                OsmPrimitive.isSelectablePredicate);
+                OsmPrimitive::isSelectable);
         ContourMergeModel model = ContourMergePlugin.getModelManager()
                 .getActiveModel();
         if (model.isPotentialDropTarget(ws)){
