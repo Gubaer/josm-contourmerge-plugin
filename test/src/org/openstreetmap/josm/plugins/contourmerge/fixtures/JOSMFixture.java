@@ -7,7 +7,6 @@ import java.text.MessageFormat;
 import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.I18n;
@@ -33,7 +32,7 @@ public class JOSMFixture {
                 fail(MessageFormat.format("property ''{0}'' points to ''{1}'' which is either not existing or not readable.\nUpdate system property '{0}'", "josm.home", f));
             }
         }
-        Main.pref = new Preferences();
+
         I18n.init();
         // initialize the platform hook, and
         Main.determinePlatformHook();
