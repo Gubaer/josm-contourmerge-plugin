@@ -31,7 +31,7 @@ public class ContourMergeModelManager implements LayerChangeListener{
     }
 
     private final Map<OsmDataLayer, ContourMergeModel> models =
-            new HashMap<OsmDataLayer, ContourMergeModel>();
+            new HashMap<>();
 
     public void wireToJOSM(){
         models.clear();
@@ -65,8 +65,6 @@ public class ContourMergeModelManager implements LayerChangeListener{
      * @return the model
      */
     public ContourMergeModel getActiveModel() {
-        if (Main.map == null) return null;
-        if (Main.map.mapView == null) return null;
         OsmDataLayer layer = Main.getLayerManager().getEditLayer();
         if (layer == null) return null;
         return getModel(layer);

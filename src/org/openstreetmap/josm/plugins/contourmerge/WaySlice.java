@@ -267,12 +267,12 @@ public class WaySlice {
         if (newNodes == null || newNodes.isEmpty()) return nw;
 
         if (!w.isClosed()) {
-            List<Node> oldNodes = new ArrayList<Node>(w.getNodes());
+            List<Node> oldNodes = new ArrayList<>(w.getNodes());
             for (int i=start; i<= end;i++) oldNodes.remove(start);
             oldNodes.addAll(start, newNodes);
             nw.setNodes(oldNodes);
         } else {
-            List<Node> oldNodes = new ArrayList<Node>(w.getNodes());
+            List<Node> oldNodes = new ArrayList<>(w.getNodes());
             if (inDirection) {
                 if (start == 0)oldNodes.remove(oldNodes.size()-1);
                 for (int i=start; i<= end;i++)oldNodes.remove(start);
@@ -299,7 +299,7 @@ public class WaySlice {
      * @return the list of nodes
      */
     public List<Node> getNodes(){
-        List<Node> nodes = new ArrayList<Node>();
+        List<Node> nodes = new ArrayList<>();
         if (!w.isClosed()) {
             nodes.addAll(w.getNodes().subList(start, end+1));
         } else {
@@ -343,7 +343,7 @@ public class WaySlice {
      * @return true if this way slice participates in at least one sling.
      */
     protected boolean hasSlings() {
-        Set<Node> nodeSet = new HashSet<Node>();
+        Set<Node> nodeSet = new HashSet<>();
         if (w.isClosed()){
             if (isInDirection()) {
                 for (int i=start; i<=end; i++){
@@ -371,7 +371,7 @@ public class WaySlice {
          * make sure each node in  way slice occurs exactly once in the way.
          * This ensures that the way slice is not participating in any slings.
          */
-        Set<Node> seen = new HashSet<Node>();
+        Set<Node> seen = new HashSet<>();
         for (int i=0; i< (w.isClosed() ? w.getNodesCount()-1 :
             w.getNodesCount()); i++) {
             Node n = w.getNode(i);

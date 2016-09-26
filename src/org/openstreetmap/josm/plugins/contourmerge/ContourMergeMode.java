@@ -9,7 +9,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
@@ -102,15 +101,9 @@ public class ContourMergeMode extends MapMode {
              * selection which are not in the dataset anymore.
              */
             DataSet ds = model.getLayer().data;
-
-            for(Iterator<OsmPrimitive> it = selection.iterator();it.hasNext();) {
-                OsmPrimitive p = it.next();
-                if (ds.getPrimitiveById(p) == null) {
-                    it.remove();
-                }
-            }
+            selection.removeIf(p -> ds.getPrimitiveById(p) == null);
             model.getLayer().data.setSelected(selection);
-             selection = null;
+            selection = null;
         }
     }
 

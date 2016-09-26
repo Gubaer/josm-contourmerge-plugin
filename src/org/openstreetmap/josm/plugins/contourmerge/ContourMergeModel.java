@@ -44,7 +44,7 @@ public class ContourMergeModel implements DataSetListener{
     private Node feedbackNode;
     private WaySegment dragStartFeedbackSegment;
     private WaySegment dropFeedbackSegment;
-    private final ArrayList<Node> selectedNodes = new ArrayList<Node>();
+    private final ArrayList<Node> selectedNodes = new ArrayList<>();
     private Point dragOffset = null;
 
     /**
@@ -213,7 +213,9 @@ public class ContourMergeModel implements DataSetListener{
      */
     protected Set<Way> computeSelectedWays(){
         return selectedNodes.stream()
-            .flatMap(n -> OsmPrimitive.getFilteredList(n.getReferrers(),Way.class).stream())
+            .flatMap(n -> OsmPrimitive.getFilteredList(
+                n.getReferrers(),Way.class
+            ).stream())
             .collect(Collectors.toSet());
     }
 
@@ -224,7 +226,6 @@ public class ContourMergeModel implements DataSetListener{
      * @return the set of selected nodes
      */
     protected Set<Node> computeSelectedNodesOnWay(Way way){
-        if (way == null) return Collections.emptySet();
         return selectedNodes.stream()
             .filter(n -> OsmPrimitive.getFilteredSet(n.getReferrers(),
                     Way.class).contains(way))
