@@ -80,7 +80,7 @@ public class ContourMergeMode extends MapMode {
              * rendered selection might interfere with our understanding of
              * "selected" nodes and way slices in this map mode.
              */
-            selection = new ArrayList<OsmPrimitive>(
+            selection = new ArrayList<>(
                     model.getLayer().data.getSelected()
              );
             model.getLayer().data.clearSelection();
@@ -102,8 +102,8 @@ public class ContourMergeMode extends MapMode {
              * selection which are not in the dataset anymore.
              */
             DataSet ds = model.getLayer().data;
-            Iterator<OsmPrimitive> it = selection.iterator();
-            while(it.hasNext()) {
+
+            for(Iterator<OsmPrimitive> it = selection.iterator();it.hasNext();) {
                 OsmPrimitive p = it.next();
                 if (ds.getPrimitiveById(p) == null) {
                     it.remove();

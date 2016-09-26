@@ -6,10 +6,10 @@ import java.awt.Point;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -212,12 +212,9 @@ public class ContourMergeModel implements DataSetListener{
      * @return the set of selected ways
      */
     protected Set<Way> computeSelectedWays(){
-        Set<Way> ways = new HashSet<Way>();
-        for (Node n: selectedNodes){
-            ways.addAll(OsmPrimitive.getFilteredList(n.getReferrers(),
-                    Way.class));
-        }
-        return ways;
+        return selectedNodes.stream()
+            .flatMap(n -> OsmPrimitive.getFilteredList(n.getReferrers(),Way.class).stream())
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -227,14 +224,11 @@ public class ContourMergeModel implements DataSetListener{
      * @return the set of selected nodes
      */
     protected Set<Node> computeSelectedNodesOnWay(Way way){
-        Set<Node> nodes = new HashSet<Node>();
-        if (way == null) return nodes;
-        for (Node n : selectedNodes){
-            if (!OsmPrimitive.getFilteredSet(n.getReferrers(),
-                    Way.class).contains(way)) continue;
-            nodes.add(n);
-        }
-        return nodes;
+        if (way == null) return Collections.emptySet();
+        return selectedNodes.stream()
+            .filter(n -> OsmPrimitive.getFilteredSet(n.getReferrers(),
+                    Way.class).contains(way))
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -269,13 +263,10 @@ public class ContourMergeModel implements DataSetListener{
 
     protected List<Integer> computeSelectedNodeIndicesOnWay(Way way){
         Set<Node> nodes = computeSelectedNodesOnWay(way);
-        List<Integer> ret = new ArrayList<Integer>();
-        if (nodes.isEmpty()) return ret;
-        for (Node n: nodes){
-            ret.add(way.getNodes().indexOf(n));
-        }
-        Collections.sort(ret);
-        return ret;
+        return nodes.stream()
+            .map(n -> way.getNodes().indexOf(n))
+            .sorted()
+            .collect(Collectors.toList());
     }
 
     protected WaySlice getWaySliceFromSelectedNodes(
@@ -437,7 +428,7 @@ public class ContourMergeModel implements DataSetListener{
         if (! areDirectionAligned(dragSource, dropTarget)) {
             Collections.reverse(targetNodes);
         }
-        List<Command> cmds = new ArrayList<Command>();
+        List<Command> cmds = new ArrayList<>();
         // the command to change the source way
         cmds.add(new ChangeCommand(dragSource.getWay(),
                 dragSource.replaceNodes(targetNodes)));
