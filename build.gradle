@@ -12,9 +12,12 @@ repositories {
 
 dependencies {
     compile files("contrib/josm.jar")
+    compile group: 'javax.validation', name: 'validation-api', version: '1.0.0.GA'
+    
     testCompile group: 'junit', name: 'junit', version: '4.+' 
     testCompile localGroovy()
     testCompile files("contrib/josm.jar")
+    testCompile group: 'javax.validation', name: 'validation-api', version: '1.0.0.GA'
 }
 
 def currentPluginVersion(config) {
