@@ -1,7 +1,5 @@
 package org.openstreetmap.josm.plugins.contourmerge;
 
-import static org.openstreetmap.josm.plugins.contourmerge.util.Assert.checkArgNotNull;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -10,6 +8,9 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
+import java.util.Objects;
+
+import javax.validation.constraints.NotNull;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -102,14 +103,11 @@ public class ContourMergeView implements MapViewPaintable{
      * @param mv the map view. Must not be null.
      * @param ws the way slice. Must not be null.
      * @return a polyline
-     * @throws IllegalArgumentException thrown if {@code mv} is null
-     * @throws IllegalArgumentException thrown if {@code ws} is null
      *
      */
-    public static Path2D project(MapView mv, WaySlice ws)
-            throws IllegalArgumentException{
-        checkArgNotNull(mv, "mv");
-        checkArgNotNull(ws, "ws");
+    public static Path2D project(@NotNull MapView mv, @NotNull WaySlice ws){
+        Objects.requireNonNull(mv);
+        Objects.requireNonNull(ws);
         Path2D.Float polyline = new Path2D.Float();
         if (ws.isInDirection()) {
             /*
@@ -159,12 +157,11 @@ public class ContourMergeView implements MapViewPaintable{
      * @param ws the way slice. Must not be null.
      * @param displacement the displacement. (0,0) is assumed, if null.
      * @return a polyline
-     * @throws IllegalArgumentException thrown if {@code mv} is null
-     * @throws IllegalArgumentException thrown if {@code ws} is null
      */
-    public Path2D project(MapView mv, WaySlice ws, Point displacement)
-            throws IllegalArgumentException{
-        checkArgNotNull(mv, "mv");
+    public Path2D project(@NotNull MapView mv, @NotNull WaySlice ws,
+            Point displacement){
+        Objects.requireNonNull(mv);
+        Objects.requireNonNull(ws);
         if (displacement == null) displacement = new Point(0,0);
         Path2D polyline = project(mv, ws);
         AffineTransform at = new AffineTransform();

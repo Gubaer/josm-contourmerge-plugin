@@ -8,8 +8,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.validation.constraints.NotNull;
 
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -51,11 +54,10 @@ public class ContourMergeModel implements DataSetListener{
      * <p>Creates a new contour merge model for the layer {@code layer}.</p>
      *
      * @param layer the data layer. Must not be null.
-     * @throws IllegalArgumentException thrown if {@code layer} is null
+     * @throws NullPointerException thrown if {@code layer} is null
      */
-    public ContourMergeModel(OsmDataLayer layer)
-            throws IllegalArgumentException {
-        Assert.checkArgNotNull(layer, "layer");
+    public ContourMergeModel(@NotNull OsmDataLayer layer){
+        Objects.requireNonNull(layer);
         this.layer = layer;
     }
 
@@ -102,8 +104,8 @@ public class ContourMergeModel implements DataSetListener{
      * @return true, if {@code node} is currently selected in the contour merge
      *  mode.
      */
-    public boolean isSelected(Node node) throws IllegalArgumentException{
-        Assert.checkArgNotNull(node, "node");
+    public boolean isSelected(@NotNull Node node) {
+        Objects.requireNonNull(node);
         Assert.checkArg(node.getDataSet() == layer.data,
            "Node must be owned by this contour merge models layer"); // don't
                                                                   //translate
@@ -115,10 +117,9 @@ public class ContourMergeModel implements DataSetListener{
      *
      * @param node the node. Must not be null. Must be owned by this models
      * layer.
-     * @throws IllegalArgumentException
      */
-    public void selectNode(Node node) throws IllegalArgumentException{
-        Assert.checkArgNotNull(node, "node");
+    public void selectNode(@NotNull Node node) {
+        Objects.requireNonNull(node);
         Assert.checkArg(node.getDataSet() == layer.data,
                 "Node must be owned by this contour merge models layer");
         if (!isSelected(node)) selectedNodes.add(node);
@@ -129,10 +130,9 @@ public class ContourMergeModel implements DataSetListener{
      *
      * @param node the node. Must not be null. Must be owned by this models
      *  layer.
-     * @throws IllegalArgumentException
      */
-    public void deselectNode(Node node) throws IllegalArgumentException{
-        Assert.checkArgNotNull(node, "node");
+    public void deselectNode(@NotNull Node node) {
+        Objects.requireNonNull(node);
         Assert.checkArg(node.getDataSet() == layer.data,
                 //don't translate
                 "Node must be owned by this contour merge models layer");
@@ -144,10 +144,9 @@ public class ContourMergeModel implements DataSetListener{
      *
      * @param node the node. Must not be null. Must be owned by this models
      *  layer.
-     * @throws IllegalArgumentException
      */
-    public void toggleSelected(Node node) throws IllegalArgumentException {
-        Assert.checkArgNotNull(node, "node");
+    public void toggleSelected(Node node) {
+        Objects.requireNonNull(node);
         Assert.checkArg(node.getDataSet() == layer.data,
                 // don't translate
                 "Node must be owned by this contour merge models layer");
