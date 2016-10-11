@@ -46,9 +46,6 @@ public class ContourMergeView implements MapViewPaintable{
     }
 
     protected void decorateFeedbackNode(Graphics2D g, MapView mv, Bounds bbox){
-        Node n = ContourMergePlugin.getModelManager()
-                .getActiveModel().getFeedbackNode();
-        if (n == null) return;
         /* currently no decoration - mouse pointer is changing if mouse over a
          * node */
     }
