@@ -227,7 +227,8 @@ public class ContourMergeModel implements DataSetListener{
     protected Set<Node> computeSelectedNodesOnWay(Way way){
         return selectedNodes.stream()
             .filter(n -> OsmPrimitive.getFilteredSet(n.getReferrers(),
-                    Way.class).contains(way))
+                    Way.class).contains(way)
+             )
             .collect(Collectors.toSet());
     }
 
@@ -262,8 +263,7 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     protected List<Integer> computeSelectedNodeIndicesOnWay(Way way){
-        Set<Node> nodes = computeSelectedNodesOnWay(way);
-        return nodes.stream()
+        return computeSelectedNodesOnWay(way).stream()
             .map(n -> way.getNodes().indexOf(n))
             .sorted()
             .collect(Collectors.toList());

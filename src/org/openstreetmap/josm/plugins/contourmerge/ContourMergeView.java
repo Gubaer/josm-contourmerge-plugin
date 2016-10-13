@@ -9,6 +9,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.validation.constraints.NotNull;
 
@@ -46,6 +47,10 @@ public class ContourMergeView implements MapViewPaintable{
         Main.map.mapView.removeTemporaryLayer(this);
     }
 
+    protected Optional<ContourMergeModel> getActiveModel() {
+        return ContourMergePlugin.getModelManager().getActiveModel();
+    }
+
     protected void decorateFeedbackNode(Graphics2D g, MapView mv, Bounds bbox){
         /* currently no decoration - mouse pointer is changing if mouse over a
          * node */
@@ -70,12 +75,10 @@ public class ContourMergeView implements MapViewPaintable{
     }
 
     protected void decorateSelectedNodes(Graphics2D g, MapView mv, Bounds bbox){
-        ContourMergeModel model = ContourMergePlugin.getModelManager()
-                .getActiveModel();
-        if (model == null) return;
-        for (Node n: model.getSelectedNodes()) {
-            decorateSelectedNode(g, mv, bbox, n);
-        }
+        getActiveModel().ifPresent(model -> {
+            model.getSelectedNodes().stream()
+            .forEach(n -> decorateSelectedNode(g, mv, bbox, n));
+        });
     }
 
     /**
@@ -172,35 +175,35 @@ public class ContourMergeView implements MapViewPaintable{
 
     protected void paintHelperLinesFromDragSourceToDraggedWaySlice(
             Graphics2D g, MapView mv){
-        ContourMergeModel model = ContourMergePlugin.getModelManager()
-                .getActiveModel();
-        if (model == null) return;
-        if (! model.isDragging()) return;
-        WaySlice dragSource = model.getDragSource();
+        getActiveModel()
+        .filter(model -> model.isDragging())
+        .ifPresent(model -> {
+            WaySlice dragSource = model.getDragSource();
 
-        Node lowerTearOffNode = dragSource.getStartTearOffNode();
-        Node upperTearOffNode = dragSource.getEndTearOffNode();
-        Point offset = model.getDragOffset();
+            Node lowerTearOffNode = dragSource.getStartTearOffNode();
+            Node upperTearOffNode = dragSource.getEndTearOffNode();
+            Point offset = model.getDragOffset();
 
-        // init the graphics attributes
-        float[] dashPattern = { 2, 3, 2, 3 };
-        g.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT,
-                   BasicStroke.JOIN_ROUND,1f, dashPattern,0f));
-        boolean crossing = helperLinesAreCrossing(mv, dragSource, offset);
-        if (lowerTearOffNode != null){
-            Point p1 = mv.getPoint(!crossing ? dragSource.getStartNode() : dragSource.getEndNode());
-            p1 = new Point(p1.x + offset.x, p1.y + offset.y);
-            Point p2 = mv.getPoint(lowerTearOffNode);
-            g.drawLine(p1.x,p1.y, p2.x,p2.y);
-        }
-        if (upperTearOffNode != null){
-            Point p1 = mv.getPoint(!crossing
-                    ? dragSource.getEndNode()
-                    : dragSource.getStartNode());
-            p1 = new Point(p1.x + offset.x, p1.y + offset.y);
-            Point p2 = mv.getPoint(upperTearOffNode);
-            g.drawLine(p1.x,p1.y, p2.x,p2.y);
-        }
+            // init the graphics attributes
+            float[] dashPattern = { 2, 3, 2, 3 };
+            g.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT,
+                       BasicStroke.JOIN_ROUND,1f, dashPattern,0f));
+            boolean crossing = helperLinesAreCrossing(mv, dragSource, offset);
+            if (lowerTearOffNode != null){
+                Point p1 = mv.getPoint(!crossing ? dragSource.getStartNode() : dragSource.getEndNode());
+                p1 = new Point(p1.x + offset.x, p1.y + offset.y);
+                Point p2 = mv.getPoint(lowerTearOffNode);
+                g.drawLine(p1.x,p1.y, p2.x,p2.y);
+            }
+            if (upperTearOffNode != null){
+                Point p1 = mv.getPoint(!crossing
+                        ? dragSource.getEndNode()
+                        : dragSource.getStartNode());
+                p1 = new Point(p1.x + offset.x, p1.y + offset.y);
+                Point p2 = mv.getPoint(upperTearOffNode);
+                g.drawLine(p1.x,p1.y, p2.x,p2.y);
+            }
+        });
     }
 
     /**
@@ -272,64 +275,64 @@ public class ContourMergeView implements MapViewPaintable{
 
     protected void paintHelperLinesFromDragSourceToDropTarget(Graphics2D g,
             MapView mv){
-        ContourMergeModel model = ContourMergePlugin.getModelManager()
-                .getActiveModel();
-        if (model == null) return;
-        if (! model.isDragging()) return;
-        WaySlice dragSource = model.getDragSource();
-        WaySlice dropTarget = model.getDropTarget();
-        Node lowerTearOffNode = dragSource.getStartTearOffNode();
-        Node upperTearOffNode = dragSource.getEndTearOffNode();
+        getActiveModel()
+        .filter(model -> model.isDragging())
+        .ifPresent(model -> {
+            WaySlice dragSource = model.getDragSource();
+            WaySlice dropTarget = model.getDropTarget();
+            Node lowerTearOffNode = dragSource.getStartTearOffNode();
+            Node upperTearOffNode = dragSource.getEndTearOffNode();
 
+            // init the graphics attributes
+            float[] dashPattern = { 2, 3, 2, 3 };
+            g.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT,
+                    BasicStroke.JOIN_ROUND,1f, dashPattern,0f));
 
-        // init the graphics attributes
-        float[] dashPattern = { 2, 3, 2, 3 };
-        g.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_ROUND,1f, dashPattern,0f));
-
-        boolean crossing = helperLinesAreCrossing(mv, dragSource, dropTarget);
-        if (lowerTearOffNode != null){
-            Point p1 = mv.getPoint(lowerTearOffNode);
-            Point p2 = mv.getPoint(!crossing ? dropTarget.getStartNode()
-                    : dropTarget.getEndNode());
-            g.drawLine(p1.x,p1.y, p2.x,p2.y);
-        }
-        if (upperTearOffNode != null){
-            Point p1 = mv.getPoint(upperTearOffNode);
-            Point p2 = mv.getPoint(!crossing ? dropTarget.getEndNode()
-                    : dropTarget.getStartNode());
-            g.drawLine(p1.x,p1.y, p2.x,p2.y);
-        }
+            boolean crossing = helperLinesAreCrossing(mv, dragSource, dropTarget);
+            if (lowerTearOffNode != null){
+                Point p1 = mv.getPoint(lowerTearOffNode);
+                Point p2 = mv.getPoint(!crossing ? dropTarget.getStartNode()
+                        : dropTarget.getEndNode());
+                g.drawLine(p1.x,p1.y, p2.x,p2.y);
+            }
+            if (upperTearOffNode != null){
+                Point p1 = mv.getPoint(upperTearOffNode);
+                Point p2 = mv.getPoint(!crossing ? dropTarget.getEndNode()
+                        : dropTarget.getStartNode());
+                g.drawLine(p1.x,p1.y, p2.x,p2.y);
+            }
+        });
     }
 
     protected void paintDraggedWaySlice(Graphics2D g, MapView mv, Bounds bbox) {
-        ContourMergeModel model = ContourMergePlugin.getModelManager()
-                .getActiveModel();
-        if (model == null) return;
-        if (! model.isDragging()) return;
-        WaySlice dragSource = model.getDragSource();
-        WaySlice dropTarget = model.getDropTarget();
-        if (dragSource == null) return;
-        if (dropTarget == null) {
-            /*
-             * paint the temporary dragged way slice, unless the mouse is
-             * currently over a potential drop target
-             */
-            Path2D polyline = project(mv, dragSource, model.getDragOffset());
-            g.setColor(Color.RED);
-            float[] dashPattern = { 10, 5, 10, 5 };
-            g.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT,
-                    BasicStroke.JOIN_ROUND,1f, dashPattern,0f));
-            g.draw(polyline);
-            paintHelperLinesFromDragSourceToDraggedWaySlice(g, mv);
-        } else {
-            /*
-             * the mouse is over a suitable drop target. Paint only
-             * two helper lines from the drag source to the drop target.
-             * The drop target is highlighted elsewhere.
-             */
-            paintHelperLinesFromDragSourceToDropTarget(g,mv);
-        }
+        getActiveModel()
+        .filter(model -> model.isDragging())
+        .ifPresent(model -> {
+            WaySlice dragSource = model.getDragSource();
+            WaySlice dropTarget = model.getDropTarget();
+            if (dragSource == null) return;
+            if (dropTarget == null) {
+                /*
+                 * paint the temporary dragged way slice, unless the mouse is
+                 * currently over a potential drop target
+                 */
+                Path2D polyline = project(mv, dragSource,
+                        model.getDragOffset());
+                g.setColor(Color.RED);
+                float[] dashPattern = { 10, 5, 10, 5 };
+                g.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT,
+                        BasicStroke.JOIN_ROUND,1f, dashPattern,0f));
+                g.draw(polyline);
+                paintHelperLinesFromDragSourceToDraggedWaySlice(g, mv);
+            } else {
+                /*
+                 * the mouse is over a suitable drop target. Paint only
+                 * two helper lines from the drag source to the drop target.
+                 * The drop target is highlighted elsewhere.
+                 */
+                paintHelperLinesFromDragSourceToDropTarget(g,mv);
+            }
+        });
     }
 
     /* ---------------------------------------------------------------------- */
@@ -340,22 +343,22 @@ public class ContourMergeView implements MapViewPaintable{
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
         if (!ContourMergePlugin.isEnabled()) return;
-        ContourMergeModel model = ContourMergePlugin.getModelManager()
-                .getActiveModel();
-        if (model == null) return;
-        if (!model.getLayer().isVisible()) return;
-        decorateSelectedNodes(g, mv, bbox);
-        decorateFeedbackNode(g, mv, bbox);
-        WaySlice dragSourceSlice = model.getDragSource();
-        if (dragSourceSlice != null){
-            highlightWaySlice(g, mv, bbox, dragSourceSlice);
-        }
-        WaySlice dropTargetSlice = model.getDropTarget();
-        if (dropTargetSlice != null){
-            highlightWaySlice(g, mv, bbox, dropTargetSlice);
-        }
-        if (model.isDragging()){
-            paintDraggedWaySlice(g, mv, bbox);
-        }
+        getActiveModel()
+            .filter(model -> model.getLayer().isVisible())
+            .ifPresent(model -> {
+                decorateSelectedNodes(g, mv, bbox);
+                decorateFeedbackNode(g, mv, bbox);
+                WaySlice dragSourceSlice = model.getDragSource();
+                if (dragSourceSlice != null){
+                    highlightWaySlice(g, mv, bbox, dragSourceSlice);
+                }
+                WaySlice dropTargetSlice = model.getDropTarget();
+                if (dropTargetSlice != null){
+                    highlightWaySlice(g, mv, bbox, dropTargetSlice);
+                }
+                if (model.isDragging()){
+                    paintDraggedWaySlice(g, mv, bbox);
+                }
+            });
     }
 }

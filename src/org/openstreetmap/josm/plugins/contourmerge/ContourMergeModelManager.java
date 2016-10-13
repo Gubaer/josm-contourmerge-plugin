@@ -3,6 +3,7 @@ package org.openstreetmap.josm.plugins.contourmerge;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.validation.constraints.NotNull;
 
@@ -52,9 +53,9 @@ public class ContourMergeModelManager implements LayerChangeListener{
      * @param layer the data layer. Must not be null.
      * @return the model
      */
-    public ContourMergeModel getModel(@NotNull OsmDataLayer layer){
+    public Optional<ContourMergeModel> getModel(@NotNull OsmDataLayer layer){
         Objects.requireNonNull(layer);
-        return models.get(layer);
+        return Optional.ofNullable(models.get(layer));
     }
 
     /**
@@ -64,12 +65,11 @@ public class ContourMergeModelManager implements LayerChangeListener{
      *
      * @return the model
      */
-    public ContourMergeModel getActiveModel() {
+    public Optional<ContourMergeModel> getActiveModel() {
         OsmDataLayer layer = Main.getLayerManager().getEditLayer();
         if (layer == null) return null;
         return getModel(layer);
     }
-
 
     /* --------------------------------------------------------------------- */
     /* interface LayerChangeListener                                         */
