@@ -12,11 +12,14 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.contourmerge.util.Assert;
 
+import lombok.EqualsAndHashCode;
+
 /**
  * <p>A <strong>WaySlice</strong> is a sub sequence of a ways sequence of
  * nodes.</p>
  *
  */
+@EqualsAndHashCode(doNotUseGetters = false)
 public class WaySlice {
     //static private final Logger logger = Logger.getLogger(WaySlice.class.getName());
 
@@ -394,39 +397,5 @@ public class WaySlice {
             .append(", isInDirection=").append(isInDirection())
             .append(">");
         return sb.toString();
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + end;
-        result = prime * result + (inDirection ? 1231 : 1237);
-        result = prime * result + start;
-        result = prime * result + ((w == null) ? 0 : w.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        WaySlice other = (WaySlice) obj;
-        if (end != other.end)
-            return false;
-        if (inDirection != other.inDirection)
-            return false;
-        if (start != other.start)
-            return false;
-        if (w == null) {
-            if (other.w != null)
-                return false;
-        } else if (!w.equals(other.w))
-            return false;
-        return true;
     }
 }
