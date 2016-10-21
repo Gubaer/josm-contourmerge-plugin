@@ -9,8 +9,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
@@ -37,9 +38,10 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 @SuppressWarnings("serial")
 public class ContourMergeMode extends MapMode {
-//    @SuppressWarnings("unused")
-//    static private final Logger logger = Logger.getLogger(
-//            ContourMergeMode.class.getName());
+
+    @SuppressWarnings("unused")
+    static private final Logger logger =
+        Logger.getLogger(ContourMergeMode.class.getName());
 
     private Collection<OsmPrimitive> selection;
 
@@ -65,26 +67,28 @@ public class ContourMergeMode extends MapMode {
         return Main.map.mapView;
     }
 
+    protected Optional<ContourMergeModel> getActiveModel() {
+        return ContourMergePlugin.getModelManager().getActiveModel();
+    }
+
     @Override
     public void enterMode() {
         super.enterMode();
         getMapView().addMouseListener(this);
         getMapView().addMouseMotionListener(this);
         ContourMergePlugin.setEnabled(true);
-        ContourMergeModel model = ContourMergePlugin.getModelManager()
-                .getActiveModel();
-        if (model != null) {
+        getActiveModel().ifPresent(model -> {;
             model.reset();
             /*
              * Remind the current selection and clear it; otherwise the
              * rendered selection might interfere with our understanding of
              * "selected" nodes and way slices in this map mode.
              */
-            selection = new ArrayList<OsmPrimitive>(
+            selection = new ArrayList<>(
                     model.getLayer().data.getSelected()
              );
             model.getLayer().data.clearSelection();
-        }
+        });
     }
 
     @Override
@@ -93,25 +97,17 @@ public class ContourMergeMode extends MapMode {
         getMapView().removeMouseListener(this);
         getMapView().removeMouseMotionListener(this);
         ContourMergePlugin.setEnabled(false);
-        ContourMergeModel model = ContourMergePlugin.getModelManager()
-                .getActiveModel();
-        if (model != null) {
+        getActiveModel().ifPresent(model -> {
             model.reset();
             /*
              * Restore the last selection, but remove primitives from the
              * selection which are not in the dataset anymore.
              */
             DataSet ds = model.getLayer().data;
-            Iterator<OsmPrimitive> it = selection.iterator();
-            while(it.hasNext()) {
-                OsmPrimitive p = it.next();
-                if (ds.getPrimitiveById(p) == null) {
-                    it.remove();
-                }
-            }
+            selection.removeIf(p -> ds.getPrimitiveById(p) == null);
             model.getLayer().data.setSelected(selection);
-             selection = null;
-        }
+            selection = null;
+        });
     }
 
     @Override
@@ -128,33 +124,29 @@ public class ContourMergeMode extends MapMode {
     @Override
     public void mousePressed(MouseEvent e) {
         if (! ContourMergePlugin.isEnabled()) return;
-        ContourMergeModel model = ContourMergePlugin.getModelManager()
-                .getActiveModel();
-        if (model == null) return;
-        onStartDrag(e.getPoint());
+        getActiveModel().ifPresent(model -> onStartDrag(e.getPoint()));
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
         if (! ContourMergePlugin.isEnabled()) return;
         if (e.getButton() != MouseEvent.BUTTON1) return;
-        ContourMergeModel model = ContourMergePlugin.getModelManager()
-                .getActiveModel();
-        if (model == null) return;
-
-        List<Node> candidates = getMapView().getNearestNodes(e.getPoint(),
-                OsmPrimitive::isSelectable);
-        if (!candidates.isEmpty()){
-            if (!OsmPrimitive.getFilteredList(candidates.get(0).getReferrers(),
-                    Way.class).isEmpty()) {
-                /*
-                 * clicked on a node which isn't isolated ? => toggle its
-                 * selected state
-                 */
-                model.toggleSelected(candidates.get(0));
+        getActiveModel().ifPresent(model -> {
+            List<Node> candidates = getMapView().getNearestNodes(e.getPoint(),
+                    OsmPrimitive::isSelectable);
+            if (!candidates.isEmpty()){
+                if (!OsmPrimitive.getFilteredList(
+                        candidates.get(0).getReferrers(),
+                        Way.class).isEmpty()) {
+                    /*
+                     * clicked on a node which isn't isolated ? => toggle its
+                     * selected state
+                     */
+                    model.toggleSelected(candidates.get(0));
+                }
             }
-        }
-        getMapView().repaint();
+            getMapView().repaint();
+        });
     }
 
     protected BBox buildSnapBBox(Point p){
@@ -171,48 +163,46 @@ public class ContourMergeMode extends MapMode {
     @Override
     public void mouseMoved(MouseEvent e) {
         if (! ContourMergePlugin.isEnabled()) return;
-        if (ContourMergePlugin.getModelManager().getActiveModel() == null)
-            return;
-        if (e.getButton() != MouseEvent.NOBUTTON) return;
-        List<Node> candidates = getMapView().getNearestNodes(e.getPoint(),
-                OsmPrimitive::isSelectable);
-        ContourMergeModel model = ContourMergePlugin.getModelManager()
-                .getActiveModel();
-        showHelpText("");
-        if (candidates.isEmpty()){
-            model.setFeedbackNode(null);
-            WaySegment ws = getMapView().getNearestWaySegment(e.getPoint(),
+        getActiveModel().ifPresent(model -> {
+            if (e.getButton() != MouseEvent.NOBUTTON) return;
+            List<Node> candidates = getMapView().getNearestNodes(e.getPoint(),
                     OsmPrimitive::isSelectable);
-            if (ws == null){
-                getMapView().setCursor(Cursor.getDefaultCursor());
-                model.setDragStartFeedbackWaySegment(null);
-            } else {
-                showHelpText(tr("Drag/drop: drag the way segment an drop "
-                        + "it on a target segment"));
-                getMapView().setCursor(Cursor.getPredefinedCursor(
-                        Cursor.MOVE_CURSOR));
-                model.setDragStartFeedbackWaySegment(ws);
-            }
-        } else {
-            if (model.isSelected(candidates.get(0))) {
-                showHelpText(tr("Left-Click: deselect node"));
-                getMapView().setCursor(ImageProvider.getCursor("normal",
-                        "deselect_node"));
-            } else {
-                if (OsmPrimitive.getFilteredList(
-                        candidates.get(0).getReferrers(),
-                        Way.class).isEmpty()) {
-                    showHelpText(tr("Can''t select an isolated node"));
-                    getMapView().setCursor(DragSource.DefaultMoveNoDrop);
+            showHelpText("");
+            if (candidates.isEmpty()){
+                model.setFeedbackNode(null);
+                WaySegment ws = getMapView().getNearestWaySegment(e.getPoint(),
+                        OsmPrimitive::isSelectable);
+                if (ws == null){
+                    getMapView().setCursor(Cursor.getDefaultCursor());
+                    model.setDragStartFeedbackWaySegment(null);
                 } else {
-                    showHelpText(tr("Left-Click: select node"));
-                    getMapView().setCursor(ImageProvider.getCursor("normal",
-                            "select_node"));
+                    showHelpText(tr("Drag/drop: drag the way segment an drop "
+                            + "it on a target segment"));
+                    getMapView().setCursor(Cursor.getPredefinedCursor(
+                            Cursor.MOVE_CURSOR));
+                    model.setDragStartFeedbackWaySegment(ws);
                 }
+            } else {
+                if (model.isSelected(candidates.get(0))) {
+                    showHelpText(tr("Left-Click: deselect node"));
+                    getMapView().setCursor(ImageProvider.getCursor("normal",
+                            "deselect_node"));
+                } else {
+                    if (OsmPrimitive.getFilteredList(
+                            candidates.get(0).getReferrers(),
+                            Way.class).isEmpty()) {
+                        showHelpText(tr("Can''t select an isolated node"));
+                        getMapView().setCursor(DragSource.DefaultMoveNoDrop);
+                    } else {
+                        showHelpText(tr("Left-Click: select node"));
+                        getMapView().setCursor(ImageProvider.getCursor("normal",
+                                "select_node"));
+                    }
+                }
+                model.setFeedbackNode(candidates.get(0));
             }
-            model.setFeedbackNode(candidates.get(0));
-        }
-        Main.map.mapView.repaint();
+            Main.map.mapView.repaint();
+        });
     }
 
     @Override
@@ -231,28 +221,29 @@ public class ContourMergeMode extends MapMode {
     protected Point dragStart = null;
 
     protected void onStartDrag(Point start) {
-        ContourMergeModel model = ContourMergePlugin.getModelManager()
-                .getActiveModel();
-        WaySegment ws = getMapView().getNearestWaySegment(start,
-                OsmPrimitive::isSelectable);
-        if (ws != null && model.isWaySegmentDragable(ws)) {
-            this.dragStart = start;
-            getMapView().setCursor(Cursor.getPredefinedCursor(
-                 Cursor.MOVE_CURSOR));
-            showHelpText(tr(
-                "Drag the way segment and drop it on a target segment"));
-            model.setDragOffset(new Point(0,0));
-            model.setDragStartFeedbackWaySegment(ws);
-            model.setDropFeedbackSegment(null);
-        }
+        getActiveModel().ifPresent(model -> {
+            WaySegment ws = getMapView().getNearestWaySegment(start,
+                    OsmPrimitive::isSelectable);
+            if (ws != null && model.isWaySegmentDragable(ws)) {
+                this.dragStart = start;
+                getMapView().setCursor(Cursor.getPredefinedCursor(
+                     Cursor.MOVE_CURSOR));
+                showHelpText(tr(
+                    "Drag the way segment and drop it on a target segment"));
+                model.setDragOffset(new Point(0,0));
+                model.setDragStartFeedbackWaySegment(ws);
+                model.setDropFeedbackSegment(null);
+            }
+        });
     }
 
     protected void onStepDrag(Point current){
         if (dragStart == null) return;  // drag initiated outside of map view ?
-        WaySegment ws = getMapView().getNearestWaySegment(current,
+        final WaySegment ws = getMapView().getNearestWaySegment(current,
                 OsmPrimitive::isSelectable);
-        ContourMergeModel model = ContourMergePlugin.getModelManager()
-                .getActiveModel();
+        final boolean isPotentialDropTarget = getActiveModel()
+                .filter(model -> model.isPotentialDropTarget(ws))
+                .isPresent();
         WaySegment newDropTargetFeedbackSegment;
         if (ws == null){
             /*
@@ -263,7 +254,7 @@ public class ContourMergeMode extends MapMode {
             showHelpText(tr(
                 "Drag the way segment and drop it on a target segment"));
             newDropTargetFeedbackSegment = null;
-        } else if (! model.isPotentialDropTarget(ws)) {
+        } else if (!isPotentialDropTarget) {
             /*
              * mouse pointer is close to a way segment which isn't part of
              * a potential target way slice
@@ -275,50 +266,52 @@ public class ContourMergeMode extends MapMode {
             newDropTargetFeedbackSegment = null;
         } else {
             /*
-             * mouse pointer is close to a way segment which is part of a potential
-             * target way slice
+             * mouse pointer is close to a way segment which is part of a
+             * potential target way slice
              */
             getMapView().setCursor(DragSource.DefaultLinkDrop);
             showHelpText(tr("Drop to align to the target segment"));
             newDropTargetFeedbackSegment = ws;
         }
-        Point offset = new Point(
+        final Point offset = new Point(
             current.x - dragStart.x,
             current.y - dragStart.y
         );
-        model.setDragOffset(offset);
-        model.setDropFeedbackSegment(newDropTargetFeedbackSegment);
+        getActiveModel().ifPresent(model -> {
+            model.setDragOffset(offset);
+            model.setDropFeedbackSegment(newDropTargetFeedbackSegment);
+        });
         Main.map.mapView.repaint();
     }
 
     protected void onDrop(Point target){
         if (dragStart == null) return;  // drag initiated outside of map view ?
-        WaySegment ws = getMapView().getNearestWaySegment(target,
+        final WaySegment ws = getMapView().getNearestWaySegment(target,
                 OsmPrimitive::isSelectable);
-        ContourMergeModel model = ContourMergePlugin.getModelManager()
-                .getActiveModel();
-        if (model.isPotentialDropTarget(ws)){
+        getActiveModel().ifPresent(model -> {
+            if (model.isPotentialDropTarget(ws)){
+                /*
+                 * Merge the way slice given by the drag source onto the way
+                 * slice given by the drop target.
+                 */
+                getMapView().setCursor(Cursor.getDefaultCursor());
+                Command cmd = model.buildContourAlignCommand();
+                if (cmd != null){
+                    Main.main.undoRedo.add(cmd);
+                }
+            }
+
             /*
-             * Merge the way slice given by the drag source onto the way
-             * slice given by the drop target.
+             * Reset the drag state
              */
             getMapView().setCursor(Cursor.getDefaultCursor());
-            Command cmd = model.buildContourAlignCommand();
-            if (cmd != null){
-                Main.main.undoRedo.add(cmd);
-            }
-        }
-
-        /*
-         * Reset the drag state
-         */
-        getMapView().setCursor(Cursor.getDefaultCursor());
-        showHelpText(tr("Left-Click: on node to select/unselect; "
-                + "Drag: drag way slice"));
-        this.dragStart = null;
-        model.setDragStartFeedbackWaySegment(null);
-        model.setDropFeedbackSegment(null);
-        model.setDragOffset(null);
-        Main.map.mapView.repaint();
+            showHelpText(tr("Left-Click: on node to select/unselect; "
+                    + "Drag: drag way slice"));
+            this.dragStart = null;
+            model.setDragStartFeedbackWaySegment(null);
+            model.setDropFeedbackSegment(null);
+            model.setDragOffset(null);
+            Main.map.mapView.repaint();
+        });
     }
 }

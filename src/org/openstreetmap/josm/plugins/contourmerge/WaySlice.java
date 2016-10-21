@@ -5,15 +5,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
+
+import org.apache.commons.lang3.Validate;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.plugins.contourmerge.util.Assert;
+
+import lombok.EqualsAndHashCode;
 
 /**
  * <p>A <strong>WaySlice</strong> is a sub sequence of a ways sequence of
  * nodes.</p>
  *
  */
+@EqualsAndHashCode(doNotUseGetters = false)
 public class WaySlice {
     //static private final Logger logger = Logger.getLogger(WaySlice.class.getName());
 
@@ -34,13 +39,13 @@ public class WaySlice {
      * @throws IllegalArgumentException thrown if one of the arguments
      *  isn't valid
      */
-    public WaySlice(Way w, int start, int end) throws IllegalArgumentException {
-        Assert.checkArgNotNull(w, "w");
-        Assert.checkArg(start >= 0 && start < w.getNodesCount(),
+    public WaySlice(@NotNull Way w, int start, int end){
+        Validate.notNull(w);
+        Validate.isTrue(start >= 0 && start < w.getNodesCount(),
                 "start out of range, got {0}", start);
-        Assert.checkArg(end >= 0 && end < w.getNodesCount(),
+        Validate.isTrue(end >= 0 && end < w.getNodesCount(),
                 "end out of range, got {0}", start);
-        Assert.checkArg(start < end,
+        Validate.isTrue(start < end,
                 "expected start < end, got start={0}, end={1}", start, end);
         this.w = w;
         this.start = start;
@@ -50,8 +55,8 @@ public class WaySlice {
     /**
      * <p>Creates a new way slice for the way {@code w}.</p>
      *
-     * <p>If {@code inDirection==true}, it consists of the nodes at the positions
-     * <code>[start, start+1, ..., end]</code>.</p>
+     * <p>If {@code inDirection==true}, it consists of the nodes at the
+     * positions <code>[start, start+1, ..., end]</code>.</p>
      *
      * <p>If {@code inDirection==false} <strong>and w is
      * {@link Way#isClosed() closed}</strong>, it consists of the nodes at the
@@ -67,18 +72,17 @@ public class WaySlice {
      * (provided the way is closed)
      * @throws IllegalArgumentException thrown if a precondition is violated
      */
-    public WaySlice(Way w, int start, int end, boolean inDirection)
-            throws IllegalArgumentException{
+    public WaySlice(@NotNull Way w, int start, int end, boolean inDirection){
         this(w,start,end);
         if (!inDirection){
-            Assert.checkArg(w.isClosed(),
+            Validate.isTrue(w.isClosed(),
                  "inDirection=false only supported provided w is closed");
         }
-        if (w.isClosed() && start == 0 && end == w.getNodesCount() -1){
-            Assert.checkArg(false,
-             "for a closed way, start and end must not both refer to the "
-             + "shared 'join'-node");
-        }
+        Validate.isTrue(
+            ! (w.isClosed() && start == 0 && end == w.getNodesCount() -1),
+            "for a closed way, start and end must not both refer to the "
+            + "shared 'join'-node"
+        );
         this.inDirection = inDirection;
     }
 
@@ -267,12 +271,12 @@ public class WaySlice {
         if (newNodes == null || newNodes.isEmpty()) return nw;
 
         if (!w.isClosed()) {
-            List<Node> oldNodes = new ArrayList<Node>(w.getNodes());
+            List<Node> oldNodes = new ArrayList<>(w.getNodes());
             for (int i=start; i<= end;i++) oldNodes.remove(start);
             oldNodes.addAll(start, newNodes);
             nw.setNodes(oldNodes);
         } else {
-            List<Node> oldNodes = new ArrayList<Node>(w.getNodes());
+            List<Node> oldNodes = new ArrayList<>(w.getNodes());
             if (inDirection) {
                 if (start == 0)oldNodes.remove(oldNodes.size()-1);
                 for (int i=start; i<= end;i++)oldNodes.remove(start);
@@ -299,7 +303,7 @@ public class WaySlice {
      * @return the list of nodes
      */
     public List<Node> getNodes(){
-        List<Node> nodes = new ArrayList<Node>();
+        List<Node> nodes = new ArrayList<>();
         if (!w.isClosed()) {
             nodes.addAll(w.getNodes().subList(start, end+1));
         } else {
@@ -343,7 +347,7 @@ public class WaySlice {
      * @return true if this way slice participates in at least one sling.
      */
     protected boolean hasSlings() {
-        Set<Node> nodeSet = new HashSet<Node>();
+        Set<Node> nodeSet = new HashSet<>();
         if (w.isClosed()){
             if (isInDirection()) {
                 for (int i=start; i<=end; i++){
@@ -371,7 +375,7 @@ public class WaySlice {
          * make sure each node in  way slice occurs exactly once in the way.
          * This ensures that the way slice is not participating in any slings.
          */
-        Set<Node> seen = new HashSet<Node>();
+        Set<Node> seen = new HashSet<>();
         for (int i=0; i< (w.isClosed() ? w.getNodesCount()-1 :
             w.getNodesCount()); i++) {
             Node n = w.getNode(i);
@@ -390,39 +394,5 @@ public class WaySlice {
             .append(", isInDirection=").append(isInDirection())
             .append(">");
         return sb.toString();
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + end;
-        result = prime * result + (inDirection ? 1231 : 1237);
-        result = prime * result + start;
-        result = prime * result + ((w == null) ? 0 : w.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        WaySlice other = (WaySlice) obj;
-        if (end != other.end)
-            return false;
-        if (inDirection != other.inDirection)
-            return false;
-        if (start != other.start)
-            return false;
-        if (w == null) {
-            if (other.w != null)
-                return false;
-        } else if (!w.equals(other.w))
-            return false;
-        return true;
     }
 }

@@ -6,11 +6,16 @@ import java.awt.Point;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
+import javax.validation.constraints.NotNull;
+
+import org.apache.commons.lang3.Validate;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -30,32 +35,32 @@ import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.plugins.contourmerge.util.Assert;
 
 /**
  * <strong>ContourMergeModel</strong> keeps the current edit state for a
  * specific edit layer, if the <tt>contourmerge</tt> map mode is enabled.</p>
  */
 public class ContourMergeModel implements DataSetListener{
-    //static private final Logger logger = Logger.getLogger(
-    //ContourMergeModel.class.getName());
+
+    @SuppressWarnings("unused")
+    static private final Logger logger =
+        Logger.getLogger(ContourMergeModel.class.getName());
 
     private final OsmDataLayer layer;
     private Node feedbackNode;
     private WaySegment dragStartFeedbackSegment;
     private WaySegment dropFeedbackSegment;
-    private final ArrayList<Node> selectedNodes = new ArrayList<Node>();
+    private final ArrayList<Node> selectedNodes = new ArrayList<>();
     private Point dragOffset = null;
 
     /**
      * <p>Creates a new contour merge model for the layer {@code layer}.</p>
      *
      * @param layer the data layer. Must not be null.
-     * @throws IllegalArgumentException thrown if {@code layer} is null
+     * @throws NullPointerException thrown if {@code layer} is null
      */
-    public ContourMergeModel(OsmDataLayer layer)
-            throws IllegalArgumentException {
-        Assert.checkArgNotNull(layer, "layer");
+    public ContourMergeModel(@NotNull OsmDataLayer layer){
+        Validate.notNull(layer);
         this.layer = layer;
     }
 
@@ -102,9 +107,9 @@ public class ContourMergeModel implements DataSetListener{
      * @return true, if {@code node} is currently selected in the contour merge
      *  mode.
      */
-    public boolean isSelected(Node node) throws IllegalArgumentException{
-        Assert.checkArgNotNull(node, "node");
-        Assert.checkArg(node.getDataSet() == layer.data,
+    public boolean isSelected(@NotNull Node node) {
+        Objects.requireNonNull(node);
+        Validate.isTrue(node.getDataSet() == layer.data,
            "Node must be owned by this contour merge models layer"); // don't
                                                                   //translate
         return selectedNodes.contains(node);
@@ -115,11 +120,10 @@ public class ContourMergeModel implements DataSetListener{
      *
      * @param node the node. Must not be null. Must be owned by this models
      * layer.
-     * @throws IllegalArgumentException
      */
-    public void selectNode(Node node) throws IllegalArgumentException{
-        Assert.checkArgNotNull(node, "node");
-        Assert.checkArg(node.getDataSet() == layer.data,
+    public void selectNode(@NotNull Node node) {
+        Objects.requireNonNull(node);
+        Validate.isTrue(node.getDataSet() == layer.data,
                 "Node must be owned by this contour merge models layer");
         if (!isSelected(node)) selectedNodes.add(node);
     }
@@ -129,11 +133,10 @@ public class ContourMergeModel implements DataSetListener{
      *
      * @param node the node. Must not be null. Must be owned by this models
      *  layer.
-     * @throws IllegalArgumentException
      */
-    public void deselectNode(Node node) throws IllegalArgumentException{
-        Assert.checkArgNotNull(node, "node");
-        Assert.checkArg(node.getDataSet() == layer.data,
+    public void deselectNode(@NotNull Node node) {
+        Objects.requireNonNull(node);
+        Validate.isTrue(node.getDataSet() == layer.data,
                 //don't translate
                 "Node must be owned by this contour merge models layer");
         selectedNodes.remove(node);
@@ -144,11 +147,10 @@ public class ContourMergeModel implements DataSetListener{
      *
      * @param node the node. Must not be null. Must be owned by this models
      *  layer.
-     * @throws IllegalArgumentException
      */
-    public void toggleSelected(Node node) throws IllegalArgumentException {
-        Assert.checkArgNotNull(node, "node");
-        Assert.checkArg(node.getDataSet() == layer.data,
+    public void toggleSelected(Node node) {
+        Objects.requireNonNull(node);
+        Validate.isTrue(node.getDataSet() == layer.data,
                 // don't translate
                 "Node must be owned by this contour merge models layer");
         if (isSelected(node)) {
@@ -212,12 +214,11 @@ public class ContourMergeModel implements DataSetListener{
      * @return the set of selected ways
      */
     protected Set<Way> computeSelectedWays(){
-        Set<Way> ways = new HashSet<Way>();
-        for (Node n: selectedNodes){
-            ways.addAll(OsmPrimitive.getFilteredList(n.getReferrers(),
-                    Way.class));
-        }
-        return ways;
+        return selectedNodes.stream()
+            .flatMap(n -> OsmPrimitive.getFilteredList(
+                n.getReferrers(),Way.class
+            ).stream())
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -227,14 +228,11 @@ public class ContourMergeModel implements DataSetListener{
      * @return the set of selected nodes
      */
     protected Set<Node> computeSelectedNodesOnWay(Way way){
-        Set<Node> nodes = new HashSet<Node>();
-        if (way == null) return nodes;
-        for (Node n : selectedNodes){
-            if (!OsmPrimitive.getFilteredSet(n.getReferrers(),
-                    Way.class).contains(way)) continue;
-            nodes.add(n);
-        }
-        return nodes;
+        return selectedNodes.stream()
+            .filter(n -> OsmPrimitive.getFilteredSet(n.getReferrers(),
+                    Way.class).contains(way)
+             )
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -268,14 +266,10 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     protected List<Integer> computeSelectedNodeIndicesOnWay(Way way){
-        Set<Node> nodes = computeSelectedNodesOnWay(way);
-        List<Integer> ret = new ArrayList<Integer>();
-        if (nodes.isEmpty()) return ret;
-        for (Node n: nodes){
-            ret.add(way.getNodes().indexOf(n));
-        }
-        Collections.sort(ret);
-        return ret;
+        return computeSelectedNodesOnWay(way).stream()
+            .map(n -> way.getNodes().indexOf(n))
+            .sorted()
+            .collect(Collectors.toList());
     }
 
     protected WaySlice getWaySliceFromSelectedNodes(
@@ -339,8 +333,8 @@ public class ContourMergeModel implements DataSetListener{
                 return new WaySlice(way, 0, upper,
                         false /* reverse direction */);
             } else {
-                return new WaySlice(way, upper, lower, false
-                        /* reverse direction */);
+                return new WaySlice(way, upper, lower,
+                        false /* reverse direction */);
             }
         } else {
             /*
@@ -437,7 +431,7 @@ public class ContourMergeModel implements DataSetListener{
         if (! areDirectionAligned(dragSource, dropTarget)) {
             Collections.reverse(targetNodes);
         }
-        List<Command> cmds = new ArrayList<Command>();
+        List<Command> cmds = new ArrayList<>();
         // the command to change the source way
         cmds.add(new ChangeCommand(dragSource.getWay(),
                 dragSource.replaceNodes(targetNodes)));

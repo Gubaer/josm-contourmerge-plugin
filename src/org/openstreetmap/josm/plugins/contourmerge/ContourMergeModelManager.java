@@ -2,6 +2,10 @@ package org.openstreetmap.josm.plugins.contourmerge;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.validation.constraints.NotNull;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -10,7 +14,6 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.plugins.contourmerge.util.Assert;
 
 /**
  * <p>Manages a set of {@link ContourMergeModel}s for each available data
@@ -31,7 +34,7 @@ public class ContourMergeModelManager implements LayerChangeListener{
     }
 
     private final Map<OsmDataLayer, ContourMergeModel> models =
-            new HashMap<OsmDataLayer, ContourMergeModel>();
+            new HashMap<>();
 
     public void wireToJOSM(){
         models.clear();
@@ -49,12 +52,10 @@ public class ContourMergeModelManager implements LayerChangeListener{
      *
      * @param layer the data layer. Must not be null.
      * @return the model
-     * @throws IllegalArgumentException thrown if {@code layer} is null
      */
-    public ContourMergeModel getModel(OsmDataLayer layer)
-            throws IllegalArgumentException{
-        Assert.checkArgNotNull(layer, "layer");
-        return models.get(layer);
+    public Optional<ContourMergeModel> getModel(@NotNull OsmDataLayer layer){
+        Objects.requireNonNull(layer);
+        return Optional.ofNullable(models.get(layer));
     }
 
     /**
@@ -64,14 +65,11 @@ public class ContourMergeModelManager implements LayerChangeListener{
      *
      * @return the model
      */
-    public ContourMergeModel getActiveModel() {
-        if (Main.map == null) return null;
-        if (Main.map.mapView == null) return null;
-        OsmDataLayer layer = Main.getLayerManager().getEditLayer();
-        if (layer == null) return null;
-        return getModel(layer);
+    public Optional<ContourMergeModel> getActiveModel() {
+        return Optional.ofNullable(Main.getLayerManager().getEditLayer())
+            .map(layer -> getModel(layer))
+            .orElse(Optional.empty());
     }
-
 
     /* --------------------------------------------------------------------- */
     /* interface LayerChangeListener                                         */

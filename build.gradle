@@ -1,5 +1,6 @@
 plugins {
     id "de.undercouch.download" version "3.1.1"
+    id "io.franzbecker.gradle-lombok" version "1.7"
 }
 
 apply plugin: "java"
@@ -10,11 +11,25 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    commonslang3
+}
+
 dependencies {
+
+    commonslang3 group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+    
+    compileOnly "org.projectlombok:lombok:1.16.10"
+    
     compile files("contrib/josm.jar")
+    compile group: 'javax.validation', name: 'validation-api', version: '1.0.0.GA'
+    compile configurations.commonslang3.dependencies
+    
     testCompile group: 'junit', name: 'junit', version: '4.+' 
     testCompile localGroovy()
     testCompile files("contrib/josm.jar")
+    testCompile group: 'javax.validation', name: 'validation-api', version: '1.0.0.GA'
+    testCompile configurations.commonslang3.dependencies
 }
 
 def currentPluginVersion(config) {
@@ -33,7 +48,7 @@ def bestPluginVersion(config, josmVersion) {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.14.1'
+    gradleVersion = '3.1'
 }
 
 jar.baseName = "contourmerge"
@@ -60,11 +75,14 @@ jar {
             attributes([(key):value]) 
         }
     }
+    
+    from zipTree(configurations.commonslang3.asPath)
 }
 
 compileJava {
   sourceCompatibility = JavaVersion.VERSION_1_8
   targetCompatibility = JavaVersion.VERSION_1_8
+  options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
 }
 
 sourceSets {
