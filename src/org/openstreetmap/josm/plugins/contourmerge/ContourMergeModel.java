@@ -60,7 +60,7 @@ public class ContourMergeModel implements DataSetListener{
      * @throws NullPointerException thrown if {@code layer} is null
      */
     public ContourMergeModel(@NotNull OsmDataLayer layer){
-        Objects.requireNonNull(layer);
+        Validate.notNull(layer);
         this.layer = layer;
     }
 

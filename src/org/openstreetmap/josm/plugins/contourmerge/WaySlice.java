@@ -3,7 +3,6 @@ package org.openstreetmap.josm.plugins.contourmerge;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -40,9 +39,8 @@ public class WaySlice {
      * @throws IllegalArgumentException thrown if one of the arguments
      *  isn't valid
      */
-    public WaySlice(@NotNull Way w, int start, int end)
-               throws IllegalArgumentException {
-        Objects.requireNonNull(w);
+    public WaySlice(@NotNull Way w, int start, int end){
+        Validate.notNull(w);
         Validate.isTrue(start >= 0 && start < w.getNodesCount(),
                 "start out of range, got {0}", start);
         Validate.isTrue(end >= 0 && end < w.getNodesCount(),
@@ -57,8 +55,8 @@ public class WaySlice {
     /**
      * <p>Creates a new way slice for the way {@code w}.</p>
      *
-     * <p>If {@code inDirection==true}, it consists of the nodes at the positions
-     * <code>[start, start+1, ..., end]</code>.</p>
+     * <p>If {@code inDirection==true}, it consists of the nodes at the
+     * positions <code>[start, start+1, ..., end]</code>.</p>
      *
      * <p>If {@code inDirection==false} <strong>and w is
      * {@link Way#isClosed() closed}</strong>, it consists of the nodes at the
