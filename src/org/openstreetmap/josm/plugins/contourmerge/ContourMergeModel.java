@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.Validate;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -34,7 +35,6 @@ import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.plugins.contourmerge.util.Assert;
 
 /**
  * <strong>ContourMergeModel</strong> keeps the current edit state for a
@@ -109,7 +109,7 @@ public class ContourMergeModel implements DataSetListener{
      */
     public boolean isSelected(@NotNull Node node) {
         Objects.requireNonNull(node);
-        Assert.checkArg(node.getDataSet() == layer.data,
+        Validate.isTrue(node.getDataSet() == layer.data,
            "Node must be owned by this contour merge models layer"); // don't
                                                                   //translate
         return selectedNodes.contains(node);
@@ -123,7 +123,7 @@ public class ContourMergeModel implements DataSetListener{
      */
     public void selectNode(@NotNull Node node) {
         Objects.requireNonNull(node);
-        Assert.checkArg(node.getDataSet() == layer.data,
+        Validate.isTrue(node.getDataSet() == layer.data,
                 "Node must be owned by this contour merge models layer");
         if (!isSelected(node)) selectedNodes.add(node);
     }
@@ -136,7 +136,7 @@ public class ContourMergeModel implements DataSetListener{
      */
     public void deselectNode(@NotNull Node node) {
         Objects.requireNonNull(node);
-        Assert.checkArg(node.getDataSet() == layer.data,
+        Validate.isTrue(node.getDataSet() == layer.data,
                 //don't translate
                 "Node must be owned by this contour merge models layer");
         selectedNodes.remove(node);
@@ -150,7 +150,7 @@ public class ContourMergeModel implements DataSetListener{
      */
     public void toggleSelected(Node node) {
         Objects.requireNonNull(node);
-        Assert.checkArg(node.getDataSet() == layer.data,
+        Validate.isTrue(node.getDataSet() == layer.data,
                 // don't translate
                 "Node must be owned by this contour merge models layer");
         if (isSelected(node)) {
