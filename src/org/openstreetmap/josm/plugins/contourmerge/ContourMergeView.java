@@ -8,11 +8,11 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
-import java.util.Objects;
 import java.util.Optional;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.Validate;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.Node;
@@ -109,8 +109,8 @@ public class ContourMergeView implements MapViewPaintable{
      *
      */
     public static Path2D project(@NotNull MapView mv, @NotNull WaySlice ws){
-        Objects.requireNonNull(mv);
-        Objects.requireNonNull(ws);
+        Validate.notNull(mv);
+        Validate.notNull(ws);
         Path2D.Float polyline = new Path2D.Float();
         if (ws.isInDirection()) {
             /*
@@ -163,8 +163,8 @@ public class ContourMergeView implements MapViewPaintable{
      */
     public Path2D project(@NotNull MapView mv, @NotNull WaySlice ws,
             Point displacement){
-        Objects.requireNonNull(mv);
-        Objects.requireNonNull(ws);
+        Validate.notNull(mv);
+        Validate.notNull(ws);
         if (displacement == null) displacement = new Point(0,0);
         Path2D polyline = project(mv, ws);
         AffineTransform at = new AffineTransform();
