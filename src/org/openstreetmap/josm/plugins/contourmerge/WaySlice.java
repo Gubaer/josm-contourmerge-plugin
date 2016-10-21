@@ -79,7 +79,7 @@ public class WaySlice {
                  "inDirection=false only supported provided w is closed");
         }
         Validate.isTrue(
-            w.isClosed() && start == 0 && end == w.getNodesCount() -1,
+            ! (w.isClosed() && start == 0 && end == w.getNodesCount() -1),
             "for a closed way, start and end must not both refer to the "
             + "shared 'join'-node"
         );
