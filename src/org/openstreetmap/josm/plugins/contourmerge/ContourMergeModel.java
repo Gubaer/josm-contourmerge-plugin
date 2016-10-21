@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
@@ -40,8 +41,10 @@ import org.openstreetmap.josm.plugins.contourmerge.util.Assert;
  * specific edit layer, if the <tt>contourmerge</tt> map mode is enabled.</p>
  */
 public class ContourMergeModel implements DataSetListener{
-    //static private final Logger logger = Logger.getLogger(
-    //ContourMergeModel.class.getName());
+
+    @SuppressWarnings("unused")
+    static private final Logger logger =
+        Logger.getLogger(ContourMergeModel.class.getName());
 
     private final OsmDataLayer layer;
     private Node feedbackNode;
@@ -330,8 +333,8 @@ public class ContourMergeModel implements DataSetListener{
                 return new WaySlice(way, 0, upper,
                         false /* reverse direction */);
             } else {
-                return new WaySlice(way, upper, lower, false
-                        /* reverse direction */);
+                return new WaySlice(way, upper, lower,
+                        false /* reverse direction */);
             }
         } else {
             /*

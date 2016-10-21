@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
@@ -37,9 +38,10 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 @SuppressWarnings("serial")
 public class ContourMergeMode extends MapMode {
-//    @SuppressWarnings("unused")
-//    static private final Logger logger = Logger.getLogger(
-//            ContourMergeMode.class.getName());
+
+    @SuppressWarnings("unused")
+    static private final Logger logger =
+        Logger.getLogger(ContourMergeMode.class.getName());
 
     private Collection<OsmPrimitive> selection;
 
@@ -237,9 +239,9 @@ public class ContourMergeMode extends MapMode {
 
     protected void onStepDrag(Point current){
         if (dragStart == null) return;  // drag initiated outside of map view ?
-        WaySegment ws = getMapView().getNearestWaySegment(current,
+        final WaySegment ws = getMapView().getNearestWaySegment(current,
                 OsmPrimitive::isSelectable);
-        boolean isPotentialDropTarget = getActiveModel()
+        final boolean isPotentialDropTarget = getActiveModel()
                 .filter(model -> model.isPotentialDropTarget(ws))
                 .isPresent();
         WaySegment newDropTargetFeedbackSegment;
@@ -252,7 +254,7 @@ public class ContourMergeMode extends MapMode {
             showHelpText(tr(
                 "Drag the way segment and drop it on a target segment"));
             newDropTargetFeedbackSegment = null;
-        } else if (isPotentialDropTarget) {
+        } else if (!isPotentialDropTarget) {
             /*
              * mouse pointer is close to a way segment which isn't part of
              * a potential target way slice
@@ -271,7 +273,7 @@ public class ContourMergeMode extends MapMode {
             showHelpText(tr("Drop to align to the target segment"));
             newDropTargetFeedbackSegment = ws;
         }
-        Point offset = new Point(
+        final Point offset = new Point(
             current.x - dragStart.x,
             current.y - dragStart.y
         );
@@ -284,7 +286,7 @@ public class ContourMergeMode extends MapMode {
 
     protected void onDrop(Point target){
         if (dragStart == null) return;  // drag initiated outside of map view ?
-        WaySegment ws = getMapView().getNearestWaySegment(target,
+        final WaySegment ws = getMapView().getNearestWaySegment(target,
                 OsmPrimitive::isSelectable);
         getActiveModel().ifPresent(model -> {
             if (model.isPotentialDropTarget(ws)){
