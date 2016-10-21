@@ -190,7 +190,9 @@ public class ContourMergeView implements MapViewPaintable{
                        BasicStroke.JOIN_ROUND,1f, dashPattern,0f));
             boolean crossing = helperLinesAreCrossing(mv, dragSource, offset);
             if (lowerTearOffNode != null){
-                Point p1 = mv.getPoint(!crossing ? dragSource.getStartNode() : dragSource.getEndNode());
+                Point p1 = mv.getPoint(!crossing
+                        ? dragSource.getStartNode()
+                        : dragSource.getEndNode());
                 p1 = new Point(p1.x + offset.x, p1.y + offset.y);
                 Point p2 = mv.getPoint(lowerTearOffNode);
                 g.drawLine(p1.x,p1.y, p2.x,p2.y);
