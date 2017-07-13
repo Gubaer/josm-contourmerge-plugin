@@ -29,7 +29,8 @@ public class JOSMFixture {
             josmHome = josmHome.trim();
             File f = new File(josmHome);
             if (! f.exists() || ! f.canRead()) {
-                fail(MessageFormat.format("property ''{0}'' points to ''{1}'' which is either not existing or not readable.\nUpdate system property '{0}'", "josm.home", f));
+                fail(MessageFormat.format("property ''{0}'' points to ''{1}'' which is either not existing "
+                       + "or not readable.\nUpdate system property '{0}'", "josm.home", f));
             }
         }
 

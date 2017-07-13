@@ -4,7 +4,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses([
-	ContourMergeModelTest.class,
-	WaySliceTest.class
+    ContourMergeModelTest.class,
+    WaySliceTest.class
 ])
 class AllUnitTests {}
