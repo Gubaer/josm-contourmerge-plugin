@@ -88,7 +88,6 @@ compileJava {
 sourceSets {
     main {
         java.srcDirs = ["src"]
-        output.classesDir = "build"
         resources {
             srcDir file(".")
             include "README.md"
