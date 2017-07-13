@@ -48,7 +48,7 @@ class WaySliceTest {
 		assert ws.getStart() == 1
 		assert ws.getEnd() == 3
 		
-		shouldFail(IllegalArgumentException){
+		shouldFail(NullPointerException) {
 			ws = new WaySlice(null, 1, 3) // way must not be null
 		}
 		
@@ -103,7 +103,7 @@ class WaySliceTest {
 		assert ! ws.isInDirection()
 		
 	
-		shouldFail(IllegalArgumentException){
+		shouldFail(NullPointerException) {
 			ws = new WaySlice(null, 1, 3,false) // way must not be null
 		}
 		
