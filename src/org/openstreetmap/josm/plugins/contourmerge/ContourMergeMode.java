@@ -57,7 +57,6 @@ public class ContourMergeMode extends MapMode {
                     Shortcut.NONE // don't assign an action group, let the
                                   // user assign it in the preferences
             ),
-            mapFrame,
             Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)
         );
         putValue("help", HelpUtil.ht("Plugin/ContourMerge"));
