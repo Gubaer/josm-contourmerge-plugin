@@ -48,7 +48,7 @@ def bestPluginVersion(config, josmVersion) {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.1'
+    gradleVersion = '4.1'
 }
 
 jar.baseName = "contourmerge"
@@ -88,7 +88,6 @@ compileJava {
 sourceSets {
     main {
         java.srcDirs = ["src"]
-        output.classesDir = "build"
         resources {
             srcDir file(".")
             include "README.md"
@@ -100,7 +99,6 @@ sourceSets {
     }
     test {
         groovy.srcDirs = ["test/src"]
-        output.classesDir = "test/build"
         resources {
             srcDir file("test/config")
         }

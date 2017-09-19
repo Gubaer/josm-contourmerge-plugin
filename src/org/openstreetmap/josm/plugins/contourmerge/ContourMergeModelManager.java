@@ -7,7 +7,7 @@ import java.util.Optional;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.Validate;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
@@ -38,12 +38,12 @@ public class ContourMergeModelManager implements LayerChangeListener{
 
     public void wireToJOSM(){
         models.clear();
-        Main.getLayerManager().addLayerChangeListener(this);
+        MainApplication.getLayerManager().addLayerChangeListener(this);
     }
 
     public void unwireFromJOSM() {
         models.clear();
-        Main.getLayerManager().removeLayerChangeListener(this);
+        MainApplication.getLayerManager().removeLayerChangeListener(this);
     }
 
     /**
@@ -66,7 +66,7 @@ public class ContourMergeModelManager implements LayerChangeListener{
      * @return the model
      */
     public Optional<ContourMergeModel> getActiveModel() {
-        return Optional.ofNullable(Main.getLayerManager().getEditLayer())
+        return Optional.ofNullable(MainApplication.getLayerManager().getEditLayer())
             .map(layer -> getModel(layer))
             .orElse(Optional.empty());
     }

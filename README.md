@@ -18,7 +18,7 @@ contours on an OSM map, i.e.
 See this short [user guide on the JOSM wiki](http://josm.openstreetmap.de/wiki/Help/Plugin/ContourMerge).
 
 ## Build status
-[![Build Status](https://drone.io/github.com/Gubaer/josm-contourmerge-plugin/status.png)](https://drone.io/github.com/Gubaer/josm-contourmerge-plugin/latest)
+[![Build Status](https://travis-ci.org/Gubaer/josm-contourmerge-plugin.svg?branch=master)](https://travis-ci.org/Gubaer/josm-contourmerge-plugin.svg?branch=master)
 
 ## License
 Published under GPL Version 3 and higher. See included LICENSE file.

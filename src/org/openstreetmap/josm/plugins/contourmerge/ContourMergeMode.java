@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -57,14 +58,13 @@ public class ContourMergeMode extends MapMode {
                     Shortcut.NONE // don't assign an action group, let the
                                   // user assign it in the preferences
             ),
-            mapFrame,
             Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)
         );
         putValue("help", HelpUtil.ht("Plugin/ContourMerge"));
     }
 
     protected MapView getMapView(){
-        return Main.map.mapView;
+        return MainApplication.getMap().mapView;
     }
 
     protected Optional<ContourMergeModel> getActiveModel() {
@@ -150,14 +150,14 @@ public class ContourMergeMode extends MapMode {
     }
 
     protected BBox buildSnapBBox(Point p){
-        MapView mv = Main.map.mapView;
+        MapView mv = MainApplication.getMap().mapView;
         LatLon ll = mv.getLatLon(p.x -3, p.y - 3);
         LatLon ur = mv.getLatLon(p.x + 3, p.y + 3);
         return new BBox(ll, ur);
     }
 
     protected void showHelpText(String text){
-        Main.map.statusLine.setHelpText(text);
+        MainApplication.getMap().statusLine.setHelpText(text);
     }
 
     @Override
@@ -201,7 +201,7 @@ public class ContourMergeMode extends MapMode {
                 }
                 model.setFeedbackNode(candidates.get(0));
             }
-            Main.map.mapView.repaint();
+            MainApplication.getMap().mapView.repaint();
         });
     }
 
@@ -281,7 +281,7 @@ public class ContourMergeMode extends MapMode {
             model.setDragOffset(offset);
             model.setDropFeedbackSegment(newDropTargetFeedbackSegment);
         });
-        Main.map.mapView.repaint();
+        MainApplication.getMap().mapView.repaint();
     }
 
     protected void onDrop(Point target){
@@ -311,7 +311,7 @@ public class ContourMergeMode extends MapMode {
             model.setDragStartFeedbackWaySegment(null);
             model.setDropFeedbackSegment(null);
             model.setDragOffset(null);
-            Main.map.mapView.repaint();
+            MainApplication.getMap().mapView.repaint();
         });
     }
 }
