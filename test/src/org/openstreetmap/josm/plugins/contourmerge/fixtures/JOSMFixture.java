@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.I18n;
 
 public class JOSMFixture {
@@ -41,6 +42,7 @@ public class JOSMFixture {
         Main.platform.preStartupHook();
 
         Main.pref.init(false);
+        Config.setPreferencesInstance(Main.pref);
 
         // init projection
         ProjectionPreference.setProjection("core:mercator", null, true /* make default */);
