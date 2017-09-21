@@ -16,6 +16,7 @@ import org.apache.commons.lang3.Validate;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 
@@ -43,10 +44,9 @@ public class ContourMergeView implements MapViewPaintable{
     }
 
     public void unwireFromJOSM() {
-        final MapView mv = MainApplication.getMap().mapView; 
-        if (mv != null) {
-            mv.removeTemporaryLayer(this);
-        }
+        Optional.ofNullable(MainApplication.getMap())
+        .map(frame -> frame.mapView)
+        .ifPresent(mv -> mv.removeTemporaryLayer(ContourMergeView.this));
     }
 
     protected Optional<ContourMergeModel> getActiveModel() {
