@@ -60,7 +60,11 @@ public class ContourMergeView implements MapViewPaintable{
 
     protected void decorateSelectedNode(Graphics2D g, MapView mv, Bounds bbox,
             Node node){
-        if (!bbox.contains(node.getCoor())) return;
+        // since at least 12712 the following check always returns false. Possibly
+        // already before 12712. Don't know due to which commit exactly.
+        // Comment it out for the time being. Should have only a minor
+        // impact on drawing efficiency and responsiveness.
+        //if (!bbox.contains(node.getCoor())) return;
         Point p = mv.getPoint(node.getCoor());
         g.translate(p.x,p.y);
             g.setColor(Color.ORANGE);
