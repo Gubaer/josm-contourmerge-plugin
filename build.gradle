@@ -1,35 +1,8 @@
 plugins {
-    id "de.undercouch.download" version "3.1.1"
-    id "io.franzbecker.gradle-lombok" version "1.7"
-}
-
-apply plugin: "java"
-apply plugin: "groovy"
-apply plugin: "eclipse"
-
-repositories {
-    mavenCentral()
-}
-
-configurations {
-    commonslang3
-}
-
-dependencies {
-
-    commonslang3 group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
-    
-    compileOnly "org.projectlombok:lombok:1.16.10"
-    
-    compile files("contrib/josm.jar")
-    compile group: 'javax.validation', name: 'validation-api', version: '1.0.0.GA'
-    compile configurations.commonslang3.dependencies
-    
-    testCompile group: 'junit', name: 'junit', version: '4.+' 
-    testCompile localGroovy()
-    testCompile files("contrib/josm.jar")
-    testCompile group: 'javax.validation', name: 'validation-api', version: '1.0.0.GA'
-    testCompile configurations.commonslang3.dependencies
+    id 'org.openstreetmap.josm' version '0.2.1'
+    id 'java'
+    id 'groovy'
+    id 'eclipse'
 }
 
 def currentPluginVersion(config) {
@@ -42,47 +15,70 @@ def currentPluginMainVersion(config) {
 
 def bestPluginVersion(config, josmVersion) {
     return config.releases
-        .findAll{it.josmVersion == josmVersion}   
+        .findAll{it.josmVersion == josmVersion}
         .collect{it.pluginVersion}
         .max()
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
+repositories {
+    mavenCentral()
 }
 
-jar.baseName = "contourmerge"
+dependencies {
 
-jar {
+    compileOnly "org.projectlombok:lombok:1.16.10"
+
+    packIntoJar group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+    
+    implementation group: 'javax.validation', name: 'validation-api', version: '1.0.0.GA'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+    
+    testImplementation group: 'junit', name: 'junit', version: '4.+' 
+    testImplementation group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.12'
+    testImplementation group: 'javax.validation', name: 'validation-api', version: '1.0.0.GA'
+    testImplementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+}
+
+
+task wrapper(type: Wrapper) {
+     gradleVersion = '4.4'
+}
+
+def ConfigObject releaseHistory = new ConfigSlurper().parse(file("releases.conf").text)
+
+version = currentPluginVersion(releaseHistory)
+archivesBaseName = "contourmerge"
+
+josm {
+    josmCompileVersion = "latest"
     manifest {
-        def config = new ConfigSlurper().parse(file("releases.conf").text)
-        attributes(
-            "Plugin-Date": new Date().format("yyyy-MM-dd HH:mm"),
-            "Plugin-Version": currentPluginVersion(config),
-            "Plugin-Mainversion": currentPluginMainVersion(config),
-            'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')',
-            'Built-With': "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
-            'Plugin-Class' : "org.openstreetmap.josm.plugins.contourmerge.ContourMergePlugin",
-            "Plugin-Description": "Merges the contours of two areas",
-            "Plugin-Icon" : "images/mapmode/contourmerge.png",
-            "Plugin-Link" : "http://wiki.openstreetmap.org/index.php/JOSM/Plugins/ContourMerge",
-            "Plugin-Canloadatruntime" : "true"
-        )
-        config.releases.collect{it.josmVersion}.unique().sort().each {jv -> 
-            def dv = bestPluginVersion(config, jv)
-            def key = "${jv}_Plugin-Url".toString()
-            def value = "${dv};https://raw.github.com/Gubaer/josm-contourmerge-plugin/for-josm-${jv}/dist/contourmerge.jar".toString()
-            attributes([(key):value]) 
+        description = 'Merges the contours of two areas'
+        minJosmVersion = currentPluginMainVersion(releaseHistory)
+        mainClass = 'org.openstreetmap.josm.plugins.contourmerge.ContourMergePlugin'
+        iconPath = 'images/mapmode/contourmerge.png'
+        website = new URL("http://wiki.openstreetmap.org/index.php/JOSM/Plugins/ContourMerge")
+        canLoadAtRuntime = true
+
+        releaseHistory.releases.collect{it.josmVersion}.unique().sort().each {jv ->
+            def String dv = bestPluginVersion(releaseHistory, jv)
+            oldVersionDownloadLink jv, dv, new URL("https://raw.github.com/Gubaer/josm-contourmerge-plugin/for-josm-${jv}/dist/contourmerge.jar")
         }
     }
-    
-    from zipTree(configurations.commonslang3.asPath)
 }
 
 compileJava {
   sourceCompatibility = JavaVersion.VERSION_1_8
   targetCompatibility = JavaVersion.VERSION_1_8
   options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "-Werror"
+}
+
+test {
+    useJUnit()
+    systemProperty "josm.home", file("test/josm.home")
+
+    afterTest { desc, result -> 
+        println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
+    }
 }
 
 sourceSets {
@@ -105,47 +101,13 @@ sourceSets {
     }
 }
 
-test {
-    useJUnit()
-    systemProperty "josm.home", file("test/josm.home")
-
-    afterTest { desc, result -> 
-        println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
-    }
-}
-
-task  getJosm {
-    description = "Download a JOSM jar from the JOSM website"
-    doLast {
-        if (! file("contrib").exists()) {
-            file("contrib").mkdir()
-        }
-        if (!file("contrib/josm.jar").exists()) {    
-            println "Downloading JOSM from <${josmDownloadUrl}> ..."    
-            download {
-                src josmDownloadUrl
-                dest "contrib/josm.jar"
-            }
-        }
-    }
-}
-compileJava.dependsOn "getJosm"
-
-clean.doFirst {
-    delete "contrib/josm.jar"
-}
+tasks.dist.into("$projectDir/dist")
 
 task deploy {
     doLast {
         def config = new ConfigSlurper().parse(file("releases.conf").text)
         def deployBranch = "deploy"
-        def jar = "dist/contourmerge.jar";
-        file("dist").mkdirs()
-        ant.copy(todir: "dist") {
-            fileset(dir : "build/libs") {
-                  include(name:"contourmerge.jar")
-            }
-        }
+        def jar = "$projectDir/dist/${archivesBaseName}.jar"
         Git.ensureOnBranch(deployBranch)
         Git.add(jar)
         Git.commit(jar, "committed plugin build ${currentPluginVersion(config)}") 
