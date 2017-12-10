@@ -58,10 +58,11 @@ josm {
         iconPath = 'images/mapmode/contourmerge.png'
         website = new URL("http://wiki.openstreetmap.org/index.php/JOSM/Plugins/ContourMerge")
         canLoadAtRuntime = true
-
         releaseHistory.releases.collect{it.josmVersion}.unique().sort().each {jv ->
             def String dv = bestPluginVersion(releaseHistory, jv)
-            oldVersionDownloadLink jv, dv, new URL("https://raw.github.com/Gubaer/josm-contourmerge-plugin/for-josm-${jv}/dist/contourmerge.jar")
+            oldVersionDownloadLink jv, dv,
+                new URL("https://raw.github.com/Gubaer/josm-contourmerge-plugin"
+                      + "/for-josm-${jv}/dist/${archivesBaseName}.jar")
         }
     }
 }
