@@ -1,8 +1,9 @@
-.classpath
-.project
-.settings
-build
-.gradle
-contrib
+/.classpath
+/.project
+/.settings/
+/.idea/
+/.gradle/
 /bin/
-dist
+/build/
+/contrib/
+/dist/
