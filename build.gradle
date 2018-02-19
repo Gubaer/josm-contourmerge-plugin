@@ -67,7 +67,7 @@ compileJava {
 
 test {
     useJUnit()
-    systemProperty "josm.home", file("test/josm.home")
+    systemProperty "josm.home", file("src/test/resources/josm.home")
 
     afterTest { desc, result ->
         println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
@@ -75,23 +75,14 @@ test {
 }
 
 sourceSets {
-    main {
-        java.srcDirs = ["src"]
-        resources {
-            srcDir file(".")
-            include "README.md"
-            include "LICENSE"
-            include "images/**/*"
-            exclude "images/*.svg"
-            exclude "images/**/*.svg"
-        }
+    main.resources {
+        exclude "images/**/*.svg"
     }
-    test {
-        groovy.srcDirs = ["test/src"]
-        resources {
-            srcDir file("test/config")
-        }
-    }
+}
+
+processResources {
+    from("$projectDir/README.md")
+    from("$projectDir/LICENSE")
 }
 
 tasks.dist.into("$projectDir/dist")
