@@ -16,7 +16,6 @@ import org.apache.commons.lang3.Validate;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 
@@ -259,7 +258,7 @@ public class ContourMergeView implements MapViewPaintable{
      *
      * @param mv the map view
      * @param dragSource
-     * @param dropTarget
+     * @param dragOffset
      * @return true, if the two helper lines from the drag source to the drop
      * target intersect
      */

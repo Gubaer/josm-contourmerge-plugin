@@ -186,7 +186,7 @@ public class ContourMergeMode extends MapMode {
                 if (model.isSelected(candidates.get(0))) {
                     showHelpText(tr("Left-Click: deselect node"));
                     getMapView().setCursor(ImageProvider.getCursor("normal",
-                            "deselect_node"));
+                            "contourmerge_deselect_node"));
                 } else {
                     if (OsmPrimitive.getFilteredList(
                             candidates.get(0).getReferrers(),
@@ -196,7 +196,7 @@ public class ContourMergeMode extends MapMode {
                     } else {
                         showHelpText(tr("Left-Click: select node"));
                         getMapView().setCursor(ImageProvider.getCursor("normal",
-                                "select_node"));
+                                "contourmerge_select_node"));
                     }
                 }
                 model.setFeedbackNode(candidates.get(0));
