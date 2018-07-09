@@ -5,6 +5,7 @@ plugins {
     id 'eclipse'
 }
 
+/*
 def currentPluginVersion(config) {
     return config.releases.collect {it.pluginVersion}.max()
 }
@@ -19,6 +20,7 @@ def bestPluginVersion(config, josmVersion) {
         .collect{it.pluginVersion}
         .max()
 }
+*/
 
 repositories {
     mavenCentral()
@@ -36,26 +38,30 @@ dependencies {
     testImplementation group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.13'
 }
 
+/*
 def ConfigObject releaseHistory = new ConfigSlurper().parse(file("releases.conf").text)
+*/
 
-version = currentPluginVersion(releaseHistory)
+//version = currentPluginVersion(releaseHistory)
+version=1034
 archivesBaseName = "contourmerge"
 
 josm {
     josmCompileVersion = "latest"
     manifest {
+        includeLinksToGithubReleases = true
         description = 'Merges the contours of two areas'
-        minJosmVersion = currentPluginMainVersion(releaseHistory)
+        minJosmVersion = 12875
         mainClass = 'org.openstreetmap.josm.plugins.contourmerge.ContourMergePlugin'
         iconPath = 'images/mapmode/contourmerge.png'
         website = new URL("http://wiki.openstreetmap.org/index.php/JOSM/Plugins/ContourMerge")
         canLoadAtRuntime = true
-        releaseHistory.releases.collect{it.josmVersion}.unique().sort().each {jv ->
-            def String dv = bestPluginVersion(releaseHistory, jv)
-            oldVersionDownloadLink jv, dv,
-                new URL("https://raw.github.com/Gubaer/josm-contourmerge-plugin"
-                      + "/for-josm-${jv}/dist/${archivesBaseName}.jar")
-        }
+//        releaseHistory.releases.collect{it.josmVersion}.unique().sort().each {jv ->
+//            def String dv = bestPluginVersion(releaseHistory, jv)
+//            oldVersionDownloadLink jv, dv,
+//                new URL("https://raw.github.com/Gubaer/josm-contourmerge-plugin"
+//                      + "/for-josm-${jv}/dist/${archivesBaseName}.jar")
+//        }
     }
 }
 
@@ -85,8 +91,11 @@ processResources {
     from("$projectDir/LICENSE")
 }
 
+/*
 tasks.dist.into("$projectDir/dist")
+*/
 
+/*
 task deploy {
     doLast {
         def config = new ConfigSlurper().parse(file("releases.conf").text)
@@ -101,7 +110,9 @@ task deploy {
         Git.pushTags()
     }
 }
+*/
 
+/*
 class Git {
     static private def executeAndLog(cmd) {
         def proc = cmd.execute()
@@ -142,3 +153,4 @@ class Git {
         executeAndLog("git push --tags -f")
     }
 }
+*/
