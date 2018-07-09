@@ -5,23 +5,6 @@ plugins {
     id 'eclipse'
 }
 
-/*
-def currentPluginVersion(config) {
-    return config.releases.collect {it.pluginVersion}.max()
-}
-
-def currentPluginMainVersion(config) {
-    return config.releases.collect {it.josmVersion}.max()
-}
-
-def bestPluginVersion(config, josmVersion) {
-    return config.releases
-        .findAll{it.josmVersion == josmVersion}
-        .collect{it.pluginVersion}
-        .max()
-}
-*/
-
 repositories {
     mavenCentral()
 }
@@ -38,11 +21,6 @@ dependencies {
     testImplementation group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.13'
 }
 
-/*
-def ConfigObject releaseHistory = new ConfigSlurper().parse(file("releases.conf").text)
-*/
-
-//version = currentPluginVersion(releaseHistory)
 version=1034
 archivesBaseName = "contourmerge"
 
@@ -56,12 +34,6 @@ josm {
         iconPath = 'images/mapmode/contourmerge.png'
         website = new URL("http://wiki.openstreetmap.org/index.php/JOSM/Plugins/ContourMerge")
         canLoadAtRuntime = true
-//        releaseHistory.releases.collect{it.josmVersion}.unique().sort().each {jv ->
-//            def String dv = bestPluginVersion(releaseHistory, jv)
-//            oldVersionDownloadLink jv, dv,
-//                new URL("https://raw.github.com/Gubaer/josm-contourmerge-plugin"
-//                      + "/for-josm-${jv}/dist/${archivesBaseName}.jar")
-//        }
     }
 }
 
@@ -90,67 +62,3 @@ processResources {
     from("$projectDir/README.md")
     from("$projectDir/LICENSE")
 }
-
-/*
-tasks.dist.into("$projectDir/dist")
-*/
-
-/*
-task deploy {
-    doLast {
-        def config = new ConfigSlurper().parse(file("releases.conf").text)
-        def deployBranch = "deploy"
-        def jar = "$projectDir/dist/${archivesBaseName}.jar"
-        Git.ensureOnBranch(deployBranch)
-        Git.add(jar)
-        Git.commit(jar, "committed plugin build ${currentPluginVersion(config)}")
-        def tag = "for-josm-${currentPluginMainVersion(config)}"
-        Git.tagHead(tag)
-        Git.push("origin", deployBranch)
-        Git.pushTags()
-    }
-}
-*/
-
-/*
-class Git {
-    static private def executeAndLog(cmd) {
-        def proc = cmd.execute()
-        proc.waitFor()
-        println "Exit Value: ${proc.exitValue()}"
-        println "Output: ${proc.in.text}"
-        println "Error: ${proc.err.text}"
-        if (proc.exitValue() != 0) {
-            throw new Error("git command failed. command was <$cmd>")
-        }
-    }
-
-    static def ensureOnBranch(branch) {
-        def proc = "git rev-parse --abbrev-ref HEAD".execute()
-        def ret = proc.in.text.trim()
-        if (ret != branch) {
-            throw new Error("currently on branch '$ret', but expected branch '$branch'")
-        }
-    }
-
-    static def add(file) {
-        executeAndLog(["git", "add", file])
-    }
-
-    static def commit(file, message) {
-        executeAndLog(["git", "commit", "-m", message, file])
-    }
-
-    static def push(remote, branch) {
-        executeAndLog("git push $remote $branch")
-    }
-
-    static def tagHead(tag) {
-        executeAndLog(["git", "tag", "-f", tag, "HEAD"])
-    }
-
-    static def pushTags() {
-        executeAndLog("git push --tags -f")
-    }
-}
-*/
