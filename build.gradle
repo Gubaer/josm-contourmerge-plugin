@@ -1,5 +1,6 @@
 plugins {
-    id 'org.openstreetmap.josm' version '0.5.0-62-g6ed8d91-dirty'
+    // uses a local development fork of the gradle josm plugin
+    id 'org.openstreetmap.josm' version '0.5.0-77-g30a855a-dirty'
     id 'java'
     id 'groovy'
     id 'eclipse'
@@ -21,15 +22,16 @@ dependencies {
     testImplementation group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.13'
 }
 
-version=1034
+version="v0.1.0"
 archivesBaseName = "contourmerge"
 
 josm {
     josmCompileVersion = "latest"
     manifest {
         includeLinksToGithubReleases = true
-        description = 'Merges the contours of two areas'
         minJosmVersion = 12875
+
+        description = 'Merges the contours of two areas'
         mainClass = 'org.openstreetmap.josm.plugins.contourmerge.ContourMergePlugin'
         iconPath = 'images/mapmode/contourmerge.png'
         website = new URL("http://wiki.openstreetmap.org/index.php/JOSM/Plugins/ContourMerge")
@@ -61,4 +63,8 @@ sourceSets {
 processResources {
     from("$projectDir/README.md")
     from("$projectDir/LICENSE")
+}
+
+publishToGithubRelease {
+    remoteJarName = "contourmerge.jar"
 }
