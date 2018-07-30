@@ -1,3 +1,52 @@
-
 releases:
-  # initially empty
+  - label: v0.1.0
+    numeric_josm_version: 12875
+    description: |
+      switching to semantic versions for release labels
+
+  - label: 1033
+    numeric_josm_version: 12875
+    description: |
+      - fix #16 Mouse cursor changes in other modes
+      - fix #14 Regression: Cut-nodes are not highlighted after 12712
+      - keep up with refactorings in JOSM
+
+  - label: 1030
+    numeric_josm_version: 10966
+    description: |
+      Cleanup, refactorings, reformatting, Java8 features
+
+  - label: 1022
+    numeric_josm_version: 10929
+    description: |
+      Response to changes in the JOSM code base
+
+  - label: 1021
+    numeric_josm_version: 10659
+    description: |
+      OsmPrimitive::isSelectablePredicate now a Java8 closure
+
+  - label: 1020
+    numeric_josm_version: 10526
+    description: |
+      Java 8; adapt to changes in JOSMs layer management
+
+  - label: 1014
+    numeric_josm_version: 8024
+    description: |
+      fix #10 NPE in contourmerge plugin
+      plugin installation without restart
+
+  - label: 1012
+    numeric_josm_version: 6317
+    description: |
+      recompiled because of #9
+      recompiled because of #9
+      recompiled for Java 1.6
+
+  - label: 1007
+    numeric_josm_version: 4394
+
+  - label: 1001
+    numeric_josm_version: 4223
+
