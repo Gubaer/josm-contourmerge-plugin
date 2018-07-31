@@ -1,6 +1,6 @@
 plugins {
     // uses a local development fork of the gradle josm plugin
-    id 'org.openstreetmap.josm' version '0.5.0-77-g30a855a-dirty'
+    id 'org.openstreetmap.josm' version '0.5.0-80-g834a3b2-dirty'
     id 'java'
     id 'groovy'
     id 'eclipse'
