@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -297,7 +297,7 @@ public class ContourMergeMode extends MapMode {
                 getMapView().setCursor(Cursor.getDefaultCursor());
                 Command cmd = model.buildContourAlignCommand();
                 if (cmd != null){
-                    Main.main.undoRedo.add(cmd);
+                    UndoRedoHandler.getInstance().add(cmd);
                 }
             }
 
