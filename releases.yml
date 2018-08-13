@@ -1,4 +1,9 @@
 releases:
+  - label: v0.1.1
+    numeric_josm_version: 12875
+    description: |
+      fixes build and failing unit tests
+
   - label: v0.1.0
     numeric_josm_version: 12875
     description: |
