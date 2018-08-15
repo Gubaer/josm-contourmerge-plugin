@@ -1,13 +1,10 @@
-package org.openstreetmap.josm.plugins.contourmerge;
+package org.openstreetmap.josm.plugins.contourmerge
 
-import java.util.List;
-
-import static org.junit.Assert.*;
-import org.junit.*;
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.plugins.contourmerge.fixtures.JOSMFixture;
-import org.openstreetmap.josm.plugins.contourmerge.WaySlice;
+import org.junit.BeforeClass
+import org.junit.Test
+import org.openstreetmap.josm.data.osm.Node
+import org.openstreetmap.josm.data.osm.Way
+import org.openstreetmap.josm.plugins.contourmerge.fixtures.JOSMFixture
 
 class WaySliceTest {
     def shouldFail = new GroovyTestCase().&shouldFail
