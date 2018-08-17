@@ -29,7 +29,7 @@ josm {
     josmCompileVersion = "latest"
     manifest {
         includeLinksToGithubReleases = true
-        minJosmVersion = 12875
+        minJosmVersion = 14153
 
         description = 'Merges the contours of two areas'
         mainClass = 'org.openstreetmap.josm.plugins.contourmerge.ContourMergePlugin'
