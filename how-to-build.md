@@ -1,45 +1,53 @@
-## Build
+# Build
 
 ```bash
-# this will download and install gradle if necessary 
 % ./gradlew clean build
 ```
 
-## Deploy and publish
+# Deploy and publish
 
-The latest build for the `contourmerge` plugin should always be built on the branch `deploy`
-and then pushed to GitHub. 
+1. Create a new entry at the top of `releases.yml`. Example:
 
-The following steps mimic the deployment infrastructure JOSM uses for plugins maintained
-on the OSM SVN site, see [doc](http://josm.openstreetmap.de/wiki/DevelopersGuide/DevelopingPlugins)
-for more info. JOSM reads meta-data about available plugins from http://josm.openstreetmap.de/plugin
-and the following steps ensure that the `contourmerge` plugin is properly listed there.
-
-
-Before you deploy, open `releases.conf` in a text editor and add a new line to the version table:
-
-```groovy
-releases = [
-    [
-        // replace with a new plugin version 
-     	pluginVersion    : 1021,     
-     	// the smallest JOSM version this plugin version is compatible with
-     	josmVersion      : 10659,    
-     	// a short description
-     	description      : "OsmPrimitive::isSelectablePredicate now a Java8 closure"
-    ],
-    ...
-}
+```yml
+    releases:
+        # mandatory: choose a new release label
+      - label: v0.0.20
+        # mandatory: the lowest josm version this plugin release is compatible with
+        numeric_josm_version: 12345
+        # optional: a release description. You may refer to github issues.
+        description: fixes issue #14
 ```
 
-Typical steps:
+
+2. Make sure the build parameters in `build.gradle` are up to date
+
+```gradle
+// the same label as in releases.yml
+version="v0.0.20"
+josm {
+    manifest {
+        //  the same  version as in releases.yml
+        minJosmVersion = 12345
+...
+```
+
+3. Create the GitHub release for the current release label
+```bash
+$ ./gradlew createGithubRelease
+```
+
+4. Build the plugin
+```bash
+$ ./gradlew clean build
+```
+
+4. Publish the plugin to the Github releases
+
+The plugin is published to two releases:
+
+* to the release for the current release label
+* to the pickup release with a version independent name, where the JOSM plugin infrastructures picks up the latest plugin release
 
 ```bash
-% git checkout deploy
-% git merge master             # merge the development work from the branch 'master'
-% git push origin deploy       # push the deploy branch
-
-% ./gradlew clean build        # build the plugin
-% ./gradlew deploy             # deploys the plugin to GitHub where it is picked up
-                               # by the JOSM plugin installer
+$ ./gradlew publishToGithubRelease --publish-to-pickup-release
 ```
