@@ -9,7 +9,6 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.logging.Logger;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.Preferences;
