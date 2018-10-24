@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
 
-    compileOnly "org.projectlombok:lombok:1.16.20"
+    compileOnly "org.projectlombok:lombok:1.18.2"
 
     packIntoJar group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
 
