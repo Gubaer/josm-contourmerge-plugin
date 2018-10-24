@@ -22,7 +22,7 @@ dependencies {
     testImplementation group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.13'
 }
 
-version="v0.1.1"
+version="v0.1.2"
 archivesBaseName = "contourmerge"
 
 josm {

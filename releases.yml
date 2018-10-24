@@ -1,4 +1,8 @@
 releases:
+  - label: v0.1.2
+    numeric_josm_version: 14153
+    description: fixes #18 - Anomalies when merging a boundary already snapped to another feature
+
   - label: v0.1.1
     numeric_josm_version: 14153
     description: fixes build and failing unit tests
