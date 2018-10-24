@@ -77,7 +77,7 @@ public class ContourMergeMode extends MapMode {
         getMapView().addMouseListener(this);
         getMapView().addMouseMotionListener(this);
         ContourMergePlugin.setEnabled(true);
-        getActiveModel().ifPresent(model -> {;
+        getActiveModel().ifPresent(model -> {
             model.reset();
             /*
              * Remind the current selection and clear it; otherwise the
@@ -85,8 +85,8 @@ public class ContourMergeMode extends MapMode {
              * "selected" nodes and way slices in this map mode.
              */
             selection = new ArrayList<>(
-                    model.getLayer().data.getSelected()
-             );
+                model.getLayer().data.getSelected()
+            );
             model.getLayer().data.clearSelection();
         });
     }
@@ -147,13 +147,6 @@ public class ContourMergeMode extends MapMode {
             }
             getMapView().repaint();
         });
-    }
-
-    protected BBox buildSnapBBox(Point p){
-        MapView mv = MainApplication.getMap().mapView;
-        LatLon ll = mv.getLatLon(p.x -3, p.y - 3);
-        LatLon ur = mv.getLatLon(p.x + 3, p.y + 3);
-        return new BBox(ll, ur);
     }
 
     protected void showHelpText(String text){
