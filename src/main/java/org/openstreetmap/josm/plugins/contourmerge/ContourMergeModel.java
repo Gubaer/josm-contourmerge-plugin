@@ -1,19 +1,5 @@
 package org.openstreetmap.josm.plugins.contourmerge;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
-import java.awt.Point;
-import java.awt.geom.Line2D;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang3.Validate;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -24,16 +10,17 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
-import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
-import org.openstreetmap.josm.data.osm.event.DataSetListener;
-import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
-import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
-import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
-import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
-import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
-import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
+import org.openstreetmap.josm.data.osm.event.*;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+
+import javax.validation.constraints.NotNull;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * <strong>ContourMergeModel</strong> keeps the current edit state for a
@@ -474,10 +461,14 @@ public class ContourMergeModel implements DataSetListener{
          */
         if (haveSameStartAndEndNode(n1, n2)) return true;
         if (haveReversedStartAndEndeNode(n1,n2)) return false;
-        /*
-         * n1 and n2 have different start or end nodes. Draw an imaginary line
-         * from the start of n1 to start of n2 and from the end of n1 to the end
-         * of n2 and check whether they intersect.
+
+        /**
+         * new heuristic. The endpoints of will be merged with the end points
+         * of t. We compute the total distance between the endpoints of s
+         * and t and the endpoints of s and t in reverse direction. Choose
+         * the direction with the minimal total distance the endpoints have
+         * to be moved.
+         *
          */
         EastNorth s1 = n1.get(0).getEastNorth();
         EastNorth s2 = n1.get(n1.size()-1).getEastNorth();
@@ -485,11 +476,9 @@ public class ContourMergeModel implements DataSetListener{
         EastNorth t1 = n2.get(0).getEastNorth();
         EastNorth t2 = n2.get(n2.size()-1).getEastNorth();
 
-        Line2D l1 = new Line2D.Double(s1.getX(), s1.getY(), t1.getX(),
-                t1.getY());
-        Line2D l2 = new Line2D.Double(s2.getX(), s2.getY(), t2.getX(),
-                t2.getY());
-        return ! l1.intersectsLine(l2);
+        double d1 = Math.abs(s1.distance(t1)) + Math.abs(s2.distance(t2));
+        double d2 = Math.abs(s1.distance(t2)) + Math.abs(s2.distance(t1));
+        return d1 <= d2;
     }
 
     /**
