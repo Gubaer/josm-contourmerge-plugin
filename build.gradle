@@ -13,6 +13,7 @@ repositories {
 dependencies {
 
     compileOnly "org.projectlombok:lombok:1.18.2"
+    annotationProcessor "org.projectlombok:lombok:1.18.2"
     packIntoJar "org.apache.commons:commons-lang3:3.7"
 
     implementation "javax.validation:validation-api:2.0.1.Final"
