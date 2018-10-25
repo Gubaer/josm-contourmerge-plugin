@@ -13,7 +13,7 @@ repositories {
 dependencies {
 
     compileOnly "org.projectlombok:lombok:1.18.2"
-    annotationProcessor "org.projectlombok:lombok:1.18.2"
+    //annotationProcessor "org.projectlombok:lombok:1.18.2"
     packIntoJar "org.apache.commons:commons-lang3:3.7"
 
     implementation "javax.validation:validation-api:2.0.1.Final"
@@ -44,8 +44,8 @@ test {
     systemProperty "josm.home", file("src/test/resources/josm.home")
 
     afterTest { desc, result ->
-        println "Executing test ${desc.name} [${desc.className}] with "
-        + "result: ${result.resultType}"
+        println "Executing test ${desc.name} [${desc.className}] with " + 
+                "result: ${result.resultType}"
     }
 }
 
