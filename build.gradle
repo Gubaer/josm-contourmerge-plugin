@@ -13,13 +13,12 @@ repositories {
 dependencies {
 
     compileOnly "org.projectlombok:lombok:1.18.2"
+    packIntoJar "org.apache.commons:commons-lang3:3.7"
 
-    packIntoJar group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
+    implementation "javax.validation:validation-api:2.0.1.Final"
 
-    implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
-
-    testImplementation group: 'junit', name: 'junit', version: '4.+'
-    testImplementation group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.13'
+    testImplementation "junit:junit:4.+"
+    testImplementation "org.codehaus.groovy:groovy-all:2.4.13"
 }
 
 version="v0.1.2"
@@ -30,12 +29,6 @@ josm {
     manifest {
         includeLinksToGithubReleases = true
         minJosmVersion = 14153
-
-        description = 'Merges the contours of two areas'
-        mainClass = 'org.openstreetmap.josm.plugins.contourmerge.ContourMergePlugin'
-        iconPath = 'images/mapmode/contourmerge.png'
-        website = new URL("http://wiki.openstreetmap.org/index.php/JOSM/Plugins/ContourMerge")
-        canLoadAtRuntime = true
     }
 }
 
@@ -50,7 +43,8 @@ test {
     systemProperty "josm.home", file("src/test/resources/josm.home")
 
     afterTest { desc, result ->
-        println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
+        println "Executing test ${desc.name} [${desc.className}] with "
+        + "result: ${result.resultType}"
     }
 }
 
