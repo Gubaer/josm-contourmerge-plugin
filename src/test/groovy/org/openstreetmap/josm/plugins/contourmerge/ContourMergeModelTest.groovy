@@ -1,36 +1,16 @@
-package org.openstreetmap.josm.plugins.contourmerge;
+package org.openstreetmap.josm.plugins.contourmerge
 
-import java.util.Arrays;
-
-import groovy.lang.GroovyInterceptable;
-import groovy.util.GroovyTestCase;
-
-import static org.junit.Assert.*;
-import org.junit.*;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.plugins.contourmerge.fixtures.JOSMFixture;
-import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.command.ChangeCommand;
-import org.openstreetmap.josm.command.Command;
+import org.junit.Before
+import org.junit.BeforeClass
+import org.junit.Test
+import org.openstreetmap.josm.data.osm.*
+import org.openstreetmap.josm.gui.layer.OsmDataLayer
+import org.openstreetmap.josm.plugins.contourmerge.fixtures.JOSMFixture
 
 class ContourMergeModelTest {
 
-    def shouldFail = new GroovyTestCase().&shouldFail
+    private DataSet ds
 
-    private def DataSet ds
-
-    def newNodes(Range nodes){
-        def nn = []
-        nodes.each {i->
-            nn << newNode(i)
-        }
-        return nn
-    }
     def newNode(int id){
         Node n = new Node(id)
         ds.addPrimitive(n)
@@ -72,11 +52,13 @@ class ContourMergeModelTest {
         switch(name){
             case ~/^n(\d+)$/:
                 def m = name =~ /^n(\d+)$/
-                return ds.getPrimitiveById(m[0][1].toInteger(),OsmPrimitiveType.NODE)
+                return ds.getPrimitiveById(m[0][1].toInteger(),
+                        OsmPrimitiveType.NODE)
 
              case ~/^w(\d+)$/:
                 def m = name=~ /^w(\d+)$/
-                return ds.getPrimitiveById(m[0][1].toInteger(),OsmPrimitiveType.WAY)
+                return ds.getPrimitiveById(m[0][1].toInteger(),
+                        OsmPrimitiveType.WAY)
         }
         return getMetaClass().getProperty(this,name)
     }
@@ -88,17 +70,17 @@ class ContourMergeModelTest {
     }
 
     @BeforeClass
-    static public void startJOSMFixture() {
+    static void startJOSMFixture() {
         JOSMFixture.createUnitTestFixture().init()
     }
 
     @Before
-    public void setUp() {
+    void setUp() {
         ds = new DataSet()
     }
 
     @Test
-    public void selectNode() {
+    void selectNode() {
         ContourMergeModel model = createModelMock()
         Node n = newNode(1)
         model.selectNode(n)
@@ -108,7 +90,7 @@ class ContourMergeModelTest {
     }
 
     @Test
-    public void selectNodeAndDeselectAll() {
+    void selectNodeAndDeselectAll() {
         ContourMergeModel model = createModelMock()
         model.selectNode(newNode(1))
         model.selectNode(newNode(2))
@@ -118,7 +100,7 @@ class ContourMergeModelTest {
     }
 
     @Test
-    public void toggleSelected(){
+    void toggleSelected(){
         ContourMergeModel model = createModelMock()
         Node n = newNode(1)
         model.selectNode(n)
@@ -130,7 +112,7 @@ class ContourMergeModelTest {
 
 
     @Test
-    public void getDragSource_OpenWayNoSelectedNodes() {
+    void getDragSource_OpenWayNoSelectedNodes() {
         Node n1 = newNode(1)
         Node n2 = newNode(2)
         Node n3 = newNode(3)
@@ -166,7 +148,7 @@ class ContourMergeModelTest {
     }
 
     @Test
-    public void getDragSource_OpenWayOneSelectedNode() {
+    void getDragSource_OpenWayOneSelectedNode() {
         Node n1 = newNode(1)
         Node n2 = newNode(2)
         Node n3 = newNode(3)
@@ -223,7 +205,7 @@ class ContourMergeModelTest {
     }
 
     @Test
-    public void getDragSource_OpenWayFirstOrLastSelectedNode() {
+    void getDragSource_OpenWayFirstOrLastSelectedNode() {
         Node n1 = newNode(1)
         Node n2 = newNode(2)
         Node n3 = newNode(3)
@@ -265,7 +247,7 @@ class ContourMergeModelTest {
     }
 
     @Test
-    public void getDragSource_ClosedWayTwoSelectedNodes() {
+    void getDragSource_ClosedWayTwoSelectedNodes() {
         Node n1 = newNode(1)
         Node n2 = newNode(2)
         Node n3 = newNode(3)
@@ -409,7 +391,7 @@ class ContourMergeModelTest {
     }
 
     @Test
-    public void isWaySegmentDragable() {
+    void isWaySegmentDragable() {
         Node n1 = newNode(1)
         Node n2 = newNode(2)
         Node n3 = newNode(3)

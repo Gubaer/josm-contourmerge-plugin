@@ -9,29 +9,29 @@ import org.openstreetmap.josm.plugins.contourmerge.fixtures.JOSMFixture
 class WaySliceTest {
     def shouldFail = new GroovyTestCase().&shouldFail
 
-    def newNode(id){
+    static def newNode(id){
         return new Node(id)
     }
 
-    def newWay(id, Node... nodes){
+    static def newWay(id, Node... nodes){
         Way w = new Way(id,1)
         w.setNodes(Arrays.asList(nodes))
         return w
     }
 
-    def newWay(id, List<Node> nodes){
+    static def newWay(id, List<Node> nodes){
         Way w = new Way(id,1)
         w.setNodes(nodes)
         return w
     }
 
     @BeforeClass
-    static public void startJOSMFixtures() {
+    static void startJOSMFixtures() {
         JOSMFixture.createUnitTestFixture().init()
     }
 
     @Test
-    public void constructor_inDirection(){
+    void constructor_inDirection(){
         def w = newWay(1, newNode(1), newNode(2), newNode(4), newNode(5))
 
         WaySlice ws
@@ -75,7 +75,7 @@ class WaySliceTest {
     }
 
     @Test
-    public void constructor_inOppositeDirection(){
+    void constructor_inOppositeDirection(){
         def n = newNode(1)
         // this is a closed way
         def w = newWay(1, n, newNode(2), newNode(4), newNode(5), n)
@@ -136,7 +136,7 @@ class WaySliceTest {
     }
 
     @Test
-    public void getStartTearOffIndex() {
+    void getStartTearOffIndex() {
         def w = newWay(1, newNode(1), newNode(2), newNode(3), newNode(4), newNode(5)) // an open way
 
         WaySlice ws
@@ -193,7 +193,7 @@ class WaySliceTest {
 
 
     @Test
-    public void getEndTearOffIndex() {
+    void getEndTearOffIndex() {
         def w = newWay(1, newNode(1), newNode(2), newNode(3),newNode(4), newNode(5)) // an open way
 
         WaySlice ws
@@ -260,7 +260,7 @@ class WaySliceTest {
     }
 
     @Test
-    public void getNumSegments() {
+    void getNumSegments() {
         def w = newWay(1, newNode(1), newNode(2), newNode(3), newNode(4), newNode(5)) // an open way
 
         def ws = new WaySlice(w, 0, 3)
@@ -289,7 +289,7 @@ class WaySliceTest {
     }
 
     @Test
-    public void replaceNodes_OpenWay() {
+    void replaceNodes_OpenWay() {
         def w = newWay(1, newNode(1), newNode(2), newNode(3), newNode(4), newNode(5)) // an open way
         def newnodes = [newNode(10), newNode(11), newNode(12)]
 
@@ -311,7 +311,7 @@ class WaySliceTest {
     }
 
     @Test
-    public void replaceNodes_ClosedWay_InDirection() {
+    void replaceNodes_ClosedWay_InDirection() {
         Node n1 = new Node(1)
         def w = newWay(1, n1, newNode(2), newNode(3), newNode(4), newNode(5), n1) // a closed way
         def newnodes = [newNode(10), newNode(11), newNode(12)]
@@ -334,7 +334,7 @@ class WaySliceTest {
     }
 
     @Test
-    public void replaceNodes_ClosedWay_ReverseDirection() {
+    void replaceNodes_ClosedWay_ReverseDirection() {
         Node n1 = new Node(1)
         def w = newWay(1, n1, newNode(2), newNode(3), newNode(4), newNode(5), n1) // a closed way
         def newnodes = [newNode(10), newNode(11), newNode(12)]
