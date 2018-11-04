@@ -276,21 +276,21 @@ public class WaySlice {
 
         if (!w.isClosed()) {
             List<Node> oldNodes = new ArrayList<>(w.getNodes());
-            for (int i=start; i<= end;i++) oldNodes.remove(start);
+            oldNodes.subList(start, end+1).clear();
             oldNodes.addAll(start, newNodes);
             nw.setNodes(oldNodes);
         } else {
             List<Node> oldNodes = new ArrayList<>(w.getNodes());
             if (inDirection) {
                 if (start == 0)oldNodes.remove(oldNodes.size()-1);
-                for (int i=start; i<= end;i++)oldNodes.remove(start);
+                oldNodes.subList(start,end+1).clear();
                 oldNodes.addAll(start, newNodes);
                 if (start == 0) oldNodes.add(newNodes.get(0));
                 nw.setNodes(oldNodes);
             } else {
                 int upper = oldNodes.size()-1;
-                for (int i=end; i<=upper; i++) oldNodes.remove(end);
-                for (int i=0; i<=start;i++) oldNodes.remove(0);
+                oldNodes.subList(end, upper+1).clear();
+                oldNodes.subList(0,start+1).clear();
                 oldNodes.addAll(0, newNodes);
                 // make sure the new way is closed again
                 oldNodes.add(newNodes.get(0));
