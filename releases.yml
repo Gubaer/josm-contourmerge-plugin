@@ -1,4 +1,8 @@
 releases:
+  - label: v0.1.3
+    numeric_josm_version: 14153
+    description: "fixes #17 - Anomalies when merging boundaries around complex geometries"
+
   - label: v0.1.2
     numeric_josm_version: 14153
     description: "fixes #18 - Anomalies when merging a boundary already snapped to another feature"
