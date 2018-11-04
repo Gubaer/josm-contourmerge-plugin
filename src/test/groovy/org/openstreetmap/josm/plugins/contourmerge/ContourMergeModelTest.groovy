@@ -3,13 +3,16 @@ package org.openstreetmap.josm.plugins.contourmerge
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
+import org.junit.experimental.runners.Enclosed
+import org.junit.runner.RunWith
 import org.openstreetmap.josm.data.osm.*
 import org.openstreetmap.josm.gui.layer.OsmDataLayer
-import org.openstreetmap.josm.plugins.contourmerge.fixtures.JOSMFixture
 
+
+@RunWith(Enclosed.class)
 class ContourMergeModelTest {
 
-    private DataSet ds
+    protected DataSet ds
 
     def newNode(int id){
         Node n = new Node(id)
@@ -40,12 +43,10 @@ class ContourMergeModelTest {
         return newWay(id,nn)
     }
 
-    def newWay(args){
-        Way w = newWay(args["id"].toInteger(), args["nodes"])
-        if (args["closed"]){
-            w.setNodes(w.getNodes() + w.getNode(0))
-        }
-        return w
+
+    @Before
+    void setUp() {
+        ds = new DataSet()
     }
 
     def getProperty(String name){
@@ -67,16 +68,6 @@ class ContourMergeModelTest {
         OsmDataLayer layer = new OsmDataLayer(ds, null, null)
         ContourMergeModel model = new ContourMergeModel(layer)
         return model
-    }
-
-    @BeforeClass
-    static void startJOSMFixture() {
-        JOSMFixture.createUnitTestFixture().init()
-    }
-
-    @Before
-    void setUp() {
-        ds = new DataSet()
     }
 
     @Test
@@ -466,4 +457,6 @@ class ContourMergeModelTest {
           assert ! model.isWaySegmentDragable(new WaySegment(w, it))
       }
     }
+
+
  }

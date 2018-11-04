@@ -1,9 +1,8 @@
 package org.openstreetmap.josm.plugins.contourmerge;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import javax.validation.constraints.NotNull;
 
@@ -25,6 +24,11 @@ public class WaySlice {
     private final Way w;
     private final int start;
     private final int end;
+    //NOTE: if 'inDirection==true' this slice doesn't wrap around the end of
+    // a closed way; if 'inDirection==false', it does wrap around. Even in
+    // the second case start is the lower indices start and end, but in this
+    // case the slice consists of the nodes
+    //      start, start-1,...,0,len-1,len-2,...,end
     private boolean inDirection = true;
 
     /**
@@ -42,11 +46,11 @@ public class WaySlice {
     public WaySlice(@NotNull Way w, int start, int end){
         Validate.notNull(w);
         Validate.isTrue(start >= 0 && start < w.getNodesCount(),
-                "start out of range, got {0}", start);
+                "start out of range, got %s", start);
         Validate.isTrue(end >= 0 && end < w.getNodesCount(),
-                "end out of range, got {0}", start);
+                "end out of range, got %s", start);
         Validate.isTrue(start < end,
-                "expected start < end, got start={0}, end={1}", start, end);
+                "expected start < end, got start=%s, end=%s", start, end);
         this.w = w;
         this.start = start;
         this.end = end;
@@ -114,7 +118,7 @@ public class WaySlice {
     }
 
     /**
-     * Replies true, if this way slice has the same direction and the
+     * Replies true, if this way slice has the same direction as the
      * parent way. Replies false, if it has the opposite direction.
      *
      * @return
@@ -383,6 +387,168 @@ public class WaySlice {
             if (nodeSet.contains(n)) seen.add(n);
         }
         return false;
+    }
+
+    public static class SliceBoundary {
+        public SliceBoundary(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+        int start;
+        int end;
+
+        SliceBoundary normalized(int wayLength) {
+            return new SliceBoundary(
+                start % wayLength,
+                end >= wayLength ? (end + 1) % wayLength : end
+            );
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("<slice-boundary ")
+                .append(", start=").append(start)
+                .append(", end=").append(end)
+                .append(">");
+            return sb.toString();
+        }
+    }
+
+    /**
+     * Checks whether a list of way nodes includes the sub sequence
+     * of nods in <code>sliceNodes</code>. If yes, replies the
+     * {@link SliceBoundary}, i.e. the start and end index of the sub
+     * sequence
+     *
+     * @param wayNodes   the way nodes where we look for a sub sequence.
+     *                   Must not be null. At least 2 nodes required.
+     * @param sliceNodes the sub sequence. Mot not be nul. At least 2
+     *                   nodes required.
+     */
+    public static Optional<SliceBoundary> findSliceBoundary(
+            @NotNull List<Node> wayNodes,
+            @NotNull List<Node> sliceNodes) {
+        Validate.isTrue(wayNodes.size() >= 2);
+        Validate.isTrue(sliceNodes.size() >= 2);
+
+        int start = 0;
+        while (start < wayNodes.size()) {
+            if (wayNodes.get(start).equals(sliceNodes.get(0))) break;
+            start ++;
+        }
+        if (start >= wayNodes.size()) {
+            return Optional.empty();
+        }
+        int j=0;
+        while( j < sliceNodes.size() && start + j < wayNodes.size()) {
+            if (!wayNodes.get(start +j).equals(sliceNodes.get(j))) break;
+            j++;
+        }
+        if (j >= sliceNodes.size()) {
+            return Optional.of(new SliceBoundary(start, start+j-1));
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<WaySlice> buildWaySliceFromOpenWay(
+        @NotNull Way way, @NotNull List<Node> sliceNodes) {
+        Validate.isTrue(!way.isClosed());
+
+        Function<SliceBoundary,WaySlice> buildWaySlice = b ->
+            new WaySlice(way, b.start, b.end);
+
+        List<Node> wayNodes = way.getNodes();
+        Optional<SliceBoundary> boundary = findSliceBoundary(
+                wayNodes, sliceNodes);
+        if (boundary.isPresent()) {
+            return boundary.map(buildWaySlice);
+        }
+        List<Node> reversedSlice = new ArrayList<>(sliceNodes);
+        Collections.reverse(reversedSlice);
+        return findSliceBoundary(wayNodes, reversedSlice)
+            .map(buildWaySlice);
+    }
+
+    private static Optional<WaySlice> buildWaySliceFromClosedWay(
+        @NotNull Way way, @NotNull List<Node> sliceNodes) {
+        Validate.isTrue(way.isClosed());
+
+        Function<SliceBoundary,WaySlice> buildWaySlice = b -> {
+            b = b.normalized(way.getNodesCount());
+            if (b.start < b.end) {
+                return new WaySlice(way, b.start, b.end);
+            } else {
+                // b.end < b.start => slice wraps around joint node
+                // => set inDirection = false
+                return new WaySlice(
+                    way, b.end, b.start, false /* inDirection = false */);
+            }
+        };
+
+        List<Node> wayNodes = way.getNodes().subList(0,way.getNodesCount()-1);
+        wayNodes.addAll(way.getNodes());
+        Optional<SliceBoundary> boundary = findSliceBoundary(
+            wayNodes, sliceNodes);
+        if (boundary.isPresent()) {
+            return boundary.map(buildWaySlice);
+        }
+        List<Node> reversedSlice = new ArrayList<>(sliceNodes);
+        Collections.reverse(reversedSlice);
+        return findSliceBoundary(wayNodes, reversedSlice)
+                .map(buildWaySlice);
+    }
+
+    /**
+     * Builds a way slice for a way consisting of the sequence of nodes in
+     * sequence, provided there is such a sequence of nodes in the other way.
+     * If not, replies {@link Optional<WaySlice>#empty()}
+     *
+     * @param way  the way. must not be null. At least two nodes required
+     * @param sequence the sequence must not be null. At least two nodes
+     *                 required in the sequence
+     * @return the way slice
+     * @exception NullPointerException if way is null or sequence is null
+     * @exception IllegalArgumentException if way has less than 2 nodes
+     * @exception IllegalArgumentException if sequence has less than 2 nodes
+     */
+    public static Optional<WaySlice> buildWaySlice(
+            @NotNull Way way,
+            @NotNull List<Node> sequence) {
+
+        Validate.isTrue(sequence.size() >= 2);
+        Validate.isTrue(way.getNodesCount() >= 2);
+
+        if (!way.isClosed()) {
+            return buildWaySliceFromOpenWay(way, sequence);
+        } else {
+            return buildWaySliceFromClosedWay(way, sequence);
+        }
+    }
+
+    /**
+     * Replies a way slice in another way with the same node sequence
+     * as this way slice, provided there is such a node sequence in
+     * the other way
+     *
+     * @param other the other way
+     * @return the way slice
+     */
+    public Optional<WaySlice> asSliceIn(@NotNull Way other) {
+        return buildWaySlice(other, getNodes());
+    }
+
+    /**
+     * Given this way slice, finds all other ways which include the same
+     * sequence of nodes as this way slice
+     *
+     * @return a stream of all  the ways slices
+     */
+    public Stream<WaySlice> findAllEquivalentWaySlices() {
+        return getStartNode().getParentWays().stream()
+            .map(candidate -> asSliceIn(candidate))
+            .filter(Optional::isPresent)
+            .map(candidate -> candidate.get());
     }
 
     @Override

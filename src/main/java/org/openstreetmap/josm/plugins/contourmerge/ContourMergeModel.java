@@ -6,12 +6,10 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.*;
 import org.openstreetmap.josm.data.osm.event.*;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.io.audio.AudioPlayer;
 
 import javax.validation.constraints.NotNull;
 import java.awt.*;
@@ -19,6 +17,7 @@ import java.util.*;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -96,8 +95,8 @@ public class ContourMergeModel implements DataSetListener{
     public boolean isSelected(@NotNull Node node) {
         Validate.notNull(node);
         Validate.isTrue(node.getDataSet() == layer.data,
-           "Node must be owned by this contour merge models layer"); // don't
-                                                                  //translate
+            // don't translate
+            "Node must be owned by this contour merge models layer");
         return selectedNodes.contains(node);
     }
 
@@ -110,7 +109,8 @@ public class ContourMergeModel implements DataSetListener{
     public void selectNode(@NotNull Node node) {
         Validate.notNull(node);
         Validate.isTrue(node.getDataSet() == layer.data,
-                "Node must be owned by this contour merge models layer");
+            // don't translate
+            "Node must be owned by this contour merge models layer");
         if (!isSelected(node)) selectedNodes.add(node);
     }
 
@@ -123,8 +123,8 @@ public class ContourMergeModel implements DataSetListener{
     public void deselectNode(@NotNull Node node) {
         Validate.notNull(node);
         Validate.isTrue(node.getDataSet() == layer.data,
-                //don't translate
-                "Node must be owned by this contour merge models layer");
+            //don't translate
+           "Node must be owned by this contour merge models layer");
         selectedNodes.remove(node);
     }
 
@@ -137,8 +137,8 @@ public class ContourMergeModel implements DataSetListener{
     public void toggleSelected(Node node) {
         Validate.notNull(node);
         Validate.isTrue(node.getDataSet() == layer.data,
-                // don't translate
-                "Node must be owned by this contour merge models layer");
+            // don't translate
+           "Node must be owned by this contour merge models layer");
         if (isSelected(node)) {
             deselectNode(node);
         } else {
@@ -264,7 +264,7 @@ public class ContourMergeModel implements DataSetListener{
         Way way = referenceSegment.way;
         if (way == null || way.getNodesCount() == 0) {
             // shouldn't happen, but consistency of a dataset is sometimes
-            // violated, after undo/redo/merge/etc. operations
+            // violated after undo/redo/merge/etc. operations.
             // This is a workaround for potential defects similar to
             // https://github.com/Gubaer/josm-contourmerge-plugin/issues/4
             return null;
@@ -401,6 +401,50 @@ public class ContourMergeModel implements DataSetListener{
         return dragOffset != null;
     }
 
+
+    protected Stream<Command> buildSourceChangeCommands(
+            final List<WaySlice> sources,
+            final WaySlice target) {
+
+        final List<Node> targetNodes = target.getNodes();
+        final List<Node> targetNodesReversed = new ArrayList<>(targetNodes);
+        Collections.reverse(targetNodesReversed);
+
+        return sources.stream().map(source -> {
+            final Way modifiedSourceWay;
+            if (areDirectionAligned(source, target)) {
+                modifiedSourceWay = source.replaceNodes(targetNodes);
+            } else {
+                modifiedSourceWay = source.replaceNodes(targetNodesReversed);
+            }
+            return new ChangeCommand(source.getWay(), modifiedSourceWay);
+        });
+    }
+
+    protected Stream<Command> buildNodeDeleteCommands(
+            final List<WaySlice> sources) {
+        Validate.isTrue(!sources.isEmpty(),
+                // don't translate
+                "sources must not be empty");
+        final WaySlice first = sources.get(0);
+        final Set<Way> ways = sources.stream().map(slice -> slice.getWay())
+                .collect(Collectors.toSet());
+
+        return first.getNodes().stream()
+            .map(n -> {
+                final boolean hasNoParents = n.getReferrers().stream()
+                    .filter(p ->! ways.contains(p))
+                    .count() == 0;
+
+                if (hasNoParents && !n.isTagged()) {
+                    return Optional.of(new DeleteCommand(n));
+                }
+                return Optional.<DeleteCommand>empty();
+                })
+            .filter(Optional::isPresent)
+            .map(o -> o.get());
+    }
+
     /**
      * <p>Builds the command to align the two contours. Replies null, if the
      * command can't be created, i.e. because there is no defined drag source
@@ -409,40 +453,32 @@ public class ContourMergeModel implements DataSetListener{
      * @return the contour align command
      */
     public Command buildContourAlignCommand() {
-        WaySlice dragSource = getDragSource();
-        WaySlice dropTarget = getDropTarget();
-        if (dragSource == null) return null;
-        if (dropTarget == null) return null;
-        List<Node> targetNodes = dropTarget.getNodes();
-        if (! areDirectionAligned(dragSource, dropTarget)) {
-            Collections.reverse(targetNodes);
-        }
-        List<Command> cmds = new ArrayList<>();
-        // the command to change the source way
-        cmds.add(new ChangeCommand(dragSource.getWay(),
-                dragSource.replaceNodes(targetNodes)));
+        final WaySlice dragSource = getDragSource();
+        final WaySlice dropTarget = getDropTarget();
+        if (dragSource == null || dropTarget == null) return null;
 
-        // the commands to delete nodes we don't need anymore
-        for (Node n: dragSource.getNodes()) {
-            List<OsmPrimitive> parents = n.getReferrers();
-            parents.remove(dragSource.getWay());
-            if (parents.isEmpty() && !n.isTagged()) {
-                cmds.add(new DeleteCommand(n));
-            }
-        }
+        final List<WaySlice> waySlices =
+                dragSource.findAllEquivalentWaySlices()
+                .collect(Collectors.toList());
 
-        SequenceCommand cmd = new SequenceCommand(tr("Merging Contour"), cmds);
-        return cmd;
+        List<Command> cmds = Stream.concat(
+            buildSourceChangeCommands(waySlices, dropTarget),
+            buildNodeDeleteCommands(waySlices)
+        ).collect(Collectors.toList());
+
+        return new SequenceCommand(tr("Merging Contour"), cmds);
     }
 
     protected boolean haveSameStartAndEndNode(List<Node> n1, List<Node> n2) {
-        return n1.get(0) == n2.get(0)
-                && n1.get(n1.size()-1) == n2.get(n2.size()-1);
+        return
+            n1.get(0) == n2.get(0)
+         && n1.get(n1.size()-1) == n2.get(n2.size()-1);
     }
 
     protected boolean haveReversedStartAndEndeNode(List<Node> n1, List<Node> n2) {
-        return n1.get(0) == n2.get(n2.size()-1)
-                && n1.get(n1.size()-1) == n2.get(0);
+        return
+            n1.get(0) == n2.get(n2.size()-1)
+         && n1.get(n1.size()-1) == n2.get(0);
     }
 
     /**
@@ -470,11 +506,11 @@ public class ContourMergeModel implements DataSetListener{
          * to be moved.
          *
          */
-        EastNorth s1 = n1.get(0).getEastNorth();
-        EastNorth s2 = n1.get(n1.size()-1).getEastNorth();
+        final EastNorth s1 = n1.get(0).getEastNorth();
+        final EastNorth s2 = n1.get(n1.size()-1).getEastNorth();
 
-        EastNorth t1 = n2.get(0).getEastNorth();
-        EastNorth t2 = n2.get(n2.size()-1).getEastNorth();
+        final EastNorth t1 = n2.get(0).getEastNorth();
+        final EastNorth t2 = n2.get(n2.size()-1).getEastNorth();
 
         double d1 = Math.abs(s1.distance(t1)) + Math.abs(s2.distance(t2));
         double d2 = Math.abs(s1.distance(t2)) + Math.abs(s2.distance(t1));
@@ -540,8 +576,7 @@ public class ContourMergeModel implements DataSetListener{
     {/* ignore */}
     @Override
     public void otherDatasetChange(AbstractDatasetChangedEvent event)
-    {/*ignore */}
-    public void primtivesAdded(PrimitivesAddedEvent event) {/* ignore */}
+    {/* ignore */}
     @Override
     public void tagsChanged(TagsChangedEvent event) { /* ignore */}
     @Override
