@@ -25,6 +25,22 @@ import static org.openstreetmap.josm.tools.I18n.tr;
  * specific edit layer, if the <tt>contourmerge</tt> map mode is enabled.</p>
  */
 public class ContourMergeModel implements DataSetListener{
+    public static <T extends OsmPrimitive> List<T> getFilteredList(
+            Collection<OsmPrimitive> list, Class<T> type) {
+        return (list != null ? list.stream() : Stream.empty())
+                .filter(type::isInstance)
+                .map(type::cast)
+                .collect(Collectors.toList());
+    }
+
+    public static <T extends OsmPrimitive> Set<T> getFilteredSet(
+            Collection<OsmPrimitive> set, Class<T> type) {
+        return (set != null ? set.stream() : Stream.empty())
+                .filter(type::isInstance)
+                .map(type::cast)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
 
     @SuppressWarnings("unused")
     static private final Logger logger =
@@ -200,7 +216,7 @@ public class ContourMergeModel implements DataSetListener{
      */
     protected Set<Way> computeSelectedWays(){
         return selectedNodes.stream()
-            .flatMap(n -> OsmPrimitive.getFilteredList(
+            .flatMap(n -> getFilteredList(
                 n.getReferrers(),Way.class
             ).stream())
             .collect(Collectors.toSet());
@@ -214,7 +230,7 @@ public class ContourMergeModel implements DataSetListener{
      */
     protected Set<Node> computeSelectedNodesOnWay(Way way){
         return selectedNodes.stream()
-            .filter(n -> OsmPrimitive.getFilteredSet(n.getReferrers(),
+            .filter(n -> getFilteredSet(n.getReferrers(),
                     Way.class).contains(way)
              )
             .collect(Collectors.toSet());
@@ -539,7 +555,7 @@ public class ContourMergeModel implements DataSetListener{
             Node n = it.next();
             if (!layer.data.getNodes().contains(n)) {
                 it.remove();
-            } else if (OsmPrimitive.getFilteredSet(n.getReferrers(),
+            } else if (getFilteredSet(n.getReferrers(),
                     Way.class).isEmpty()) {
                 it.remove();
             } else if (n.isDeleted()) {

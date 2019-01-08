@@ -135,7 +135,7 @@ public class ContourMergeMode extends MapMode {
             List<Node> candidates = getMapView().getNearestNodes(e.getPoint(),
                     OsmPrimitive::isSelectable);
             if (!candidates.isEmpty()){
-                if (!OsmPrimitive.getFilteredList(
+                if (!ContourMergeModel.getFilteredList(
                         candidates.get(0).getReferrers(),
                         Way.class).isEmpty()) {
                     /*
@@ -181,7 +181,7 @@ public class ContourMergeMode extends MapMode {
                     getMapView().setCursor(ImageProvider.getCursor("normal",
                             "contourmerge_deselect_node"));
                 } else {
-                    if (OsmPrimitive.getFilteredList(
+                    if (ContourMergeModel.getFilteredList(
                             candidates.get(0).getReferrers(),
                             Way.class).isEmpty()) {
                         showHelpText(tr("Can''t select an isolated node"));
@@ -189,7 +189,7 @@ public class ContourMergeMode extends MapMode {
                     } else {
                         showHelpText(tr("Left-Click: select node"));
                         getMapView().setCursor(ImageProvider.getCursor("normal",
-                                "contourmerge_select_node"));
+                            "contourmerge_select_node"));
                     }
                 }
                 model.setFeedbackNode(candidates.get(0));
