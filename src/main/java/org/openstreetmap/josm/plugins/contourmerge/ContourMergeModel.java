@@ -9,7 +9,6 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.*;
 import org.openstreetmap.josm.data.osm.event.*;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.io.audio.AudioPlayer;
 
 import javax.validation.constraints.NotNull;
 import java.awt.*;
