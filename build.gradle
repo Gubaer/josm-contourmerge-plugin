@@ -30,7 +30,7 @@ josm {
     josmCompileVersion = "latest"
     manifest {
         includeLinksToGithubReleases = true
-        minJosmVersion = 14153
+        minJosmVersion = 14654
     }
 }
 
