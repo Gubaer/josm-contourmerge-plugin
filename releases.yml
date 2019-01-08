@@ -1,4 +1,8 @@
 releases:
+  - label: v0.1.4
+    numeric_josm_version: 14654
+    description: "fix deprecated static methods in OsmPrimitive"
+
   - label: v0.1.3
     numeric_josm_version: 14153
     description: "fixes #17 - Anomalies when merging boundaries around complex geometries"
