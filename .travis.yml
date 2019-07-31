@@ -1,3 +1,7 @@
+# should fix "Expected feature release number in range of 9 to 14, but got: 8"
+# in the travis build
+dist: trusty
+
 language: java
 jdk:
   - oraclejdk8
