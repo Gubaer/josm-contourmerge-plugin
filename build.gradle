@@ -1,6 +1,6 @@
 plugins {
     // uses a local development fork of the gradle josm plugin
-    id 'org.openstreetmap.josm' version '0.5.0-80-g834a3b2-dirty'
+    id 'org.openstreetmap.josm' version '0.5.3-1-g798aeac-dirty'
     id 'java'
     id 'groovy'
     id 'eclipse'
@@ -31,6 +31,11 @@ josm {
     manifest {
         includeLinksToGithubReleases = true
         minJosmVersion = 14654
+    }
+
+    github {
+        repositoryName = "josm-contourmerge-plugin"
+        repositoryOwner = "gubaer"
     }
 }
 
