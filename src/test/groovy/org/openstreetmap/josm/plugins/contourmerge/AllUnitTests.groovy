@@ -5,6 +5,8 @@ import org.junit.runners.Suite
 @RunWith(Suite.class)
 @Suite.SuiteClasses([
     ContourMergeModelTest.class,
-    WaySliceTest.class
+    WaySliceTest.class,
+    DataIntegrityProblemTest01.class,
+    DataIntegrityProblemTest02.class
 ])
 class AllUnitTests {}

@@ -17,7 +17,6 @@ dependencies {
     packIntoJar "org.apache.commons:commons-lang3:3.7"
 
     implementation "javax.validation:validation-api:2.0.1.Final"
-
     testImplementation "junit:junit:4.+"
     testImplementation "org.codehaus.groovy:groovy-all:2.4.13"
     testImplementation "org.hamcrest:hamcrest-library:1.3"

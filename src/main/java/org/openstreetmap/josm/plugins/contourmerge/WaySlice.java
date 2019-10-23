@@ -1,16 +1,14 @@
 package org.openstreetmap.josm.plugins.contourmerge;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
-import javax.validation.constraints.NotNull;
-
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.Validate;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 
-import lombok.EqualsAndHashCode;
+import javax.validation.constraints.NotNull;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * <p>A <strong>WaySlice</strong> is a sub sequence of a ways sequence of
@@ -273,38 +271,73 @@ public class WaySlice {
      * @param newNodes the new nodes. Ignored if null.
      * @return the cloned way with the new nodes
      */
-    public Way replaceNodes(final List<Node> newNodes) {
-        final Way nw = new Way(w);
-        if (newNodes == null || newNodes.isEmpty()) return nw;
+     public Way replaceNodes(final List<Node> newNodes) {
+        final Way newWay = new Way(w);
+        final List<Node> updatedNodeList = new ArrayList<>();
 
         if (!w.isClosed()) {
-            List<Node> oldNodes = new ArrayList<>(w.getNodes());
-            oldNodes.subList(start, end+1).clear();
-            oldNodes.addAll(start, newNodes);
-            nw.setNodes(oldNodes);
+            updatedNodeList.addAll(w.getNodes());
+            updatedNodeList.subList(start, end + 1).clear();
+            updatedNodeList.addAll(start, newNodes);
+            newWay.setNodes(updatedNodeList);
         } else {
-            final List<Node> updatedNodeList = new ArrayList<>(w.getNodes());
+            // this is a slice of a closed way
+            updatedNodeList.addAll(w.getNodes());
             if (inDirection) {
+                // because the slice is 'in direction' either of the start
+                // or the end node, neither of them, but not both, are
+                // included in the slice.
+                // first, we normalize the current situation
                 if (start == 0) {
-                    updatedNodeList.remove(updatedNodeList.size()-1);
+                    // jn -- n ........   n -- n -- ...-- jn
+                    // <---- slice     -->
+                    // <-- cut&replace -->               cut
+                    //
+                    // (jn - shared join node; n - arbitrary node)
+
+                    // cut ...
+                    updatedNodeList.subList(0, end+1).clear();
+                    updatedNodeList.remove(updatedNodeList.size() - 1);
+                    // ... and replace
+                    updatedNodeList.addAll(0, newNodes);
+                } else if (end == w.getNodesCount() - 1) {
+                    // jn -- n ....    n -- .......   -- jn
+                    //                 <---- slice      -->
+                    // cut             <-- cut&replace  -->
+                    //
+                    // (jn - shared join node; n - arbitrary node)
+
+                    // cut ...
+                    updatedNodeList.subList(start, end + 1).clear();
+                    updatedNodeList.remove(0);
+                    // ... and replace
+                    updatedNodeList.addAll(newNodes);
+                } else {
+                    // jn -- n -- n    ....          n -- -- jn
+                    //            <----    slice   -->
+                    // keep       <-- cut&replace  -->     keep
+                    //
+                    // (jn - shared join node; n - arbitrary node)
+
+                    // cut ...
+                    updatedNodeList.subList(start, end + 1).clear();
+                    // ... and replace
+                    updatedNodeList.addAll(start, newNodes);
                 }
-                updatedNodeList.subList(start,end+1).clear();
-                updatedNodeList.addAll(start, newNodes);
-                if (start == 0) {
-                    updatedNodeList.add(newNodes.get(0));
-                }
-                nw.setNodes(updatedNodeList);
+                // make sure the way is closed
+                updatedNodeList.add(updatedNodeList.get(0));
+                newWay.setNodes(updatedNodeList);
             } else {
                 int upper = updatedNodeList.size()-1;
-                updatedNodeList.subList(end, upper+1).clear();
-                updatedNodeList.subList(0,start+1).clear();
+                updatedNodeList.subList(end, upper + 1).clear();
+                updatedNodeList.subList(0,start + 1).clear();
                 updatedNodeList.addAll(0, newNodes);
                 // make sure the new way is closed
                 updatedNodeList.add(newNodes.get(0));
-                nw.setNodes(updatedNodeList);
+                newWay.setNodes(updatedNodeList);
             }
         }
-        return nw;
+        return newWay;
     }
 
     /**

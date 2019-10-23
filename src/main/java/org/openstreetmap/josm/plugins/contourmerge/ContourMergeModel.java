@@ -11,6 +11,7 @@ import org.openstreetmap.josm.data.osm.event.*;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -459,16 +460,14 @@ public class ContourMergeModel implements DataSetListener{
         //   of a merge operation
 
         final WaySlice first = sources.get(0);
-        final Set<Way> ways = sources.stream().map(slice -> slice.getWay())
+        final Set<Way> ways = sources.stream().map(WaySlice::getWay)
                 .collect(Collectors.toSet());
-
         return first.getNodes().stream()
             .map(n -> {
                 // true, if the node n is only referenced by source ways
                 // in the merge operation
                 final boolean hasNoParents = n.getReferrers().stream()
-                    .filter(p -> !ways.contains(p))
-                    .count() == 0;
+                    .allMatch(ways::contains);
 
                 if (hasNoParents && !n.isTagged()) {
                     return Optional.of(new DeleteCommand(n));
@@ -476,7 +475,7 @@ public class ContourMergeModel implements DataSetListener{
                 return Optional.<DeleteCommand>empty();
              })
             .filter(Optional::isPresent)
-            .map(o -> o.get());
+            .map(Optional::get);
     }
 
     /**
@@ -489,15 +488,21 @@ public class ContourMergeModel implements DataSetListener{
     public Command buildContourAlignCommand() {
         final WaySlice dragSource = getDragSource();
         final WaySlice dropTarget = getDropTarget();
+        return buildContourAlignCommand(dragSource, dropTarget);
+    }
+
+    public @Null Command buildContourAlignCommand(
+            @Null final WaySlice dragSource,
+            @Null final WaySlice dropTarget) {
         if (dragSource == null || dropTarget == null) return null;
 
         final List<WaySlice> waySlices =
                 dragSource.findAllEquivalentWaySlices()
-                .collect(Collectors.toList());
+                        .collect(Collectors.toList());
 
-        List<Command> cmds = Stream.concat(
-            buildSourceChangeCommands(waySlices, dropTarget),
-            buildNodeDeleteCommands(waySlices)
+        final List<Command> cmds = Stream.concat(
+                buildSourceChangeCommands(waySlices, dropTarget),
+                buildNodeDeleteCommands(waySlices)
         ).collect(Collectors.toList());
 
         return new SequenceCommand(tr("Merging Contour"), cmds);

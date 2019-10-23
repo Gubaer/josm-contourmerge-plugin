@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='-104022' action='modify' visible='true' lat='0.01280099269' lon='-0.01320523468' />
+  <node id='-104023' action='modify' visible='true' lat='0.01298065574' lon='-0.02596131171' />
+  <node id='-104025' action='modify' visible='true' lat='0.00094323105' lon='-0.02605114324' />
+  <node id='-104027' action='modify' visible='true' lat='0.00094323105' lon='-0.01383405538' />
+  <node id='-104030' action='modify' visible='true' lat='-0.0229519549' lon='-0.01419338149' />
+  <node id='-104031' action='modify' visible='true' lat='-0.01100436216' lon='-0.0139238869' />
+  <node id='-104035' action='modify' visible='true' lat='0.02250279729' lon='-0.01275607703' />
+  <node id='-104037' action='modify' visible='true' lat='0.03507920965' lon='-0.01239675092' />
+  <node id='-104039' action='modify' visible='true' lat='-0.0234011125' lon='0.00143730445' />
+  <node id='-104040' action='modify' visible='true' lat='-0.01163318285' lon='0.0018864621' />
+  <node id='-104042' action='modify' visible='true' lat='0.00031441035' lon='0.0018864621' />
+  <node id='-104044' action='modify' visible='true' lat='0.01253149811' lon='0.00170679904' />
+  <node id='-104046' action='modify' visible='true' lat='0.0234011125' lon='0.0012576414' />
+  <node id='-104048' action='modify' visible='true' lat='0.03471988361' lon='0.00134747293' />
+  <way id='-104024' action='modify' visible='true'>
+    <nd ref='-104022' />
+    <nd ref='-104023' />
+    <nd ref='-104025' />
+    <nd ref='-104027' />
+    <nd ref='-104022' />
+  </way>
+  <way id='-104032' action='modify' visible='true'>
+    <nd ref='-104030' />
+    <nd ref='-104031' />
+    <nd ref='-104027' />
+    <nd ref='-104022' />
+    <nd ref='-104035' />
+    <nd ref='-104037' />
+  </way>
+  <way id='-104041' action='modify' visible='true'>
+    <nd ref='-104039' />
+    <nd ref='-104040' />
+    <nd ref='-104042' />
+    <nd ref='-104044' />
+    <nd ref='-104046' />
+    <nd ref='-104048' />
+  </way>
+</osm>
