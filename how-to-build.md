@@ -13,7 +13,7 @@
         # mandatory: choose a new release label
       - label: v0.0.20
         # mandatory: the lowest josm version this plugin release is compatible with
-        numeric_josm_version: 12345
+        minJosmVersion: 12345
         # optional: a release description. You may refer to github issues.
         description: fixes issue #14
 ```
