@@ -15,7 +15,6 @@ import lombok.EqualsAndHashCode;
 /**
  * <p>A <strong>WaySlice</strong> is a sub sequence of a ways sequence of
  * nodes.</p>
- *
  */
 @EqualsAndHashCode(doNotUseGetters = false)
 public class WaySlice {
@@ -26,7 +25,7 @@ public class WaySlice {
     private final int end;
     //NOTE: if 'inDirection==true' this slice doesn't wrap around the end of
     // a closed way; if 'inDirection==false', it does wrap around. Even in
-    // the second case start is the lower indices start and end, but in this
+    // the second case start is the lower index, but in this
     // case the slice consists of the nodes
     //      start, start-1,...,0,len-1,len-2,...,end
     private boolean inDirection = true;
@@ -216,16 +215,20 @@ public class WaySlice {
      * @return
      */
     public int getEndTearOffIdx() {
-        if (! w.isClosed()) {      // an open way
+        if (! w.isClosed()) {     // an open way
             return end < w.getNodesCount()-1 ? end + 1 : -1;
         } else {                  // a closed way
             if (inDirection) {
                 int upper = end + 1;
-                if (upper >= w.getNodesCount()-1) upper = 0;
+                if (upper >= w.getNodesCount()-1) {
+                    upper = 0;
+                }
                 return upper == start ? -1 : upper;
             } else {
                 int upper = start + 1;
-                if (upper >= w.getNodesCount()-1) upper = 0;
+                if (upper >= w.getNodesCount()-1) {
+                    upper = 0;
+                }
                 return upper == end ? -1 : upper;
             }
         }
@@ -270,8 +273,8 @@ public class WaySlice {
      * @param newNodes the new nodes. Ignored if null.
      * @return the cloned way with the new nodes
      */
-    public Way replaceNodes(List<Node> newNodes) {
-        Way nw = new Way(w);
+    public Way replaceNodes(final List<Node> newNodes) {
+        final Way nw = new Way(w);
         if (newNodes == null || newNodes.isEmpty()) return nw;
 
         if (!w.isClosed()) {
@@ -280,21 +283,25 @@ public class WaySlice {
             oldNodes.addAll(start, newNodes);
             nw.setNodes(oldNodes);
         } else {
-            List<Node> oldNodes = new ArrayList<>(w.getNodes());
+            final List<Node> updatedNodeList = new ArrayList<>(w.getNodes());
             if (inDirection) {
-                if (start == 0)oldNodes.remove(oldNodes.size()-1);
-                oldNodes.subList(start,end+1).clear();
-                oldNodes.addAll(start, newNodes);
-                if (start == 0) oldNodes.add(newNodes.get(0));
-                nw.setNodes(oldNodes);
+                if (start == 0) {
+                    updatedNodeList.remove(updatedNodeList.size()-1);
+                }
+                updatedNodeList.subList(start,end+1).clear();
+                updatedNodeList.addAll(start, newNodes);
+                if (start == 0) {
+                    updatedNodeList.add(newNodes.get(0));
+                }
+                nw.setNodes(updatedNodeList);
             } else {
-                int upper = oldNodes.size()-1;
-                oldNodes.subList(end, upper+1).clear();
-                oldNodes.subList(0,start+1).clear();
-                oldNodes.addAll(0, newNodes);
-                // make sure the new way is closed again
-                oldNodes.add(newNodes.get(0));
-                nw.setNodes(oldNodes);
+                int upper = updatedNodeList.size()-1;
+                updatedNodeList.subList(end, upper+1).clear();
+                updatedNodeList.subList(0,start+1).clear();
+                updatedNodeList.addAll(0, newNodes);
+                // make sure the new way is closed
+                updatedNodeList.add(newNodes.get(0));
+                nw.setNodes(updatedNodeList);
             }
         }
         return nw;

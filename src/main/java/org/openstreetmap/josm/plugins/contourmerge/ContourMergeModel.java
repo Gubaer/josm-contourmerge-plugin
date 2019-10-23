@@ -421,6 +421,12 @@ public class ContourMergeModel implements DataSetListener{
             final List<WaySlice> sources,
             final WaySlice target) {
 
+        // The sources are merged to the target. As a consequence, a sequence
+        // of nodes in each source is replaced by the same sequence of nodes
+        // from the target.
+        // The target itself remains unchanged. We have to build a change
+        // command for each affected source way.
+
         final List<Node> targetNodes = target.getNodes();
         final List<Node> targetNodesReversed = new ArrayList<>(targetNodes);
         Collections.reverse(targetNodesReversed);
@@ -441,21 +447,34 @@ public class ContourMergeModel implements DataSetListener{
         Validate.isTrue(!sources.isEmpty(),
                 // don't translate
                 "sources must not be empty");
+
+        // All source ways have the sequence of nodes in common
+        // which are replaced by a sequence of the target nodes.
+
+        // In general, all these nodes can and should be deleted
+        // after the merge operation, except
+        // * if a node is also shared by another way which does not
+        //   participate as source in the merge operation
+        // * if a node is tagged. We don't want to lose the tags because
+        //   of a merge operation
+
         final WaySlice first = sources.get(0);
         final Set<Way> ways = sources.stream().map(slice -> slice.getWay())
                 .collect(Collectors.toSet());
 
         return first.getNodes().stream()
             .map(n -> {
+                // true, if the node n is only referenced by source ways
+                // in the merge operation
                 final boolean hasNoParents = n.getReferrers().stream()
-                    .filter(p ->! ways.contains(p))
+                    .filter(p -> !ways.contains(p))
                     .count() == 0;
 
                 if (hasNoParents && !n.isTagged()) {
                     return Optional.of(new DeleteCommand(n));
                 }
                 return Optional.<DeleteCommand>empty();
-                })
+             })
             .filter(Optional::isPresent)
             .map(o -> o.get());
     }
