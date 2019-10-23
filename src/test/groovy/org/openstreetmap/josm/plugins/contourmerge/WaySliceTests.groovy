@@ -9,7 +9,6 @@ import org.junit.experimental.runners.Enclosed
 import org.junit.runner.RunWith
 import org.openstreetmap.josm.data.osm.DataSet
 import org.openstreetmap.josm.data.osm.Node
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType
 import org.openstreetmap.josm.data.osm.Way
 import org.openstreetmap.josm.plugins.contourmerge.fixtures.JOSMFixture
 
