@@ -1,9 +1,19 @@
 package org.openstreetmap.josm.plugins.contourmerge;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import org.openstreetmap.josm.actions.mapmode.MapMode;
+import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.osm.*;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Shortcut;
 
-import java.awt.Cursor;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.dnd.DragSource;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -13,24 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import org.openstreetmap.josm.data.UndoRedoHandler;
-import org.openstreetmap.josm.actions.mapmode.MapMode;
-import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.BBox;
-import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Shortcut;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * <p>ContourMergeMode is the {@link MapMode} for merging the contours of
