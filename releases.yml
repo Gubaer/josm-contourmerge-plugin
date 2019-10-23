@@ -1,4 +1,8 @@
 releases:
+  - label: v0.1.5
+    minJosmVersion: 14654
+    description: "fix #20: DataIntegrityProblemException: Deleted node referenced"
+
   - label: v0.1.4
     minJosmVersion: 14654
     description: "fix deprecated static methods in OsmPrimitive"
