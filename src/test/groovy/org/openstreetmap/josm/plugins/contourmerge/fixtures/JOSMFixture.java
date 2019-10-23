@@ -1,14 +1,5 @@
 package org.openstreetmap.josm.plugins.contourmerge.fixtures;
 
-import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.text.MessageFormat;
-import java.util.Locale;
-import java.util.logging.Logger;
-
 import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.Preferences;
@@ -17,8 +8,6 @@ import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -27,7 +16,16 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.date.DateUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.text.MessageFormat;
+import java.util.Locale;
 import java.util.TimeZone;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.fail;
 
 //TODO: updated with code in josm/test/unit/org/openstreetmap/josm/JOSMFixture.java
 // should be replaced by josm/test/unit/org/openstreetmap/josm/JOSMFixture.java
