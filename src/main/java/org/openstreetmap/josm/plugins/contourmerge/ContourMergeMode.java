@@ -73,7 +73,7 @@ public class ContourMergeMode extends MapMode {
         getActiveModel().ifPresent(model -> {
             model.reset();
             /*
-             * Remind the current selection and clear it; otherwise the
+             * Remember the current selection and clear it; otherwise the
              * rendered selection might interfere with our understanding of
              * "selected" nodes and way slices in this map mode.
              */

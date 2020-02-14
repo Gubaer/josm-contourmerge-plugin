@@ -14,7 +14,7 @@ import java.util.stream.Stream;
  * <p>A <strong>WaySlice</strong> is a sub sequence of a ways sequence of
  * nodes.</p>
  */
-@EqualsAndHashCode(doNotUseGetters = false)
+@EqualsAndHashCode()
 public class WaySlice {
     //static private final Logger logger = Logger.getLogger(WaySlice.class.getName());
 
@@ -118,7 +118,7 @@ public class WaySlice {
      * Replies true, if this way slice has the same direction as the
      * parent way. Replies false, if it has the opposite direction.
      *
-     * @return
+     * @return true, if way slice has the same direction as the parent way
      */
     public boolean isInDirection() {
         return inDirection;
@@ -133,8 +133,8 @@ public class WaySlice {
     }
 
     /**
-     * <p>Replies the lower node idx of the node from which this way slice is
-     * torn off.</p>
+     * Replies the lower node idx of the node from which this way slice is
+     * torn off.
      *
      *
      * <strong>Example</strong>
@@ -146,7 +146,7 @@ public class WaySlice {
      *     ==> the method replies 0
      * </pre>
      *
-     * <p>Replies -1, if there is no such index.</p>
+     * Replies -1, if there is no such index.
      *
      * <strong>Example</strong>
      * <pre>
@@ -157,7 +157,7 @@ public class WaySlice {
      *     ==> the method replies -1
      * </pre>
      *
-     * @return
+     * @return the start tear-off index
      */
     public int getStartTearOffIdx() {
         if (! w.isClosed()) {  // an open way
@@ -176,10 +176,10 @@ public class WaySlice {
     }
 
     /**
-     * <p>Replies the lower node from which this way slice is torn off, see
-     * {@link #getStartTearOffIdx()} for more details.</p>
-
-     * @return
+     * Replies the lower node from which this way slice is torn off, see
+     * {@link #getStartTearOffIdx()} for more details.
+     *
+     * @return the start tear-off node
      */
     public Node getStartTearOffNode() {
         int i = getStartTearOffIdx();
@@ -187,8 +187,8 @@ public class WaySlice {
     }
 
     /**
-     * <p>Replies the upper node idx of the node from which this way slice is
-     * torn off.</p>
+     * Replies the upper node idx of the node from which this way slice is
+     * torn off.
      *
      * <strong>Example</strong>
      * <pre>
@@ -200,7 +200,8 @@ public class WaySlice {
      *     ==> the method replies 4
      * </pre>
      *
-     * <p>Replies -1, if there is no such index.</p>
+     * Replies -1, if there is no such index.
+     *
      * <strong>Example</strong>
      * <pre>
      *     n0 ------------- n1 ---------- n2 --------- n3 -------------- n4
@@ -210,7 +211,7 @@ public class WaySlice {
      *     ==> the method replies -1
      * </pre>
      *
-     * @return
+     * @return the end tear-off index
      */
     public int getEndTearOffIdx() {
         if (! w.isClosed()) {     // an open way
@@ -233,10 +234,10 @@ public class WaySlice {
     }
 
     /**
-     * <p>Replies the upper node from which this way slice is torn off, see
-     * {@link #getEndTearOffIdx()} for more details.</p>
+     * Replies the end node from which this way slice is torn off, see
+     * {@link #getEndTearOffIdx()} for more details.
 
-     * @return
+     * @return the end tear-off node
      */
     public Node getEndTearOffNode() {
         int i = getEndTearOffIdx();
@@ -254,10 +255,10 @@ public class WaySlice {
     }
 
     /**
-     * <p>Replies the opposite way slice, or null, if this way slice doesn't have
-     * an opposite way slice, because it is a way slice in an open way.</p>
+     * Replies the opposite way slice, or null, if this way slice doesn't have
+     * an opposite way slice, because it is a way slice in an open way.
      *
-     * @return the oposite way slice
+     * @return the opposite way slice
      */
     public WaySlice getOpositeSlice(){
         if (!w.isClosed()) return null;
@@ -265,8 +266,8 @@ public class WaySlice {
     }
 
     /**
-     * <p>Replies a clone of the underlying way, where the nodes given by
-     * this way slice are replaced with the nodes in {@code newNodes}.</code>
+     * Replies a clone of the underlying way, where the nodes given by
+     * this way slice are replaced with the nodes in {@code newNodes}.
      *
      * @param newNodes the new nodes. Ignored if null.
      * @return the cloned way with the new nodes
@@ -341,8 +342,8 @@ public class WaySlice {
     }
 
     /**
-     * <p>Replies the list of nodes, always starting at the start index,
-     * following the nodes in the appropriate direction to the end index.</p>
+     * Replies the list of nodes, always starting at the start index,
+     * following the nodes in the appropriate direction to the end index.
      *
      * @return the list of nodes
      */
@@ -390,6 +391,7 @@ public class WaySlice {
      *
      * @return true if this way slice participates in at least one sling.
      */
+    @SuppressWarnings("unused")
     protected boolean hasSlings() {
         Set<Node> nodeSet = new HashSet<>();
         if (w.isClosed()){
@@ -446,12 +448,10 @@ public class WaySlice {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("<slice-boundary ")
-                .append(", start=").append(start)
-                .append(", end=").append(end)
-                .append(">");
-            return sb.toString();
+            return "<slice-boundary " +
+                ", start=" + start +
+                ", end=" + end +
+                ">";
         }
     }
 
@@ -586,19 +586,17 @@ public class WaySlice {
      */
     public Stream<WaySlice> findAllEquivalentWaySlices() {
         return getStartNode().getParentWays().stream()
-            .map(candidate -> asSliceIn(candidate))
+            .map(this::asSliceIn)
             .filter(Optional::isPresent)
-            .map(candidate -> candidate.get());
+            .map(Optional::get);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<way-slice ").append("way=").append(w.getPrimitiveId())
-            .append(", start=").append(start)
-            .append(", end=").append(end)
-            .append(", isInDirection=").append(isInDirection())
-            .append(">");
-        return sb.toString();
+        return "<way-slice " + "way=" + w.getPrimitiveId() +
+            ", start=" + start +
+            ", end=" + end +
+            ", isInDirection=" + isInDirection() +
+            ">";
     }
 }
