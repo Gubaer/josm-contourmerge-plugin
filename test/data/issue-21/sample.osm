@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  <head>
+    <title>
+      sample.osm on Ticket #18365 – Attachment
+     – JOSM
+    </title>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!--[if IE]><script type="text/javascript">
+      if (/^#__msie303:/.test(window.location.hash))
+        window.location.replace(window.location.hash.replace(/^#__msie303:/, '#'));
+    </script><![endif]-->
+          <link rel="search" href="/search" />
+          <link rel="help" href="/wiki/TracGuide" />
+          <link rel="alternate" href="/raw-attachment/ticket/18365/sample.osm" type="text/xml; charset=utf-8" title="Original Format" />
+          <link rel="up" href="/ticket/18365" title="Ticket #18365" />
+          <link rel="start" href="/wiki" />
+          <link rel="stylesheet" href="/chrome/common/css/trac.css" type="text/css" />
+          <link rel="stylesheet" href="/pygments/trac.css" type="text/css" />
+          <link rel="stylesheet" href="/chrome/common/css/code.css" type="text/css" />
+          <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <style id="trac-noscript" type="text/css">.trac-noscript { display: none !important }</style>
+      <link type="application/opensearchdescription+xml" rel="search" href="/search/opensearch" title="Search JOSM" />
+      <script type="text/javascript" charset="utf-8" src="/chrome/common/js/jquery.js"></script>
+      <script type="text/javascript" charset="utf-8" src="/chrome/common/js/babel.js"></script>
+      <script type="text/javascript" charset="utf-8" src="/chrome/common/js/trac.js"></script>
+      <script type="text/javascript" charset="utf-8" src="/chrome/common/js/search.js"></script>
+    <script type="text/javascript">
+      jQuery("#trac-noscript").remove();
+      jQuery(document).ready(function($) {
+        $(".trac-autofocus").focus();
+        $(".trac-target-new").attr("target", "_blank");
+        if ($.ui) { /* is jquery-ui added? */
+          $(".trac-datepicker:not([readonly])").prop("autocomplete", "off").datepicker();
+          $(".trac-datetimepicker:not([readonly])").prop("autocomplete", "off").datetimepicker();
+          $("#main").addClass("trac-nodatetimehint");
+        }
+        $(".trac-disable").disableSubmit(".trac-disable-determinant");
+        setTimeout(function() { $(".trac-scroll").scrollToTop() }, 1);
+        $(".trac-disable-on-submit").disableOnSubmit();
+      });
+    </script>
+      <script type="text/javascript" src="/chrome/common/js/folding.js"></script>
+      <script type="text/javascript">
+        jQuery(document).ready(function($) {
+          $('#preview table.code').enableCollapsibleColumns($('#preview table.code thead th.content'));
+        });
+      </script>
+<!-- disable non standard HTML violating favicon entries.
+      <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png"/>
+      <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png"/>
+      <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png"/>
+      <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png"/>
+      <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png"/>
+      <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png"/>
+      <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png"/>
+      <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png"/>
+      <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png"/>
+      <link rel="icon" type="image/png" href="/favicon-192x192.png" sizes="192x192"/>
+      <link rel="icon" type="image/png" href="/favicon-160x160.png" sizes="160x160"/>
+      <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96"/>
+      <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16"/>
+      <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32"/>
+-->
+      <meta name="msapplication-TileColor" content="#2b5797" />
+      <meta name="msapplication-TileImage" content="/mstile-144x144.png" />
+      <!-- add special josm wiki changes -->
+      <link rel="stylesheet" href="/josm.css" type="text/css" />
+    </head>
+  <body>
+    <div id="banner">
+      <div id="header">
+        <a id="logo" href="https://josm.openstreetmap.de"><img src="/svn/trunk/images_nodist/logo/header.png" alt="JOSM" height="80" width="156" /></a>
+      </div>
+      <form id="search" action="/search" method="get">
+        <div>
+          <label for="proj-search">Search:</label>
+          <input type="text" id="proj-search" name="q" size="18" value="" />
+          <input type="submit" value="Search" />
+        </div>
+      </form>
+      <div id="metanav" class="nav">
+    <ul>
+      <li class="first"><a href="/login">Login</a></li><li><a href="/prefs">Preferences</a></li><li><a href="/wiki/TracGuide">Help/Guide</a></li><li><a href="/about">About Trac</a></li><li><a href="/register">Register</a></li><li class="last"><a href="/reset_password">Forgot your password?</a></li>
+    </ul>
+  </div>
+    </div>
+    <div id="mainnav" class="nav">
+    <ul>
+      <li class="first"><a href="/wiki">Wiki</a></li><li><a href="/timeline">Timeline</a></li><li><a href="/log/josm/?verbose=on">Changelog</a></li><li><a href="/browser">Browse Source</a></li><li><a href="/report">View Tickets</a></li><li><a href="/newticket">New Ticket</a></li><li><a href="/roadmap">Roadmap</a></li><li><a href="/jenkins/">Builds</a></li><li><a href="/sonar/">Sonar</a></li><li><a href="/search">Search</a></li><li class="last"><a href="/ticketstats">Ticket Stats</a></li>
+    </ul>
+  </div>
+    <div id="main">
+      <div id="ctxtnav" class="nav">
+        <h2>Context Navigation</h2>
+        <ul>
+          <li class="last first"><a href="/ticket/18365">Back to Ticket #18365</a></li>
+        </ul>
+        <hr />
+      </div>
+    <div id="content" class="attachment">
+        <h1><a href="/ticket/18365">Ticket #18365</a>: sample.osm</h1>
+        <table id="info" summary="Description">
+          <tr>
+            <th scope="col">File sample.osm, <span title="1740 bytes">1.7 KB</span> (added by <span class="trac-author">GerdP</span>, <a class="timeline" href="/timeline?from=2019-11-28T21%3A40%3A47%2B01%3A00&amp;precision=second" title="See timeline at 2019-11-28T21:40:47+01:00">3 months ago</a>)</th>
+          </tr>
+          <tr>
+            <td class="message searchable">
+              <p>
+before merge
+</p>
+
+            </td>
+          </tr>
+        </table>
+        <div id="preview" class="searchable">
+          
+  <table class="code"><thead><tr><th class="lineno" title="Line numbers">Line</th><th class="content"> </th></tr></thead><tbody><tr><th id="L1"><a href="#L1">1</a></th><td><span class="cp">&lt;?xml version='1.0' encoding='UTF-8'?&gt;</span></td></tr><tr><th id="L2"><a href="#L2">2</a></th><td><span class="nt">&lt;osm</span> <span class="na">version=</span><span class="s">'0.6'</span> <span class="na">generator=</span><span class="s">'JOSM'</span><span class="nt">&gt;</span></td></tr><tr><th id="L3"><a href="#L3">3</a></th><td>  <span class="nt">&lt;node</span> <span class="na">id=</span><span class="s">'-105119'</span> <span class="na">action=</span><span class="s">'modify'</span> <span class="na">visible=</span><span class="s">'true'</span> <span class="na">lat=</span><span class="s">'43.36293841066'</span> <span class="na">lon=</span><span class="s">'5.28995360449'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L4"><a href="#L4">4</a></th><td>  <span class="nt">&lt;node</span> <span class="na">id=</span><span class="s">'-105120'</span> <span class="na">action=</span><span class="s">'modify'</span> <span class="na">visible=</span><span class="s">'true'</span> <span class="na">lat=</span><span class="s">'43.35490484424'</span> <span class="na">lon=</span><span class="s">'5.31232165507'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L5"><a href="#L5">5</a></th><td>  <span class="nt">&lt;node</span> <span class="na">id=</span><span class="s">'-105122'</span> <span class="na">action=</span><span class="s">'modify'</span> <span class="na">visible=</span><span class="s">'true'</span> <span class="na">lat=</span><span class="s">'43.34210119093'</span> <span class="na">lon=</span><span class="s">'5.31313013882'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L6"><a href="#L6">6</a></th><td>  <span class="nt">&lt;node</span> <span class="na">id=</span><span class="s">'-105124'</span> <span class="na">action=</span><span class="s">'modify'</span> <span class="na">visible=</span><span class="s">'true'</span> <span class="na">lat=</span><span class="s">'43.34053321104'</span> <span class="na">lon=</span><span class="s">'5.29776894747'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L7"><a href="#L7">7</a></th><td>  <span class="nt">&lt;node</span> <span class="na">id=</span><span class="s">'-105126'</span> <span class="na">action=</span><span class="s">'modify'</span> <span class="na">visible=</span><span class="s">'true'</span> <span class="na">lat=</span><span class="s">'43.34125187352'</span> <span class="na">lon=</span><span class="s">'5.27926365261'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L8"><a href="#L8">8</a></th><td>  <span class="nt">&lt;node</span> <span class="na">id=</span><span class="s">'-105128'</span> <span class="na">action=</span><span class="s">'modify'</span> <span class="na">visible=</span><span class="s">'true'</span> <span class="na">lat=</span><span class="s">'43.34523702922'</span> <span class="na">lon=</span><span class="s">'5.27773651663'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L9"><a href="#L9">9</a></th><td>  <span class="nt">&lt;node</span> <span class="na">id=</span><span class="s">'-105130'</span> <span class="na">action=</span><span class="s">'modify'</span> <span class="na">visible=</span><span class="s">'true'</span> <span class="na">lat=</span><span class="s">'43.35660308515'</span> <span class="na">lon=</span><span class="s">'5.28375522903'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L10"><a href="#L10">10</a></th><td>  <span class="nt">&lt;node</span> <span class="na">id=</span><span class="s">'-105133'</span> <span class="na">action=</span><span class="s">'modify'</span> <span class="na">visible=</span><span class="s">'true'</span> <span class="na">lat=</span><span class="s">'43.36568133607'</span> <span class="na">lon=</span><span class="s">'5.32157430249'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L11"><a href="#L11">11</a></th><td>  <span class="nt">&lt;node</span> <span class="na">id=</span><span class="s">'-105134'</span> <span class="na">action=</span><span class="s">'modify'</span> <span class="na">visible=</span><span class="s">'true'</span> <span class="na">lat=</span><span class="s">'43.34314648836'</span> <span class="na">lon=</span><span class="s">'5.31789120983'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L12"><a href="#L12">12</a></th><td>  <span class="nt">&lt;node</span> <span class="na">id=</span><span class="s">'-105136'</span> <span class="na">action=</span><span class="s">'modify'</span> <span class="na">visible=</span><span class="s">'true'</span> <span class="na">lat=</span><span class="s">'43.33399952564'</span> <span class="na">lon=</span><span class="s">'5.32328110153'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L13"><a href="#L13">13</a></th><td>  <span class="nt">&lt;node</span> <span class="na">id=</span><span class="s">'-105138'</span> <span class="na">action=</span><span class="s">'modify'</span> <span class="na">visible=</span><span class="s">'true'</span> <span class="na">lat=</span><span class="s">'43.33589436678'</span> <span class="na">lon=</span><span class="s">'5.33846262984'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L14"><a href="#L14">14</a></th><td>  <span class="nt">&lt;node</span> <span class="na">id=</span><span class="s">'-105140'</span> <span class="na">action=</span><span class="s">'modify'</span> <span class="na">visible=</span><span class="s">'true'</span> <span class="na">lat=</span><span class="s">'43.34438775568'</span> <span class="na">lon=</span><span class="s">'5.34034909193'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L15"><a href="#L15">15</a></th><td>  <span class="nt">&lt;way</span> <span class="na">id=</span><span class="s">'-105121'</span> <span class="na">action=</span><span class="s">'modify'</span> <span class="na">visible=</span><span class="s">'true'</span><span class="nt">&gt;</span></td></tr><tr><th id="L16"><a href="#L16">16</a></th><td>    <span class="nt">&lt;nd</span> <span class="na">ref=</span><span class="s">'-105119'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L17"><a href="#L17">17</a></th><td>    <span class="nt">&lt;nd</span> <span class="na">ref=</span><span class="s">'-105120'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L18"><a href="#L18">18</a></th><td>    <span class="nt">&lt;nd</span> <span class="na">ref=</span><span class="s">'-105122'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L19"><a href="#L19">19</a></th><td>    <span class="nt">&lt;nd</span> <span class="na">ref=</span><span class="s">'-105124'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L20"><a href="#L20">20</a></th><td>    <span class="nt">&lt;nd</span> <span class="na">ref=</span><span class="s">'-105126'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L21"><a href="#L21">21</a></th><td>    <span class="nt">&lt;nd</span> <span class="na">ref=</span><span class="s">'-105128'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L22"><a href="#L22">22</a></th><td>    <span class="nt">&lt;nd</span> <span class="na">ref=</span><span class="s">'-105130'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L23"><a href="#L23">23</a></th><td>    <span class="nt">&lt;nd</span> <span class="na">ref=</span><span class="s">'-105119'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L24"><a href="#L24">24</a></th><td>  <span class="nt">&lt;/way&gt;</span></td></tr><tr><th id="L25"><a href="#L25">25</a></th><td>  <span class="nt">&lt;way</span> <span class="na">id=</span><span class="s">'-105135'</span> <span class="na">action=</span><span class="s">'modify'</span> <span class="na">visible=</span><span class="s">'true'</span><span class="nt">&gt;</span></td></tr><tr><th id="L26"><a href="#L26">26</a></th><td>    <span class="nt">&lt;nd</span> <span class="na">ref=</span><span class="s">'-105133'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L27"><a href="#L27">27</a></th><td>    <span class="nt">&lt;nd</span> <span class="na">ref=</span><span class="s">'-105134'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L28"><a href="#L28">28</a></th><td>    <span class="nt">&lt;nd</span> <span class="na">ref=</span><span class="s">'-105136'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L29"><a href="#L29">29</a></th><td>    <span class="nt">&lt;nd</span> <span class="na">ref=</span><span class="s">'-105138'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L30"><a href="#L30">30</a></th><td>    <span class="nt">&lt;nd</span> <span class="na">ref=</span><span class="s">'-105140'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L31"><a href="#L31">31</a></th><td>    <span class="nt">&lt;nd</span> <span class="na">ref=</span><span class="s">'-105133'</span> <span class="nt">/&gt;</span></td></tr><tr><th id="L32"><a href="#L32">32</a></th><td>  <span class="nt">&lt;/way&gt;</span></td></tr><tr><th id="L33"><a href="#L33">33</a></th><td><span class="nt">&lt;/osm&gt;</span></td></tr></tbody></table>
+
+        </div>
+    </div>
+    <div id="altlinks">
+      <h3>Download in other formats:</h3>
+      <ul>
+        <li class="last first">
+          <a rel="nofollow" href="/raw-attachment/ticket/18365/sample.osm">Original Format</a>
+        </li>
+      </ul>
+    </div>
+    </div>
+    <div id="footer" lang="en" xml:lang="en"><hr />
+      <a id="tracpowered" href="http://trac.edgewall.org/"><img src="/chrome/common/trac_logo_mini.png" height="30" width="107" alt="Trac Powered" /></a>
+      <p class="left">Powered by <a href="/about"><strong>Trac 1.2.2</strong></a><br />
+        By <a href="http://www.edgewall.org/">Edgewall Software</a>.</p>
+      <p class="right">Server sponsored by <a href="https://www.fossgis.de/">FOSSGIS</a>. Visit the OpenStreetMap project at <a href="https://www.openstreetmap.org/">https://www.openstreetmap.org/</a><br />Content is available under <a href="https://creativecommons.org/licenses/by-sa/3.0/">Creative Commons (CC-BY-SA)</a> and anything since April 2014 also under <a href="https://www.gnu.org/licenses/lgpl.html">LGPL</a> license.</p>
+    </div>
+  </body>
+</html>
