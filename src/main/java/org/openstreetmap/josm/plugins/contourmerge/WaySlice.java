@@ -2,21 +2,27 @@ package org.openstreetmap.josm.plugins.contourmerge;
 
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.Validate;
+import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 
 import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 /**
- * <p>A <strong>WaySlice</strong> is a sub sequence of a ways sequence of
- * nodes.</p>
+ * A <strong>WaySlice</strong> is a sub sequence of a ways sequence of
+ * nodes.
  */
 @EqualsAndHashCode()
 public class WaySlice {
-    //static private final Logger logger = Logger.getLogger(WaySlice.class.getName());
+    @SuppressWarnings("unused")
+    static private final Logger logger =
+        Logger.getLogger(WaySlice.class.getName());
 
     private final Way w;
     private final int start;
@@ -29,8 +35,8 @@ public class WaySlice {
     private boolean inDirection = true;
 
     /**
-     * <p>Creates a new way slice for the way {@code w}. It consists of the
-     * nodes at the positions <code>[start, start+1, ..., end]</code>.</p>
+     * Creates a new way slice for the way {@code w}. It consists of the
+     * nodes at the positions <code>[start, start+1, ..., end]</code>.
      *
      * @param w the way. Must not be null.
      * @param start the index of the start node. 0 <= start < w.getNodeCount().
@@ -54,14 +60,15 @@ public class WaySlice {
     }
 
     /**
-     * <p>Creates a new way slice for the way {@code w}.</p>
+     * Creates a new way slice for the way {@code w}.
      *
-     * <p>If {@code inDirection==true}, it consists of the nodes at the
-     * positions <code>[start, start+1, ..., end]</code>.</p>
+     * If {@code inDirection==true}, it consists of the nodes at the
+     * positions <code>[start, start+1, ..., end]</code>.
      *
-     * <p>If {@code inDirection==false} <strong>and w is
+     * If {@code inDirection==false} <strong>and w is
      * {@link Way#isClosed() closed}</strong>, it consists of the nodes at the
-     * positions <code>[end, end+1,...,0,1,...,start]</code>.</p>
+     * positions <code>[end, end+1,...,0,1,...,start]</code>.
+     *
      * @param w the way. Must not be null.
      * @param start the index of the start node. 0 <= start < w.getNodeCount().
      *  start < end
@@ -245,7 +252,7 @@ public class WaySlice {
     }
 
     /**
-     * <p>Replies the number of way segments in this way slice.</p>
+     * Replies the number of way segments in this way slice.
      *
      * @return the number of way segments in this way slice
      */
@@ -265,6 +272,118 @@ public class WaySlice {
         return new WaySlice(w, start, end, !inDirection);
     }
 
+    private Way replaceNodesInOpenWay(final List<Node> newNodes) {
+        final List<Node> updatedNodeList = new ArrayList<>(w.getNodes());
+        updatedNodeList.subList(start, end + 1).clear();
+        updatedNodeList.addAll(start, newNodes);
+
+        final Way newWay = new Way(w);
+        newWay.setNodes(updatedNodeList);
+        return newWay;
+    }
+
+    private void ensureInvariantsForClosedWay(final List<Node> nodes)
+        throws DataIntegrityProblemException {
+
+        if (nodes.size() < 3) {
+            throw new DataIntegrityProblemException(tr(
+                  "expected >= 3 nodes in a node list for a closed way, "
+                + "got {0} nodes",
+                nodes.size())
+            );
+        }
+
+        if (nodes.get(0) != nodes.get(nodes.size() - 1)) {
+            throw new DataIntegrityProblemException(tr(
+                 "expected identical nodes at positions 0 and {0} in a closed "
+                + "way, got different nodes",
+                nodes.size() - 1)
+            );
+        }
+
+        for (int i = 1; i < nodes.size() - 1; i++) {
+            if (nodes.get(i) == nodes.get(i - 1)) {
+                throw new DataIntegrityProblemException(tr(
+                      "identified sequence of equal nodes in a node list, "
+                    + "illegal sequence starts a position {0}",
+                    i - 1)
+                );
+            }
+        }
+    }
+
+    private Way replaceNodesInClosedWay(final List<Node> newNodes)
+        throws DataIntegrityProblemException{
+        final List<Node> nodes = new ArrayList<>(w.getNodes());
+
+        if (inDirection) {
+            // because the slice is 'in direction' either the start node,
+            // the end node, neither of them, but not both, are
+            // included in the slice.
+            if (start == 0) {
+                // jn -- n ........   n -- n -- ...-- jn
+                // <---- slice     -->
+                // <-- cut&replace -->               cut
+                //
+                // (jn - shared join node; n - arbitrary node)
+
+                // cut the source nodes ...
+                nodes.subList(0, end+1).clear();
+                nodes.remove(nodes.size() - 1);
+                // ...  replace with target nodes ...
+                nodes.addAll(0, newNodes);
+                // ... and make sure the way is closed again
+                nodes.add(0, nodes.get(
+                     nodes.size() - 1));
+            } else if (end == w.getNodesCount() - 1) {
+                // jn -- n ....    n -- .......   -- jn
+                //                 <---- slice      -->
+                // cut             <-- cut&replace  -->
+                //
+                // (jn - shared join node; n - arbitrary node)
+
+                // cut the source nodes ...
+                nodes.subList(start, end + 1).clear();
+                nodes.remove(0);
+                // ... replace them with the target nodes ...
+                nodes.addAll(newNodes);
+                // ... and make sure the way is closed again
+                nodes.add(nodes.get(0));
+            } else {
+                // jn -- n -- n    ....          n -- ... -- jn
+                //            <----    slice   -->
+                // keep       <-- cut&replace  -->         keep
+                //
+                // (jn - shared join node; n - arbitrary node)
+
+                // cut the source nodes ...
+                nodes.subList(start, end + 1).clear();
+                // ...  replace them with the target nodes
+                nodes.addAll(start, newNodes);
+
+                // We didn't touch the join node (jn). The updatedNodeList
+                // still contains the node list for a closed node.
+            }
+
+            // Added after issue-21: Explicitly checks that the list
+            // of nodes from which we will build the merged source way doesn't
+            // violate expected invariants: minimal length, common start/end
+            // node, and no subsequences of identical nodes
+            ensureInvariantsForClosedWay(nodes);
+        } else {
+            int upper = nodes.size()-1;
+            nodes.subList(end, upper + 1).clear();
+            nodes.subList(0,start + 1).clear();
+            nodes.addAll(0, newNodes);
+            // make sure the new way is closed
+            nodes.add(newNodes.get(0));
+        }
+
+        final Way newWay = new Way(w);
+        newWay.setNodes(nodes);
+        return newWay;
+    }
+
     /**
      * Replies a clone of the underlying way, where the nodes given by
      * this way slice are replaced with the nodes in {@code newNodes}.
@@ -273,72 +392,11 @@ public class WaySlice {
      * @return the cloned way with the new nodes
      */
      public Way replaceNodes(final List<Node> newNodes) {
-        final Way newWay = new Way(w);
-        final List<Node> updatedNodeList = new ArrayList<>();
-
-        if (!w.isClosed()) {
-            updatedNodeList.addAll(w.getNodes());
-            updatedNodeList.subList(start, end + 1).clear();
-            updatedNodeList.addAll(start, newNodes);
-            newWay.setNodes(updatedNodeList);
+        if (w.isClosed()) {
+            return replaceNodesInClosedWay(newNodes);
         } else {
-            // this is a slice of a closed way
-            updatedNodeList.addAll(w.getNodes());
-            if (inDirection) {
-                // because the slice is 'in direction' either of the start
-                // or the end node, neither of them, but not both, are
-                // included in the slice.
-                // first, we normalize the current situation
-                if (start == 0) {
-                    // jn -- n ........   n -- n -- ...-- jn
-                    // <---- slice     -->
-                    // <-- cut&replace -->               cut
-                    //
-                    // (jn - shared join node; n - arbitrary node)
-
-                    // cut ...
-                    updatedNodeList.subList(0, end+1).clear();
-                    updatedNodeList.remove(updatedNodeList.size() - 1);
-                    // ... and replace
-                    updatedNodeList.addAll(0, newNodes);
-                } else if (end == w.getNodesCount() - 1) {
-                    // jn -- n ....    n -- .......   -- jn
-                    //                 <---- slice      -->
-                    // cut             <-- cut&replace  -->
-                    //
-                    // (jn - shared join node; n - arbitrary node)
-
-                    // cut ...
-                    updatedNodeList.subList(start, end + 1).clear();
-                    updatedNodeList.remove(0);
-                    // ... and replace
-                    updatedNodeList.addAll(newNodes);
-                } else {
-                    // jn -- n -- n    ....          n -- -- jn
-                    //            <----    slice   -->
-                    // keep       <-- cut&replace  -->     keep
-                    //
-                    // (jn - shared join node; n - arbitrary node)
-
-                    // cut ...
-                    updatedNodeList.subList(start, end + 1).clear();
-                    // ... and replace
-                    updatedNodeList.addAll(start, newNodes);
-                }
-                // make sure the way is closed
-                updatedNodeList.add(updatedNodeList.get(0));
-                newWay.setNodes(updatedNodeList);
-            } else {
-                int upper = updatedNodeList.size()-1;
-                updatedNodeList.subList(end, upper + 1).clear();
-                updatedNodeList.subList(0,start + 1).clear();
-                updatedNodeList.addAll(0, newNodes);
-                // make sure the new way is closed
-                updatedNodeList.add(newNodes.get(0));
-                newWay.setNodes(updatedNodeList);
-            }
+            return replaceNodesInOpenWay(newNodes);
         }
-        return newWay;
     }
 
     /**
