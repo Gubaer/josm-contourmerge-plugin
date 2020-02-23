@@ -8,3 +8,4 @@
 /contrib/
 /dist/
 github.env
+*.env
