@@ -1,8 +1,8 @@
 plugins {
-    // uses a local development fork of the gradle josm plugin. There is a
-    // should be
+    // uses a local development fork of the gradle josm plugin.
+    // This should be
     //   id 'gradle-josm-plugin'
-    // but: This is a workaround for bug in the build/publish script of the
+    // but: This is a workaround for a bug in the build/publish script of the
     // gradle-josm-plugin. If it is published to a maven repo hosted on S3,
     // the plugin jar includes a file 'META-INF/gradle-plugins/org.openstreetmap.josm.propertie'
     // instead of a file 'META-INFO/gradle-plugins/gradle-josm-plugin.properties'.
