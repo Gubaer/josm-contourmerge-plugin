@@ -4,7 +4,7 @@ plugins {
     //   id 'gradle-josm-plugin'
     // but: This is a workaround for a bug in the build/publish script of the
     // gradle-josm-plugin. If it is published to a maven repo hosted on S3,
-    // the plugin jar includes a file 'META-INF/gradle-plugins/org.openstreetmap.josm.propertie'
+    // the plugin jar includes a file 'META-INF/gradle-plugins/org.openstreetmap.josm.properties'
     // instead of a file 'META-INFO/gradle-plugins/gradle-josm-plugin.properties'.
     // We therefore have to use the plugin ID 'org.openstreetmap.josm' instead
     // of 'gradle-josm-plugin'.
