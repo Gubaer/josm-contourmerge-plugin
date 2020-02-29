@@ -2,15 +2,11 @@ pluginManagement {
     repositories {
         maven {
             url "$gradle_josm_plugin_repo"
-        }
-        gradlePluginPortal()
-    }
-
-    resolutionStrategy {
-        eachPlugin {
-            if (requested.id.id == 'org.openstreetmap.josm') {
-                useModule("org.openstreetmap.josm:gradle-josm-plugin:$gradle_josm_plugin_version")
+            content {
+                includeModule("org.openstreetmap.josm", "gradle-josm-plugin")
+                includeModule("org.openstreetmap.josm", "org.openstreetmap.josm.gradle.plugin")
             }
         }
+        gradlePluginPortal()
     }
 }

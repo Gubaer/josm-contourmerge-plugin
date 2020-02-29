@@ -1,5 +1,5 @@
 plugins {
-    id 'org.openstreetmap.josm'
+    id("org.openstreetmap.josm").version("$gradle_josm_plugin_version")
     id 'java'
     id 'groovy'
     id 'eclipse'
