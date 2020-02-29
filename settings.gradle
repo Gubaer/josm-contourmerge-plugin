@@ -1,8 +1,6 @@
 pluginManagement {
     repositories {
         maven {
-            // to load the gradle-josm-plugin from a custom maven repo hosted
-            // on in a custom S3 bucket
             url "$gradle_josm_plugin_repo"
         }
         gradlePluginPortal()
@@ -10,9 +8,6 @@ pluginManagement {
 
     resolutionStrategy {
         eachPlugin {
-            // WORKAROUND: we have to use the plugin ID 'org.openstreetmap.josm'
-            // instead of 'gradle-josm-plugin', see comment at the beginning
-            // of 'build.gradle'.
             if (requested.id.id == 'org.openstreetmap.josm') {
                 useModule("org.openstreetmap.josm:gradle-josm-plugin:$gradle_josm_plugin_version")
             }
