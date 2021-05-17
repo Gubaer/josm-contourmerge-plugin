@@ -21,14 +21,14 @@ dependencies {
     testImplementation "org.hamcrest:hamcrest-library:1.3"
 }
 
-version="v0.1.6"
+version="v0.1.7"
 archivesBaseName = "contourmerge"
 
 josm {
     josmCompileVersion = "latest"
     manifest {
         includeLinksToGithubReleases = true
-        minJosmVersion = 14654
+        minJosmVersion = 17878
     }
 
     github {
