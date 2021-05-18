@@ -49,8 +49,8 @@ public class ContourMergeModel implements DataSetListener{
 
     private final OsmDataLayer layer;
     private Node feedbackNode;
-    private WaySegment dragStartFeedbackSegment;
-    private WaySegment dropFeedbackSegment;
+    private IWaySegment<Node, Way> dragStartFeedbackSegment;
+    private IWaySegment<Node, Way> dropFeedbackSegment;
     private final ArrayList<Node> selectedNodes = new ArrayList<>();
     private Point dragOffset = null;
 
@@ -187,7 +187,7 @@ public class ContourMergeModel implements DataSetListener{
      * @param segment the way segment. null, if there is no feedback
          segment
      */
-    public void setDragStartFeedbackWaySegment(WaySegment segment){
+    public void setDragStartFeedbackWaySegment(IWaySegment<Node, Way> segment){
         this.dragStartFeedbackSegment = segment;
     }
 
@@ -197,15 +197,15 @@ public class ContourMergeModel implements DataSetListener{
      *
      * @return the feedback way segment
      */
-    public WaySegment getDragStartFeedbackWaySegement(){
+    public IWaySegment<Node, Way> getDragStartFeedbackWaySegement(){
         return dragStartFeedbackSegment;
     }
 
-    public void setDropFeedbackSegment(WaySegment segment){
+    public void setDropFeedbackSegment(IWaySegment<Node, Way> segment){
         this.dropFeedbackSegment = segment;
     }
 
-    public WaySegment getDropFeedbackSegment(){
+    public IWaySegment<Node, Way> getDropFeedbackSegment(){
         return dropFeedbackSegment;
     }
 
@@ -244,7 +244,7 @@ public class ContourMergeModel implements DataSetListener{
      *
      *  @return true, if we can start a drag/drop operation. false, otherwise
      */
-    public boolean isWaySegmentDragable(WaySegment ws){
+    public boolean isWaySegmentDragable(IWaySegment<?, Way> ws){
         WaySlice slice = getWaySliceFromSelectedNodes(ws);
         return slice != null;
     }
@@ -255,7 +255,7 @@ public class ContourMergeModel implements DataSetListener{
      * @param ws the way segment. If null, replies false.
      * @return  true, if {@code ws} is part of a potential drop target
      */
-    public boolean isPotentialDropTarget(WaySegment ws){
+    public boolean isPotentialDropTarget(IWaySegment<?, Way> ws){
         if (ws == null) return false;
         WaySlice dropTarget = getWaySliceFromSelectedNodes(ws);
         if (dropTarget == null) return false;
@@ -275,9 +275,9 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     protected WaySlice getWaySliceFromSelectedNodes(
-            WaySegment referenceSegment){
+            IWaySegment<?, Way> referenceSegment){
         if (referenceSegment == null) return null;
-        Way way = referenceSegment.way;
+        Way way = referenceSegment.getWay();
         if (way == null || way.getNodesCount() == 0) {
             // shouldn't happen, but consistency of a dataset is sometimes
             // violated after undo/redo/merge/etc. operations.
@@ -294,7 +294,7 @@ public class ContourMergeModel implements DataSetListener{
             if (selIndices.size() <2) return null;
 
             int nn= way.getNodesCount();
-            int li = referenceSegment.lowerIndex;
+            int li = referenceSegment.getLowerIndex();
             int lower = -1; int upper = nn;
             /*
              * Find the first selected node to the "left" of the way segment,
@@ -348,9 +348,9 @@ public class ContourMergeModel implements DataSetListener{
              * last node respectively.
              */
             List<Integer> selIndices = computeSelectedNodeIndicesOnWay(
-                    referenceSegment.way);
+                    referenceSegment.getWay());
             int nn= way.getNodesCount();
-            int li = referenceSegment.lowerIndex;
+            int li = referenceSegment.getLowerIndex();
             int lastPos = nn -1;
             int lower = 0; int upper = lastPos;
             for (int pos=li; pos >=0; pos--){
@@ -360,7 +360,7 @@ public class ContourMergeModel implements DataSetListener{
                 if (selIndices.contains(pos)) {upper = pos; break;}
             }
             if (lower == upper) return null;
-            return new WaySlice(referenceSegment.way, lower, upper);
+            return new WaySlice(referenceSegment.getWay(), lower, upper);
         }
     }
 

@@ -156,7 +156,7 @@ public class ContourMergeMode extends MapMode {
             showHelpText("");
             if (candidates.isEmpty()){
                 model.setFeedbackNode(null);
-                WaySegment ws = getMapView().getNearestWaySegment(e.getPoint(),
+                IWaySegment<Node, Way> ws = getMapView().getNearestWaySegment(e.getPoint(),
                         OsmPrimitive::isSelectable);
                 if (ws == null){
                     getMapView().setCursor(Cursor.getDefaultCursor());
@@ -208,7 +208,7 @@ public class ContourMergeMode extends MapMode {
 
     protected void onStartDrag(Point start) {
         getActiveModel().ifPresent(model -> {
-            WaySegment ws = getMapView().getNearestWaySegment(start,
+            IWaySegment<Node, Way> ws = getMapView().getNearestWaySegment(start,
                     OsmPrimitive::isSelectable);
             if (ws != null && model.isWaySegmentDragable(ws)) {
                 this.dragStart = start;
@@ -225,12 +225,12 @@ public class ContourMergeMode extends MapMode {
 
     protected void onStepDrag(Point current){
         if (dragStart == null) return;  // drag initiated outside of map view ?
-        final WaySegment ws = getMapView().getNearestWaySegment(current,
+        final IWaySegment<Node, Way> ws = getMapView().getNearestWaySegment(current,
                 OsmPrimitive::isSelectable);
         final boolean isPotentialDropTarget = getActiveModel()
                 .filter(model -> model.isPotentialDropTarget(ws))
                 .isPresent();
-        WaySegment newDropTargetFeedbackSegment;
+        IWaySegment<Node, Way> newDropTargetFeedbackSegment;
         if (ws == null){
             /*
              * mouse pointer isn't close to another way, continue dragging
@@ -272,7 +272,7 @@ public class ContourMergeMode extends MapMode {
 
     protected void onDrop(Point target){
         if (dragStart == null) return;  // drag initiated outside of map view ?
-        final WaySegment ws = getMapView().getNearestWaySegment(target,
+        final IWaySegment<Node, Way> ws = getMapView().getNearestWaySegment(target,
                 OsmPrimitive::isSelectable);
         getActiveModel().ifPresent(model -> {
             if (model.isPotentialDropTarget(ws)){
