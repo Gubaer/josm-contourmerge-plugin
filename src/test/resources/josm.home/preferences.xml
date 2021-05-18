@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<preferences xmlns='http://josm.openstreetmap.de/preferences-1.0' version='15850'>
-  <tag key='josm.version' value='15850'/>
-  <tag key='progressdialog.size' value='590'/>
+<preferences xmlns='http://josm.openstreetmap.de/preferences-1.0' version='17903'>
+  <tag key='josm.version' value='17903'/>
 </preferences>
