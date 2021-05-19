@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <bounds minlat='-23.1550787' minlon='47.0651293' maxlat='-23.1489626' maxlon='47.0745707' origin='CGImap 0.8.3 (2888343 spike-08.openstreetmap.org)' />
+  <bounds minlat='-23.1550787' minlon='47.0651293' maxlat='-23.1489626' maxlon='47.0745707' origin='OpenStreetMap server' />
+  <node id='-102596' action='modify' visible='true' lat='-23.15045423564' lon='47.06711683267' />
+  <node id='-102597' action='modify' visible='true' lat='-23.1513673192' lon='47.06758000968' />
+  <node id='-102599' action='modify' visible='true' lat='-23.15059733124' lon='47.06959946141' />
+  <node id='-102600' action='modify' visible='true' lat='-23.15108453652' lon='47.06960687224' />
+  <node id='-102601' action='modify' visible='true' lat='-23.15100385464' lon='47.06707902709' />
+  <node id='-102602' action='modify' visible='true' lat='-23.15019717563' lon='47.06768486771' />
+  <node id='-102603' action='modify' visible='true' lat='-23.15020538297' lon='47.06919191663' />
+  <node id='-102604' action='modify' visible='true' lat='-23.15139691206' lon='47.06905852456' />
+  <way id='-104840' action='modify' visible='true'>
+    <nd ref='-102602' />
+    <nd ref='-102596' />
+    <nd ref='-102601' />
+    <nd ref='-102597' />
+    <nd ref='-102598' />
+    <nd ref='-102597' />
+    <nd ref='-102601' />
+    <nd ref='-102596' />
+    <nd ref='-102602' />
+    <nd ref='-102595' />
+    <nd ref='-102602' />
+    <tag k='natural' v='water' />
+    <tag k='water' v='pond' />
+  </way>
+  <way id='-104841' action='modify' visible='true'>
+    <nd ref='-102604' />
+    <nd ref='-102598' />
+    <nd ref='-102597' />
+    <nd ref='-102601' />
+    <nd ref='-102596' />
+    <nd ref='-102602' />
+    <nd ref='-102595' />
+    <nd ref='-102603' />
+    <nd ref='-102599' />
+    <nd ref='-102600' />
+    <nd ref='-102604' />
+    <tag k='natural' v='wood' />
+  </way>
+</osm>

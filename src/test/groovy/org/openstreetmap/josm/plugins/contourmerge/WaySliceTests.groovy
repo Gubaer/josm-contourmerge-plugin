@@ -412,12 +412,12 @@ class WaySliceTest {
 
         ws = new WaySlice(w, 0, 3)
         assert ws.getNumSegments() == 3
-        ws = ws.getOpositeSlice()
+        ws = ws.getOppositeSlice()
         assert ws.getNumSegments() == 2
 
         ws = new WaySlice(w, 1, 2)
         assert ws.getNumSegments() == 1
-        ws = ws.getOpositeSlice()
+        ws = ws.getOppositeSlice()
         assert ws.getNumSegments() == 4
     }
 

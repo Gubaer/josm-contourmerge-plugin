@@ -281,7 +281,7 @@ public class ContourMergeMode extends MapMode {
                  * slice given by the drop target.
                  */
                 getMapView().setCursor(Cursor.getDefaultCursor());
-                Command cmd = model.buildContourAlignCommand();
+                final Command cmd = model.buildContourAlignCommand();
                 if (cmd != null){
                     UndoRedoHandler.getInstance().add(cmd);
                 }

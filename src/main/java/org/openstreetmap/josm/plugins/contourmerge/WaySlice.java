@@ -75,8 +75,8 @@ public class WaySlice {
      * @param end the index of the end node. 0 <= end < w.getNodeCount().
      * start < end
      * @param inDirection true, this way slice is given by the nodes
-     * <code>[start, ..., end]</code>; false, if
-     * is  given by the nodes <code>[end,..,0,..,start]</code>
+     * <code>[start, ..., end]</code>; false, if it
+     * is given by the nodes <code>[end,..,0,..,start]</code>
      * (provided the way is closed)
      * @throws IllegalArgumentException thrown if a precondition is violated
      */
@@ -137,6 +137,15 @@ public class WaySlice {
 
     public Node getEndNode() {
         return w.getNode(end);
+    }
+
+    /**
+     * Replies true if this slice contains the node <code>node</code>
+     * @param node the node
+     * @return true if this slice contains the node <code>node</code>
+     */
+    public boolean containsNode(@NotNull final Node node) {
+        return getNodes().contains(node);
     }
 
     /**
@@ -267,7 +276,7 @@ public class WaySlice {
      *
      * @return the opposite way slice
      */
-    public WaySlice getOpositeSlice(){
+    public WaySlice getOppositeSlice(){
         if (!w.isClosed()) return null;
         return new WaySlice(w, start, end, !inDirection);
     }

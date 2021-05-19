@@ -444,7 +444,9 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     protected Stream<Command> buildNodeDeleteCommands(
-            final List<WaySlice> sources) {
+            final List<WaySlice> sources,
+            final WaySlice target
+            ) {
         Validate.isTrue(!sources.isEmpty(),
                 // don't translate
                 "sources must not be empty");
@@ -460,19 +462,25 @@ public class ContourMergeModel implements DataSetListener{
         //   of a merge operation
 
         final WaySlice first = sources.get(0);
-        final Set<Way> ways = sources.stream().map(WaySlice::getWay)
+        final Set<OsmPrimitive> sourceWays = sources.stream().map(WaySlice::getWay)
                 .collect(Collectors.toSet());
         return first.getNodes().stream()
             .map(n -> {
+                final Set<OsmPrimitive> referrers = n.getReferrers().stream()
+                        .collect(Collectors.toSet());
+                final int numReferrersBeforeIntersection = referrers.size();
+                referrers.retainAll(sourceWays);
+
                 // true, if the node n is only referenced by source ways
                 // in the merge operation
-                final boolean hasNoParents = n.getReferrers().stream()
-                    .allMatch(ways::contains);
+                boolean hasOnlySourcesAsParents =
+                    numReferrersBeforeIntersection == referrers.size();
 
-                if (hasNoParents && !n.isTagged()) {
+                if (hasOnlySourcesAsParents && !n.isTagged() && !target.containsNode(n)) {
                     return Optional.of(new DeleteCommand(n));
+                } else {
+                    return Optional.<DeleteCommand>empty();
                 }
-                return Optional.<DeleteCommand>empty();
              })
             .filter(Optional::isPresent)
             .map(Optional::get);
@@ -496,13 +504,13 @@ public class ContourMergeModel implements DataSetListener{
             @Null final WaySlice dropTarget) {
         if (dragSource == null || dropTarget == null) return null;
 
-        final List<WaySlice> waySlices =
+        final List<WaySlice> sourceWaySlices =
                 dragSource.findAllEquivalentWaySlices()
                         .collect(Collectors.toList());
 
         final List<Command> cmds = Stream.concat(
-                buildSourceChangeCommands(waySlices, dropTarget),
-                buildNodeDeleteCommands(waySlices)
+                buildSourceChangeCommands(sourceWaySlices, dropTarget),
+                buildNodeDeleteCommands(sourceWaySlices, dropTarget)
         ).collect(Collectors.toList());
 
         return new SequenceCommand(tr("Merging Contour"), cmds);
