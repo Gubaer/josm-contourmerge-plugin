@@ -1,4 +1,8 @@
 releases:
+  - label: v0.1.7
+    minJosmVersion: 17903
+    description: "merge #25: Bump minJosmVersion for JOSM r17867"
+
   - label: v0.1.6
     minJosmVersion: 14654
     description: "fix #22: Duplicated way nodes"
