@@ -26,11 +26,9 @@ import java.util.logging.Logger;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
- * <p>ContourMergeMode is the {@link MapMode} for merging the contours of
- * two areas.</p>
- *
+ * ContourMergeMode is the {@link MapMode} for merging the contours of
+ * two areas.
  */
-@SuppressWarnings("serial")
 public class ContourMergeMode extends MapMode {
 
     @SuppressWarnings("unused")

@@ -25,6 +25,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
  * <strong>ContourMergeModel</strong> keeps the current edit state for a
  * specific edit layer, if the <tt>contourmerge</tt> map mode is enabled.</p>
  */
+@SuppressWarnings("unused")
 public class ContourMergeModel implements DataSetListener{
     public static <T extends OsmPrimitive> List<T> getFilteredList(
             Collection<OsmPrimitive> list, Class<T> type) {
@@ -466,8 +467,7 @@ public class ContourMergeModel implements DataSetListener{
                 .collect(Collectors.toSet());
         return first.getNodes().stream()
             .map(n -> {
-                final Set<OsmPrimitive> referrers = n.getReferrers().stream()
-                        .collect(Collectors.toSet());
+                final Set<OsmPrimitive> referrers = new HashSet<>(n.getReferrers());
                 final int numReferrersBeforeIntersection = referrers.size();
                 referrers.retainAll(sourceWays);
 
@@ -545,13 +545,12 @@ public class ContourMergeModel implements DataSetListener{
         if (haveSameStartAndEndNode(n1, n2)) return true;
         if (haveReversedStartAndEndeNode(n1,n2)) return false;
 
-        /**
-         * new heuristic. The endpoints of will be merged with the end points
+        /*
+         * new heuristic. The endpoints of s will be merged with the end points
          * of t. We compute the total distance between the endpoints of s
          * and t and the endpoints of s and t in reverse direction. Choose
          * the direction with the minimal total distance the endpoints have
          * to be moved.
-         *
          */
         final EastNorth s1 = n1.get(0).getEastNorth();
         final EastNorth s2 = n1.get(n1.size()-1).getEastNorth();
@@ -565,7 +564,7 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Replies true, if the two way slices are "direction aligned".</p>
+     * Replies true, if the two way slices are "direction aligned".
      *
      * @param dragSource the first way slice
      * @param dropTarget the second way slice

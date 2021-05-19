@@ -46,7 +46,7 @@ public class WaySlice {
      * @throws IllegalArgumentException thrown if one of the arguments
      *  isn't valid
      */
-    public WaySlice(@NotNull Way w, int start, int end){
+    public WaySlice(@NotNull final Way w, final int start, final int end){
         Validate.notNull(w);
         Validate.isTrue(start >= 0 && start < w.getNodesCount(),
                 "start out of range, got %s", start);
@@ -80,7 +80,8 @@ public class WaySlice {
      * (provided the way is closed)
      * @throws IllegalArgumentException thrown if a precondition is violated
      */
-    public WaySlice(@NotNull Way w, int start, int end, boolean inDirection){
+    public WaySlice(@NotNull final Way w, final int start, final int end,
+                    final boolean inDirection){
         this(w,start,end);
         if (!inDirection){
             Validate.isTrue(w.isClosed(),
@@ -151,7 +152,6 @@ public class WaySlice {
     /**
      * Replies the lower node idx of the node from which this way slice is
      * torn off.
-     *
      *
      * <strong>Example</strong>
      * <pre>

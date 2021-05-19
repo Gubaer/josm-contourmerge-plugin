@@ -16,12 +16,11 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
- * <p>Manages a set of {@link ContourMergeModel}s for each available data
- * layer.</p>
+ * Manages a set of {@link ContourMergeModel}s for each available data
+ * layer.
  *
- * <p>Listens to layer change events and creates new contour merge models
- * for newly added layer, or
- * removes contour merge models, if a layer is deleted.</p>
+ * Listens to layer change events and creates new contour merge models
+ * for newly added layer, or removes contour merge models, if a layer is deleted.
  */
 public class ContourMergeModelManager implements LayerChangeListener{
 
@@ -47,8 +46,8 @@ public class ContourMergeModelManager implements LayerChangeListener{
     }
 
     /**
-     * <p>Replies the contour merge model for the data layer {@code layer},
-     * or null, if no such model exists.</p>
+     * Replies the contour merge model for the data layer {@code layer},
+     * or null, if no such model exists.
      *
      * @param layer the data layer. Must not be null.
      * @return the model
@@ -59,9 +58,9 @@ public class ContourMergeModelManager implements LayerChangeListener{
     }
 
     /**
-     * <p>Replies the contour model for the currently active data layer
+     * Replies the contour model for the currently active data layer
      * (the "edit layer"), or null, if the currently active layer isn't
-     * a data layer.</p>
+     * a data layer.
      *
      * @return the model
      */

@@ -1,17 +1,5 @@
 package org.openstreetmap.josm.plugins.contourmerge;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
-import java.util.Optional;
-
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang3.Validate;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.Node;
@@ -19,15 +7,18 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 
+import javax.validation.constraints.NotNull;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
+import java.util.Optional;
+
 /**
- * <p><strong>ContourMergeView</strong> renders the {@link ContourMergeModel}
- * for the
- * currently active data layer.</p>
- *
+ * <strong>ContourMergeView</strong> renders the {@link ContourMergeModel}
+ * for the currently active data layer.
  */
 public class ContourMergeView implements MapViewPaintable{
-//    static private final Logger logger =
-//            Logger.getLogger(ContourMergeView.class.getName());
 
     static private ContourMergeView instance;
 
@@ -181,7 +172,7 @@ public class ContourMergeView implements MapViewPaintable{
     protected void paintHelperLinesFromDragSourceToDraggedWaySlice(
             Graphics2D g, MapView mv){
         getActiveModel()
-        .filter(model -> model.isDragging())
+        .filter(ContourMergeModel::isDragging)
         .ifPresent(model -> {
             WaySlice dragSource = model.getDragSource();
 
@@ -222,8 +213,8 @@ public class ContourMergeView implements MapViewPaintable{
      * the drop target, when we paint the helper lines.</p>
      *
      * @param mv the map view
-     * @param dragSource
-     * @param dropTarget
+     * @param dragSource the drag source
+     * @param dropTarget the drop target
      * @return true, if the two helper lines from the drag source to the
      * drop target intersect
      */
@@ -257,8 +248,8 @@ public class ContourMergeView implements MapViewPaintable{
      * drop target, when we paint the helper lines.</p>
      *
      * @param mv the map view
-     * @param dragSource
-     * @param dragOffset
+     * @param dragSource the drag source
+     * @param dragOffset the drag offset
      * @return true, if the two helper lines from the drag source to the drop
      * target intersect
      */
@@ -283,7 +274,7 @@ public class ContourMergeView implements MapViewPaintable{
     protected void paintHelperLinesFromDragSourceToDropTarget(Graphics2D g,
             MapView mv){
         getActiveModel()
-        .filter(model -> model.isDragging())
+        .filter(ContourMergeModel::isDragging)
         .ifPresent(model -> {
             WaySlice dragSource = model.getDragSource();
             WaySlice dropTarget = model.getDropTarget();
@@ -313,7 +304,7 @@ public class ContourMergeView implements MapViewPaintable{
 
     protected void paintDraggedWaySlice(Graphics2D g, MapView mv, Bounds bbox) {
         getActiveModel()
-        .filter(model -> model.isDragging())
+        .filter(ContourMergeModel::isDragging)
         .ifPresent(model -> {
             WaySlice dragSource = model.getDragSource();
             WaySlice dropTarget = model.getDropTarget();
