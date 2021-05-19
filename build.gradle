@@ -21,7 +21,7 @@ dependencies {
     testImplementation "org.hamcrest:hamcrest-library:2.2"
 }
 
-version="v0.1.7"
+version="v0.1.8"
 archivesBaseName = "contourmerge"
 
 josm {
@@ -48,7 +48,7 @@ test {
     systemProperty "josm.home", file("src/test/resources/josm.home")
 
     afterTest { desc, result ->
-        println "Executing test ${desc.name} [${desc.className}] with " + 
+        println "Executing test ${desc.name} [${desc.className}] with " +
                 "result: ${result.resultType}"
     }
 }

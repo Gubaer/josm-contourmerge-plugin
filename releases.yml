@@ -1,4 +1,8 @@
 releases:
+  - label: v0.1.8
+    minJosmVersion: 17903
+    description: "fix #24: Contourmerge Plugin can corrupt data integrety"
+
   - label: v0.1.7
     minJosmVersion: 17903
     description: "merge #25: Bump minJosmVersion for JOSM r17867"
