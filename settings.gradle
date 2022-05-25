@@ -1,13 +1,13 @@
-pluginManagement {
-    repositories {
-        maven {
-            url "$gradle_josm_plugin_repo"
-            allowInsecureProtocol true
-            content {
-                includeModule("org.openstreetmap.josm", "gradle-josm-plugin")
-                includeModule("org.openstreetmap.josm", "org.openstreetmap.josm.gradle.plugin")
-            }
-        }
-        gradlePluginPortal()
-    }
-}
+//pluginManagement {
+//    repositories {
+//        maven {
+//            url "$gradle_josm_plugin_repo"
+//            allowInsecureProtocol true
+//            content {
+//                includeModule("org.openstreetmap.josm", "gradle-josm-plugin")
+//                includeModule("org.openstreetmap.josm", "org.openstreetmap.josm.gradle.plugin")
+//            }
+//        }
+//        gradlePluginPortal()
+//    }
+//}
