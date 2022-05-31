@@ -1,16 +1,15 @@
 package org.openstreetmap.josm.plugins.contourmerge
 
+import groovy.test.GroovyTestCase
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
-import org.junit.experimental.runners.Enclosed
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.openstreetmap.josm.data.osm.DataSet
 import org.openstreetmap.josm.data.osm.Node
 import org.openstreetmap.josm.data.osm.Way
-import org.openstreetmap.josm.plugins.contourmerge.fixtures.JOSMFixture
+import org.openstreetmap.josm.plugins.contourmerge.fixture.JOSMFixture
 
 import java.util.stream.Collectors
 
@@ -119,15 +118,14 @@ class WaySliceBoundaryMatcher extends
     }
 }
 
-class TestCaseWithJOSMFixture {
-    @BeforeClass
+class TestCaseWithJOSMFixture extends GroovyTestCase {
+    @BeforeAll
     static void startJOSMFixtures() {
-        JOSMFixture.createUnitTestFixture().init()
+        JOSMFixture.createFixture(false /* without GUI */).init()
     }
 }
 
-@RunWith(Enclosed.class)
-class WaySliceTest {
+class WaySliceTest extends TestCaseWithJOSMFixture {
 
     static def isBoundary(int start, int end) {
         new SliceBoundaryMatcher(start, end)
@@ -140,9 +138,7 @@ class WaySliceTest {
     static def isSliceWithBoundary(int start, int end) {
         return new WaySliceBoundaryMatcher(start, end)
     }
-
-    def shouldFail = new GroovyTestCase().&shouldFail
-
+    
     static def newNode(id){
         return new Node(id)
     }
@@ -161,11 +157,6 @@ class WaySliceTest {
 
     static def newNodes(int from, int to) {
         return (from..to).collect {newNode(it)}.toList()
-    }
-
-    @BeforeClass
-    static void startJOSMFixtures() {
-        JOSMFixture.createUnitTestFixture().init()
     }
 
     @Test
@@ -421,8 +412,7 @@ class WaySliceTest {
         assert ws.getNumSegments() == 4
     }
 
-
-    def  n(i){
+    static def n(i){
         return new Node(i)
     }
 
@@ -460,7 +450,7 @@ class WaySliceTest {
 
         ws = new WaySlice(w, 0, 2)
         wn = ws.replaceNodes(newnodes)
-        assert wn.getNodes() == [n(10), n(11), n(12), n(4), n(5), n(10)]
+        assert wn.getNodes() == [n(5), n(10), n(11), n(12), n(4), n(5)]
 
         ws = new WaySlice(w, 3, 4)
         wn = ws.replaceNodes(newnodes)
@@ -468,7 +458,7 @@ class WaySliceTest {
 
         ws = new WaySlice(w, 0, 4)
         wn = ws.replaceNodes(newnodes)
-        assert wn.getNodes() == [n(10), n(11), n(12), n(10)]
+        assert wn.getNodes() == [n(12), n(10), n(11), n(12)]
     }
 
     @Test
@@ -490,22 +480,24 @@ class WaySliceTest {
         assert wn.getNodes() == [n(10), n(11), n(12), n(2), n(3), n(4), n(10)]
     }
 
-
-
     static class sliceBoundaryTest extends TestCaseWithJOSMFixture{
 
-        @Test(expected = IllegalArgumentException.class)
+        @Test
         void rejectWayNodesWithTooFewNodes() {
             def wayNodes = []
             def sliceNodes = [newNode(1), newNode(2)]
-            WaySlice.findSliceBoundary(wayNodes, sliceNodes)
+            shouldFail(IllegalArgumentException) {
+                WaySlice.findSliceBoundary(wayNodes, sliceNodes)
+            }
         }
 
-        @Test(expected = IllegalArgumentException.class)
+        @Test
         void rejectSliceNodesWithTooFewNodes() {
             def wayNodes = [newNode(1), newNode(2)]
             def sliceNodes = []
-            WaySlice.findSliceBoundary(wayNodes, sliceNodes)
+            shouldFail(IllegalArgumentException) {
+                WaySlice.findSliceBoundary(wayNodes, sliceNodes)
+            }
         }
 
         @Test
@@ -580,32 +572,40 @@ class WaySliceTest {
 
     static class buildWaySlice extends TestCaseWithJOSMFixture {
 
-        @Test(expected=NullPointerException.class)
+        @Test
         void rejectNullWay() {
             def way = null
             def slice = (0..1).collect {newNode(it)}
-            WaySlice.buildWaySlice(way, slice)
+            shouldFail(NullPointerException) {
+                WaySlice.buildWaySlice(way, slice)
+            }
         }
 
-        @Test(expected=NullPointerException.class)
+        @Test
         void rejectNullSlice() {
             def way = newWay(1, newNode(1), newNode(2))
             def slice = null
-            WaySlice.buildWaySlice(way, slice)
+            shouldFail(NullPointerException) {
+                WaySlice.buildWaySlice(way, slice)
+            }
         }
 
-        @Test(expected=IllegalArgumentException.class)
+        @Test
         void rejectIncompleteWay() {
             def way = new Way(1)
             def slice = (0..1).collect {newNode(it)}
-            WaySlice.buildWaySlice(way, slice)
+            shouldFail(IllegalArgumentException) {
+                WaySlice.buildWaySlice(way, slice)
+            }
         }
 
-        @Test(expected=IllegalArgumentException.class)
+        @Test
         void rejectSliceIfToShort() {
             def way = newWay(1, newNode(1), newNode(2))
             def slice = [newNode(3)]
-            WaySlice.buildWaySlice(way, slice)
+            shouldFail(IllegalArgumentException) {
+                WaySlice.buildWaySlice(way, slice)
+            }
         }
 
         static class fromOpenWay extends TestCaseWithJOSMFixture {
@@ -959,7 +959,7 @@ class WaySliceTest {
             return w
         }
 
-        @Before
+        @BeforeEach
         void setUp() {
             ds = new DataSet()
         }

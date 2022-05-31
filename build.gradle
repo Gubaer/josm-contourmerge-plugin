@@ -1,5 +1,5 @@
 plugins {
-    id("org.openstreetmap.josm").version("$gradle_josm_plugin_version")
+    id "org.openstreetmap.josm" version "$gradle_josm_plugin_version"
     id 'java'
     id 'groovy'
 }
@@ -14,9 +14,15 @@ dependencies {
     packIntoJar "org.apache.commons:commons-lang3:3.12.0"
 
     implementation "javax.validation:validation-api:2.0.1.Final"
-    testImplementation('org.junit.jupiter:junit-jupiter:5.8.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testImplementation 'org.apache.groovy:groovy-all:4.0.2'
+    testImplementation 'org.apache.groovy:groovy-test:4.0.2'
     testImplementation "org.hamcrest:hamcrest-library:2.2"
+
+    testImplementation('org.openstreetmap.josm:josm-unittest:latest'){
+        changing=true
+    }
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 version="v0.1.8"
@@ -42,8 +48,9 @@ compileJava {
 }
 
 test {
-    useJUnit()
-    systemProperty "josm.home", file("src/test/resources/josm.home")
+    useJUnitPlatform()
+    scanForTestClasses = false
+    systemProperty "josm.home", file("src/test/resources/josm.home").absolutePath
 
     afterTest { desc, result ->
         println "Executing test ${desc.name} [${desc.className}] with " +

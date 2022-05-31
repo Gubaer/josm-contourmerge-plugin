@@ -1,11 +1,12 @@
 package org.openstreetmap.josm.plugins.contourmerge
 
+import groovy.test.GroovyTestCase
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.openstreetmap.josm.actions.OpenFileAction
 import org.openstreetmap.josm.command.SequenceCommand
 import org.openstreetmap.josm.data.Preferences
@@ -26,13 +27,13 @@ import static org.hamcrest.Matchers.*
  * Test case for Issue 21,
  *  {@see https://github.com/Gubaer/josm-contourmerge-plugin/issues/21}
  */
-class DuplicateNodeTest {
+class DuplicateNodeTest extends GroovyTestCase {
 
     DataSet dataSet
     OsmDataLayer layer
     ContourMergeModel mergeModel
 
-    @BeforeClass
+    @BeforeAll
     static void initJosmConfig() {
         Config.setPreferencesInstance(new Preferences())
         ProjectionRegistry.setProjection(
@@ -53,7 +54,7 @@ class DuplicateNodeTest {
         mergeModel = new ContourMergeModel(layer)
     }
 
-    @Before
+    @BeforeEach
     void prepareTestData() {
         createDataSet()
         prepareMergeModel()
@@ -81,7 +82,7 @@ class DuplicateNodeTest {
         sourceWay = dataSet.getPrimitiveById(100, OsmPrimitiveType.WAY) as Way
         def newWayNodeIds = sourceWay.nodes.collect {it.primitiveId.uniqueId}
 
-        def expectedSourceWayNodeIds = [1001,2001,2002,1004,1005,1006,1007,1001]
+        List<Long> expectedSourceWayNodeIds = [1001,2001,2002,1004,1005,1006,1007,1001]
 
         assertThat("merged sourceWay consists of the expected nodes",
             newWayNodeIds,
@@ -94,10 +95,6 @@ class DuplicateNodeTest {
 }
 
 class IsIdenticalListOfLongs extends TypeSafeMatcher<List<Long>> {
-
-    static Matcher<List<Long>> isIdenticalListOfLongs(List<Long> items) {
-        return new IsIdenticalListOfLongs(items)
-    }
 
     private List<Long> expected
 

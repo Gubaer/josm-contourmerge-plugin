@@ -1,16 +1,17 @@
 package org.openstreetmap.josm.plugins.contourmerge
 
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
-import org.junit.experimental.runners.Enclosed
-import org.junit.runner.RunWith
-import org.openstreetmap.josm.data.osm.*
+import groovy.test.GroovyTestCase
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.openstreetmap.josm.data.osm.DataSet
+import org.openstreetmap.josm.data.osm.Node
+import org.openstreetmap.josm.data.osm.Way
+import org.openstreetmap.josm.data.osm.WaySegment
 import org.openstreetmap.josm.gui.layer.OsmDataLayer
+import org.openstreetmap.josm.plugins.contourmerge.fixture.JOSMFixture
 
-
-@RunWith(Enclosed.class)
-class ContourMergeModelTest {
+class ContourMergeModelTest extends GroovyTestCase {
 
     protected DataSet ds
 
@@ -31,37 +32,14 @@ class ContourMergeModelTest {
         return w
     }
 
-    def newWay(int id, Range nodes) {
-        def nn = []
-        nodes.each {i->
-            Node n = ds.getPrimitiveById(i, OsmPrimitiveType.NODE)
-            if (n == null) {
-                n = newNode(i)
-            }
-            nn << n
-        }
-        return newWay(id,nn)
+    @BeforeAll
+    static void setupJosmFixture() {
+        final fixture = JOSMFixture.createFixture()
     }
 
-
-    @Before
+    @BeforeEach
     void setUp() {
         ds = new DataSet()
-    }
-
-    def getProperty(String name){
-        switch(name){
-            case ~/^n(\d+)$/:
-                def m = name =~ /^n(\d+)$/
-                return ds.getPrimitiveById(m[0][1].toInteger(),
-                        OsmPrimitiveType.NODE)
-
-             case ~/^w(\d+)$/:
-                def m = name=~ /^w(\d+)$/
-                return ds.getPrimitiveById(m[0][1].toInteger(),
-                        OsmPrimitiveType.WAY)
-        }
-        return getMetaClass().getProperty(this,name)
     }
 
     def createModelMock(){
@@ -75,9 +53,9 @@ class ContourMergeModelTest {
         ContourMergeModel model = createModelMock()
         Node n = newNode(1)
         model.selectNode(n)
-        assert model.isSelected(n)
+        assertTrue(model.isSelected(n))
         model.deselectNode(n)
-        assert !model.isSelected(n)
+        assertTrue(!model.isSelected(n))
     }
 
     @Test
@@ -85,9 +63,9 @@ class ContourMergeModelTest {
         ContourMergeModel model = createModelMock()
         model.selectNode(newNode(1))
         model.selectNode(newNode(2))
-        assert model.getSelectedNodes().size() == 2
+        assertEquals(2, model.getSelectedNodes().size())
         model.deselectAllNodes()
-        assert model.getSelectedNodes().isEmpty()
+        assertTrue(model.getSelectedNodes().isEmpty())
     }
 
     @Test
@@ -100,7 +78,6 @@ class ContourMergeModelTest {
         model.toggleSelected(n)
         assert model.isSelected(n)
     }
-
 
     @Test
     void getDragSource_OpenWayNoSelectedNodes() {
@@ -457,6 +434,4 @@ class ContourMergeModelTest {
           assert ! model.isWaySegmentDragable(new WaySegment(w, it))
       }
     }
-
-
  }

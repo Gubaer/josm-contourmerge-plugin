@@ -1,8 +1,9 @@
 package org.openstreetmap.josm.plugins.contourmerge
 
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import groovy.test.GroovyTestCase
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.openstreetmap.josm.data.Preferences
 import org.openstreetmap.josm.data.coor.LatLon
 import org.openstreetmap.josm.data.osm.DataSet
@@ -15,13 +16,11 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer
 import org.openstreetmap.josm.io.OsmReader
 import org.openstreetmap.josm.spi.preferences.Config
 
-import javax.swing.ProgressMonitor
-
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.equalTo
-import static org.junit.Assert.*
+import static org.junit.Assert.assertFalse
 
-class DataIntegrityProblemTest01 {
+class DataIntegrityProblemTest01 extends GroovyTestCase {
 
     DataSet dataSet
     OsmDataLayer layer
@@ -34,16 +33,16 @@ class DataIntegrityProblemTest01 {
     List<Node> closedWayNodes
     WaySlice openWaySlice
 
-    @BeforeClass
+    @BeforeAll
     static void initJosmConfig() {
         Config.setPreferencesInstance(new Preferences())
         ProjectionRegistry.setProjection(
                 Projections.getProjectionByCode("EPSG:3857"))
     }
 
-    def buildNode(Map args) {
-        def node = new Node(args.id)
-        node.setCoor(new LatLon(args.lat, args.lon))
+    static def buildNode(Map args) {
+        def node = new Node(args.id as long)
+        node.setCoor(new LatLon(args.lat as double, args.lon as double))
         return node
     }
 
@@ -94,7 +93,7 @@ class DataIntegrityProblemTest01 {
     }
 
 
-    @Before
+    @BeforeEach
     void prepareTestData() {
         createDataSet()
         prepareMergeModel()
@@ -145,7 +144,7 @@ class DataIntegrityProblemTest01 {
 }
 
 
-class DataIntegrityProblemTest02 {
+class DataIntegrityProblemTest02 extends GroovyTestCase {
 
     DataSet dataSet
     OsmDataLayer layer
@@ -158,16 +157,16 @@ class DataIntegrityProblemTest02 {
     List<Node> closedWayNodes
     WaySlice openWaySlice
 
-    @BeforeClass
+    @BeforeAll
     static void initJosmConfig() {
         Config.setPreferencesInstance(new Preferences())
         ProjectionRegistry.setProjection(
                 Projections.getProjectionByCode("EPSG:3857"))
     }
 
-    def buildNode(Map args) {
-        def node = new Node(args.id)
-        node.setCoor(new LatLon(args.lat, args.lon))
+    static def buildNode(Map args) {
+        def node = new Node(args.id as long)
+        node.setCoor(new LatLon(args.lat as double, args.lon as double))
         return node
     }
 
@@ -220,7 +219,7 @@ class DataIntegrityProblemTest02 {
     }
 
 
-    @Before
+    @BeforeEach
     void prepareTestData() {
         createDataSet()
         prepareMergeModel()
@@ -272,10 +271,10 @@ class DataIntegrityProblemTest02 {
     }
 }
 
-class DataIntegrityProblemTest03 {
+class DataIntegrityProblemTest03 extends GroovyTestCase {
 
     // dataset reported in ticket https://josm.openstreetmap.de/ticket/20629
-    static DATA_SET = """
+    final static DATA_SET = """
 <osm version='0.6' generator='JOSM'>
   <bounds minlat='-23.1550787' minlon='47.0651293' maxlat='-23.1489626' maxlon='47.0745707' origin='CGImap 0.8.3 (2888343 spike-08.openstreetmap.org)' />
   <bounds minlat='-23.1550787' minlon='47.0651293' maxlat='-23.1489626' maxlon='47.0745707' origin='OpenStreetMap server' />
@@ -313,14 +312,14 @@ class DataIntegrityProblemTest03 {
 </osm>
 """
 
-    @BeforeClass
+    @BeforeAll
     static void initJosmConfig() {
         Config.setPreferencesInstance(new Preferences())
         ProjectionRegistry.setProjection(
                 Projections.getProjectionByCode("EPSG:3857"))
     }
 
-    def DataSet dataSet
+    DataSet dataSet
     def layer
     def mergeModel
 
@@ -337,7 +336,7 @@ class DataIntegrityProblemTest03 {
     }
 
 
-    @Before
+    @BeforeEach
     void prepareTestData() {
         createDataSet()
         prepareMergeModel()
@@ -370,7 +369,6 @@ class DataIntegrityProblemTest03 {
         }.size()
         assertTrue("has $numDeletedNodes nodes, expected none", numDeletedNodes == 0)
     }
-
 }
 
 
