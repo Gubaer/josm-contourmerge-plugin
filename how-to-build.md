@@ -48,12 +48,9 @@ The plugin is published to the release for the current release label.
 ```bash
 $ ./gradlew publishToGithubRelease
 ```
-Make sure the release exists and the `contourmerge.jar` is available for this 
+Make sure the release exists and the `contourmerge.jar` is available for this
 release: [https://github.com/Gubaer/josm-contourmerge-plugin/releases]
 
-5. Update the download link in the JOSMs plugin registry
-
-For the time being this has to be done manually. 
 
 * Open [https://josm.openstreetmap.de/wiki/PluginsSource]
 * Edit the page and update the link to the `contourmerge.jar`
