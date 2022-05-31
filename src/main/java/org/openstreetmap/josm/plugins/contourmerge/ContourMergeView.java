@@ -43,13 +43,15 @@ public class ContourMergeView implements MapViewPaintable{
         return ContourMergePlugin.getModelManager().getActiveModel();
     }
 
+    @SuppressWarnings("unused")
     protected void decorateFeedbackNode(Graphics2D g, MapView mv, Bounds bbox){
         /* currently no decoration - mouse pointer is changing if mouse over a
          * node */
     }
 
+    @SuppressWarnings("unused")
     protected void decorateSelectedNode(Graphics2D g, MapView mv, Bounds bbox,
-            Node node){
+                                        Node node){
         // since at least 12712 the following check always returns false. Possibly
         // already before 12712. Don't know due to which commit exactly.
         // Comment it out for the time being. Should have only a minor
@@ -71,10 +73,8 @@ public class ContourMergeView implements MapViewPaintable{
     }
 
     protected void decorateSelectedNodes(Graphics2D g, MapView mv, Bounds bbox){
-        getActiveModel().ifPresent(model -> {
-            model.getSelectedNodes().stream()
-            .forEach(n -> decorateSelectedNode(g, mv, bbox, n));
-        });
+        getActiveModel().ifPresent(model ->
+            model.getSelectedNodes().forEach(n -> decorateSelectedNode(g, mv, bbox, n)));
     }
 
     /**
@@ -83,11 +83,9 @@ public class ContourMergeView implements MapViewPaintable{
      *
      * @param g graphics context
      * @param mv map view
-     * @param bbox map bbox
      * @param slice the way slice. Must not be null.
      */
-    protected void highlightWaySlice(Graphics2D g, MapView mv, Bounds bbox,
-            WaySlice slice){
+    protected void highlightWaySlice(Graphics2D g, MapView mv, WaySlice slice){
         Path2D polyline = project(mv, slice);
         g.setColor(Color.RED);
         g.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT,
@@ -302,7 +300,7 @@ public class ContourMergeView implements MapViewPaintable{
         });
     }
 
-    protected void paintDraggedWaySlice(Graphics2D g, MapView mv, Bounds bbox) {
+    protected void paintDraggedWaySlice(Graphics2D g, MapView mv) {
         getActiveModel()
         .filter(ContourMergeModel::isDragging)
         .ifPresent(model -> {
@@ -348,14 +346,14 @@ public class ContourMergeView implements MapViewPaintable{
                 decorateFeedbackNode(g, mv, bbox);
                 WaySlice dragSourceSlice = model.getDragSource();
                 if (dragSourceSlice != null){
-                    highlightWaySlice(g, mv, bbox, dragSourceSlice);
+                    highlightWaySlice(g, mv, dragSourceSlice);
                 }
                 WaySlice dropTargetSlice = model.getDropTarget();
                 if (dropTargetSlice != null){
-                    highlightWaySlice(g, mv, bbox, dropTargetSlice);
+                    highlightWaySlice(g, mv, dropTargetSlice);
                 }
                 if (model.isDragging()){
-                    paintDraggedWaySlice(g, mv, bbox);
+                    paintDraggedWaySlice(g, mv);
                 }
             });
     }

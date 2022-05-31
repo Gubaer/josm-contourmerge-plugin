@@ -65,9 +65,8 @@ public class ContourMergeModelManager implements LayerChangeListener{
      * @return the model
      */
     public Optional<ContourMergeModel> getActiveModel() {
-        return Optional.ofNullable(MainApplication.getLayerManager().getEditLayer())
-            .map(layer -> getModel(layer))
-            .orElse(Optional.empty());
+        return Optional.ofNullable(MainApplication.getLayerManager()
+            .getEditLayer()).flatMap(this::getModel);
     }
 
     /* --------------------------------------------------------------------- */
