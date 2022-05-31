@@ -92,7 +92,6 @@ class DataIntegrityProblemTest01 extends GroovyTestCase {
         mergeModel = new ContourMergeModel(layer)
     }
 
-
     @BeforeEach
     void prepareTestData() {
         createDataSet()
@@ -345,8 +344,8 @@ class DataIntegrityProblemTest03 extends GroovyTestCase {
     @Test
     void "test case 03"() {
 
-        def pond = dataSet.getPrimitiveById(-104797, OsmPrimitiveType.WAY)
-        def wood = dataSet.getPrimitiveById(-104798, OsmPrimitiveType.WAY)
+        final pond = dataSet.getPrimitiveById(-104797, OsmPrimitiveType.WAY) as Way
+        final wood = dataSet.getPrimitiveById(-104798, OsmPrimitiveType.WAY) as Way
 
         def sourceSlice = new WaySlice(wood, 0, 1, true /* in direction */)
         def targetSlice = new WaySlice(pond, 5, 6, true /* in direction */)
