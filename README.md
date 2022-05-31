@@ -1,10 +1,10 @@
-The `contourmerge` plugin provides an editing mode to merge (or align) two 
+The `contourmerge` plugin provides an editing mode to merge (or align) two
 contours on an OSM map, i.e.
 
-* a section of a lake outline and an a section of neighboring area representing 
+* a section of a lake outline and an a section of neighboring area representing
   a forest
 * a section of a coast line and a section of a residential area
-* two border sections 
+* two border sections
 
 ## Install
 * Download [JOSM](http://josm.openstreetmap.de)
@@ -18,10 +18,10 @@ contours on an OSM map, i.e.
 See this short [user guide on the JOSM wiki](http://josm.openstreetmap.de/wiki/Help/Plugin/ContourMerge).
 
 ## Build status
-[![Build Status](https://travis-ci.org/Gubaer/josm-contourmerge-plugin.svg?branch=master)](https://travis-ci.org/Gubaer/josm-contourmerge-plugin.svg?branch=master)
+[![Josm Contourmerge Plugin - Build](https://github.com/Gubaer/josm-contourmerge-plugin/actions/workflows/gradle.yml/badge.svg)](https://github.com/Gubaer/josm-contourmerge-plugin/actions/workflows/gradle.yml)
 
 ## License
 Published under GPL Version 3 and higher. See included LICENSE file.
 
 ## Author
-Karl Guggisberg <karl.guggisberg@guggis.ch>      
+Karl Guggisberg <karl.guggisberg@guggis.ch>
