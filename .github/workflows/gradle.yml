@@ -16,6 +16,16 @@ permissions:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        josm-versions:
+          - latest
+          - tested
+          - release
+        jdk:
+          - 8
+          - 11
+          - 17
 
     runs-on: ubuntu-latest
 
@@ -24,7 +34,7 @@ jobs:
       - name: Set up JDK 8
         uses: actions/setup-java@v3
         with:
-          java-version: '8'
+          java-version: '${{ matrix.jdk }}'
           distribution: 'temurin'
       # headless X11 setup according to
       # https://stackoverflow.com/questions/68292797/running-java-gui-tests-on-github-using-xvfb
@@ -37,4 +47,4 @@ jobs:
         env:
           DISPLAY: ":19"
         with:
-          arguments: build
+          arguments: build -Pplugin.josmCompileVersion=${{ matrix.josm-version }}
