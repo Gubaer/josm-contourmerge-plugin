@@ -28,8 +28,38 @@ dependencies {
 version="v0.1.8"
 archivesBaseName = "contourmerge"
 
+import org.openstreetmap.josm.plugins.contourmerge.build.Releases
+def releases = Releases.fromFile(file("releases.yml"))
+
+def deriveJosmCompileVersion(releases) {
+    final value = project.hasProperty("plugin.josmCompileVersion")
+            ? project.property("plugin.josmCompileVersion")
+            : null
+    def josmCompileVersion
+    //noinspection GroovyFallthrough
+    switch (value) {
+        case null:
+            josmCompileVersion = "latest"
+            break
+        case "latest":
+        case "tested":
+            josmCompileVersion = value
+            break
+        case "release":
+            josmCompileVersion = releases.getLastCompatibleJosmVersion()
+            break
+        default:
+            josmCompileVersion = value.isInteger() ? value as Integer : "latest"
+    }
+    return josmCompileVersion
+}
+
+def configuredJosmCompileVersion = deriveJosmCompileVersion(releases)
+logger.info("Compiling for JOSM ${configuredJosmCompileVersion}")
+
+
 josm {
-    josmCompileVersion = "latest"
+    josmCompileVersion = configuredJosmCompileVersion
     manifest {
         includeLinksToGithubReleases = true
         minJosmVersion = 17903
