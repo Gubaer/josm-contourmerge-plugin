@@ -25,11 +25,12 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
-version="v0.1.8"
+
 archivesBaseName = "contourmerge"
 
 import org.openstreetmap.josm.plugins.contourmerge.build.Releases
 def releases = Releases.fromFile(file("releases.yml"))
+version=releases.currentPluginLabel
 
 def deriveJosmCompileVersion(releases) {
     final value = project.hasProperty("plugin.josmCompileVersion")
@@ -62,12 +63,13 @@ josm {
     josmCompileVersion = configuredJosmCompileVersion
     manifest {
         includeLinksToGithubReleases = true
-        minJosmVersion = 17903
+        minJosmVersion = releases.highestJosmVersion
     }
 
     github {
         repositoryName = "josm-contourmerge-plugin"
         repositoryOwner = "gubaer"
+        targetCommitish = "master"
     }
 }
 
