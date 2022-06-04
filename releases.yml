@@ -1,4 +1,10 @@
 releases:
+  - label: v0.1.9
+    minJosmVersion: 18218
+    description: |
+      necessary because of dependency to  [org.openstreetmap.josm.tools.Utils::isEmpty(String)][josm-source]
+      [josm-source]: https://josm.openstreetmap.de/browser/josm/trunk/src/org/openstreetmap/josm/tools/Utils.java#L696
+
   - label: v0.1.8
     minJosmVersion: 17903
     description: "fix #24: Contourmerge Plugin can corrupt data integrety"
