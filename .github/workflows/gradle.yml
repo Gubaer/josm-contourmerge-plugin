@@ -48,3 +48,4 @@ jobs:
           DISPLAY: ":19"
         with:
           arguments: build -Pplugin.josmCompileVersion=${{ matrix.josm-version }}
+          
