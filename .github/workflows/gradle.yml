@@ -43,7 +43,7 @@ jobs:
       - name: Start virtual frame buffer
         run: Xvfb :19 -screen 0 1024x768x16 &
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@v2.1.6
+        uses: gradle/gradle-build-action@v2.4.2
         env:
           DISPLAY: ":19"
         with:
