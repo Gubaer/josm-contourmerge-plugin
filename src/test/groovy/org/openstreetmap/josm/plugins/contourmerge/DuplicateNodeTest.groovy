@@ -1,8 +1,7 @@
 package org.openstreetmap.josm.plugins.contourmerge
 
-import groovy.test.GroovyTestCase
+
 import org.hamcrest.Description
-import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -27,7 +26,7 @@ import static org.hamcrest.Matchers.*
  * Test case for Issue 21,
  *  {@see https://github.com/Gubaer/josm-contourmerge-plugin/issues/21}
  */
-class DuplicateNodeTest extends GroovyTestCase {
+class DuplicateNodeTest  {
 
     DataSet dataSet
     OsmDataLayer layer
@@ -45,7 +44,7 @@ class DuplicateNodeTest extends GroovyTestCase {
         OpenFileAction.openFiles(files).get()
         layer = MainApplication.layerManager.getLayers().find {
             it.name == "sample.osm"
-        }
+        } as OsmDataLayer
         assertThat(layer, is(notNullValue()))
         dataSet=layer.dataSet
     }

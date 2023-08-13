@@ -1,6 +1,6 @@
 package org.openstreetmap.josm.plugins.contourmerge
 
-import groovy.test.GroovyTestCase
+
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,9 +18,9 @@ import org.openstreetmap.josm.spi.preferences.Config
 
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.equalTo
-import static org.junit.Assert.assertFalse
+import static org.junit.Assert.*
 
-class DataIntegrityProblemTest01 extends GroovyTestCase {
+class DataIntegrityProblemTest01  {
 
     DataSet dataSet
     OsmDataLayer layer
@@ -143,7 +143,7 @@ class DataIntegrityProblemTest01 extends GroovyTestCase {
 }
 
 
-class DataIntegrityProblemTest02 extends GroovyTestCase {
+class DataIntegrityProblemTest02 {
 
     DataSet dataSet
     OsmDataLayer layer
@@ -270,7 +270,7 @@ class DataIntegrityProblemTest02 extends GroovyTestCase {
     }
 }
 
-class DataIntegrityProblemTest03 extends GroovyTestCase {
+class DataIntegrityProblemTest03  {
 
     // dataset reported in ticket https://josm.openstreetmap.de/ticket/20629
     final static DATA_SET = """

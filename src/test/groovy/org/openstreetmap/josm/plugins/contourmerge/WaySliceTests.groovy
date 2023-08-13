@@ -1,6 +1,6 @@
 package org.openstreetmap.josm.plugins.contourmerge
 
-import groovy.test.GroovyTestCase
+
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 import org.junit.jupiter.api.BeforeAll
@@ -13,6 +13,7 @@ import org.openstreetmap.josm.plugins.contourmerge.fixture.JOSMFixture
 
 import java.util.stream.Collectors
 
+import static groovy.test.GroovyAssert.shouldFail
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.not
@@ -118,7 +119,7 @@ class WaySliceBoundaryMatcher extends
     }
 }
 
-class TestCaseWithJOSMFixture extends GroovyTestCase {
+class TestCaseWithJOSMFixture {
     @BeforeAll
     static void startJOSMFixtures() {
         JOSMFixture.createFixture(false /* without GUI */).init()

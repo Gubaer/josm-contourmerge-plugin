@@ -1,6 +1,6 @@
 package org.openstreetmap.josm.plugins.contourmerge
 
-import groovy.test.GroovyTestCase
+
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -11,7 +11,10 @@ import org.openstreetmap.josm.data.osm.WaySegment
 import org.openstreetmap.josm.gui.layer.OsmDataLayer
 import org.openstreetmap.josm.plugins.contourmerge.fixture.JOSMFixture
 
-class ContourMergeModelTest extends GroovyTestCase {
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertTrue
+
+class ContourMergeModelTest {
 
     protected DataSet ds
 
@@ -34,7 +37,7 @@ class ContourMergeModelTest extends GroovyTestCase {
 
     @BeforeAll
     static void setupJosmFixture() {
-        final fixture = JOSMFixture.createFixture()
+        JOSMFixture.createFixture()
     }
 
     @BeforeEach
