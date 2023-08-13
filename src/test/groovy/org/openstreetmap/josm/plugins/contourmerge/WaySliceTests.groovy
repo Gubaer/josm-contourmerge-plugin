@@ -124,9 +124,6 @@ class TestCaseWithJOSMFixture {
     static void startJOSMFixtures() {
         JOSMFixture.createFixture(false /* without GUI */).init()
     }
-}
-
-class WaySliceTest extends TestCaseWithJOSMFixture {
 
     static def isBoundary(int start, int end) {
         new SliceBoundaryMatcher(start, end)
@@ -139,7 +136,7 @@ class WaySliceTest extends TestCaseWithJOSMFixture {
     static def isSliceWithBoundary(int start, int end) {
         return new WaySliceBoundaryMatcher(start, end)
     }
-    
+
     static def newNode(id){
         return new Node(id)
     }
@@ -159,6 +156,9 @@ class WaySliceTest extends TestCaseWithJOSMFixture {
     static def newNodes(int from, int to) {
         return (from..to).collect {newNode(it)}.toList()
     }
+}
+
+class WaySliceTest extends TestCaseWithJOSMFixture {
 
     @Test
     void constructor_inDirection(){
@@ -480,647 +480,557 @@ class WaySliceTest extends TestCaseWithJOSMFixture {
         wn = ws.replaceNodes(newnodes)
         assert wn.getNodes() == [n(10), n(11), n(12), n(2), n(3), n(4), n(10)]
     }
+}
 
-    static class sliceBoundaryTest extends TestCaseWithJOSMFixture{
+class BuildWaySliceTest extends TestCaseWithJOSMFixture {
 
-        @Test
-        void rejectWayNodesWithTooFewNodes() {
-            def wayNodes = []
-            def sliceNodes = [newNode(1), newNode(2)]
-            shouldFail(IllegalArgumentException) {
-                WaySlice.findSliceBoundary(wayNodes, sliceNodes)
-            }
-        }
-
-        @Test
-        void rejectSliceNodesWithTooFewNodes() {
-            def wayNodes = [newNode(1), newNode(2)]
-            def sliceNodes = []
-            shouldFail(IllegalArgumentException) {
-                WaySlice.findSliceBoundary(wayNodes, sliceNodes)
-            }
-        }
-
-        @Test
-        void acceptSliceOfMinimalLengthAtBeginning() {
-            def wayNodes = (1..10).collect { newNode(it) }
-            def sliceNodes = [wayNodes[0], wayNodes[1]]
-            def boundary = WaySlice.findSliceBoundary(wayNodes, sliceNodes)
-            assertThat(boundary.isPresent(), equalTo(true))
-            assertThat(boundary, isBoundary(0, 1))
-        }
-
-        @Test
-        void acceptSliceOfMinimalLengthAtEnd() {
-            def wayNodes = (1..10).collect { newNode(it) }
-            def sliceNodes = [wayNodes[8], wayNodes[9]]
-            def boundary = WaySlice.findSliceBoundary(wayNodes, sliceNodes)
-            assertThat(boundary.isPresent(), equalTo(true))
-            assertThat(boundary, isBoundary(8, 9))
-        }
-
-        @Test
-        void acceptSliceOfMinimalLengthInTheMiddle() {
-            def wayNodes = (1..10).collect { newNode(it) }
-            def sliceNodes = [wayNodes[4], wayNodes[5]]
-            def boundary = WaySlice.findSliceBoundary(wayNodes, sliceNodes)
-            assertThat(boundary.isPresent(), equalTo(true))
-            assertThat(boundary, isBoundary(4, 5))
-        }
-
-        @Test
-        void acceptCompleteWayAsSlice() {
-            def wayNodes = (1..10).collect { newNode(it) }
-            def sliceNodes = wayNodes
-            def boundary = WaySlice.findSliceBoundary(wayNodes, sliceNodes)
-            assertThat(boundary.isPresent(), equalTo(true))
-            assertThat(boundary, isBoundary(0, 9))
-        }
-
-        @Test
-        void rejectFullyDisjointSlice() {
-            def wayNodes = (1..10).collect { newNode(it) }
-            def sliceNodes = (11..14).collect { newNode(it) }
-            def boundary = WaySlice.findSliceBoundary(wayNodes, sliceNodes)
-            assertThat(boundary.isPresent(), equalTo(false))
-        }
-
-        @Test
-        void rejectPartiallyDisjointSlice() {
-            def wayNodes = (1..10).collect { newNode(it) }
-            def sliceNodes = [wayNodes[1], wayNodes[2], newNode(11)]
-            def boundary = WaySlice.findSliceBoundary(wayNodes, sliceNodes)
-            assertThat(boundary.isPresent(), equalTo(false))
-        }
-
-        @Test
-        void rejectOverlappingSliceAtBeginning() {
-            def wayNodes = (1..10).collect { newNode(it) }
-            def sliceNodes = [newNode(11), wayNodes[0], wayNodes[1]]
-            def boundary = WaySlice.findSliceBoundary(wayNodes, sliceNodes)
-            assertThat(boundary.isPresent(), equalTo(false))
-        }
-
-        @Test
-        void rejectOverlappingSliceAtEnd() {
-            def wayNodes = (1..10).collect { newNode(it) }
-            def sliceNodes = [wayNodes[8], wayNodes[9], newNode(11)]
-            def boundary = WaySlice.findSliceBoundary(wayNodes, sliceNodes)
-            assertThat(boundary.isPresent(), equalTo(false))
+    @Test
+    void rejectNullWay() {
+        def way = null
+        def slice = (0..1).collect {newNode(it)}
+        shouldFail(NullPointerException) {
+            WaySlice.buildWaySlice(way, slice)
         }
     }
 
-
-    static class buildWaySlice extends TestCaseWithJOSMFixture {
-
-        @Test
-        void rejectNullWay() {
-            def way = null
-            def slice = (0..1).collect {newNode(it)}
-            shouldFail(NullPointerException) {
-                WaySlice.buildWaySlice(way, slice)
-            }
-        }
-
-        @Test
-        void rejectNullSlice() {
-            def way = newWay(1, newNode(1), newNode(2))
-            def slice = null
-            shouldFail(NullPointerException) {
-                WaySlice.buildWaySlice(way, slice)
-            }
-        }
-
-        @Test
-        void rejectIncompleteWay() {
-            def way = new Way(1)
-            def slice = (0..1).collect {newNode(it)}
-            shouldFail(IllegalArgumentException) {
-                WaySlice.buildWaySlice(way, slice)
-            }
-        }
-
-        @Test
-        void rejectSliceIfToShort() {
-            def way = newWay(1, newNode(1), newNode(2))
-            def slice = [newNode(3)]
-            shouldFail(IllegalArgumentException) {
-                WaySlice.buildWaySlice(way, slice)
-            }
-        }
-
-        static class fromOpenWay extends TestCaseWithJOSMFixture {
-
-            @Test
-            void acceptSliceOfMinimalLengthAtBeginning() {
-                def wayNodes = newNodes(1, 10)
-                def sliceNodes = [wayNodes[0], wayNodes[1]]
-                def way = newWay(1, *wayNodes)
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
-                assertThat(waySlice, isSliceForWay(way))
-                assertThat(waySlice, isSliceWithBoundary(0, 1))
-            }
-
-            @Test
-            void acceptSliceOfMinimalLengthAtBeginningOfReversedWay() {
-                def wayNodes = newNodes(1, 10)
-                def sliceNodes = [wayNodes[0], wayNodes[1]]
-                def way = newWay(1, *wayNodes.reverse())
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
-                assertThat(waySlice, isSliceForWay(way))
-                assertThat(waySlice, isSliceWithBoundary(8, 9))
-            }
-
-            @Test
-            void acceptSliceOfMinimalLengthAtEnd() {
-                def wayNodes = newNodes(1, 10)
-                def sliceNodes = [wayNodes[8], wayNodes[9]]
-                def way = newWay(1, *wayNodes)
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
-                assertThat(waySlice, isSliceForWay(way))
-                assertThat(waySlice, isSliceWithBoundary(8, 9))
-            }
-
-            @Test
-            void acceptSliceOfMinimalLengthAtEndOfReversedWay() {
-                def wayNodes = newNodes(1, 10)
-                def sliceNodes = [wayNodes[8], wayNodes[9]]
-                def way = newWay(1, *wayNodes.reverse())
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
-                assertThat(waySlice, isSliceForWay(way))
-                assertThat(waySlice, isSliceWithBoundary(0, 1))
-            }
-
-            @Test
-            void acceptSliceOfMinimalLengthInTheMiddle() {
-                def wayNodes = newNodes(1, 10)
-                def sliceNodes = [wayNodes[4], wayNodes[5]]
-                def way = newWay(1, *wayNodes)
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
-                assertThat(waySlice, isSliceForWay(way))
-                assertThat(waySlice, isSliceWithBoundary(4, 5))
-            }
-
-            @Test
-            void acceptSliceOfMinimalLengthInTheMiddleOfReversedWay() {
-                def wayNodes = newNodes(1, 10)
-                def sliceNodes = [wayNodes[2], wayNodes[3]]
-                def way = newWay(1, *wayNodes.reverse())
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
-                assertThat(waySlice, isSliceForWay(way))
-                assertThat(waySlice, isSliceWithBoundary(9-3, 9-2))
-            }
-
-            @Test
-            void acceptCompleteWayAsSlice() {
-                def wayNodes = newNodes(1, 10)
-                def sliceNodes = wayNodes
-                def way = newWay(1, *wayNodes)
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
-                assertThat(waySlice, isSliceForWay(way))
-                assertThat(waySlice, isSliceWithBoundary(0, 9))
-            }
-
-            @Test
-            void acceptCompleteWayAsSliceOfReversedWay() {
-                def wayNodes = newNodes(1, 10)
-                def sliceNodes = wayNodes
-                def way = newWay(1, *wayNodes.reverse())
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
-                assertThat(waySlice, isSliceForWay(way))
-                assertThat(waySlice, isSliceWithBoundary(0, 9))
-            }
-
-            @Test
-            void rejectFullyDisjointSlice() {
-                def wayNodes = newNodes(1, 10)
-                def sliceNodes = (11..14).collect { newNode(it) }
-                def way = newWay(1, *wayNodes)
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
-                assertThat(waySlice.isPresent(), equalTo(false))
-            }
-
-            @Test
-            void rejectFullyDisjointSliceOfReversedWay() {
-                def wayNodes = newNodes(1, 10)
-                def sliceNodes = (11..14).collect { newNode(it) }
-                def way = newWay(1, *wayNodes.reverse())
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
-                assertThat(waySlice.isPresent(), equalTo(false))
-            }
-
-            @Test
-            void rejectPartiallyDisjointSlice() {
-                def wayNodes = newNodes(1, 10)
-                def sliceNodes = [wayNodes[1], wayNodes[2], newNode(11)]
-                def way = newWay(1, *wayNodes)
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
-                assertThat(waySlice.isPresent(), equalTo(false))
-            }
-
-            @Test
-            void rejectPartiallyDisjointSliceOfReversedWay() {
-                def wayNodes = newNodes(1, 10)
-                def sliceNodes = [wayNodes[1], wayNodes[2], newNode(11)]
-                def way = newWay(1, *wayNodes.reverse())
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
-                assertThat(waySlice.isPresent(), equalTo(false))
-            }
-
-            @Test
-            void rejectOverlappingSliceAtBeginning() {
-                def wayNodes = newNodes(1, 10)
-                def sliceNodes = [newNode(11), wayNodes[0], wayNodes[1]]
-                def way = newWay(1, *wayNodes)
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
-                assertThat(waySlice.isPresent(), equalTo(false))
-            }
-
-            @Test
-            void rejectOverlappingSliceAtBeginningOfReversedWay() {
-                def wayNodes = newNodes(1, 10)
-                def sliceNodes = [newNode(11), wayNodes[0], wayNodes[1]]
-                def way = newWay(1, *wayNodes.reverse())
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
-                assertThat(waySlice.isPresent(), equalTo(false))
-            }
-
-            @Test
-            void rejectOverlappingSliceAtEnd() {
-                def wayNodes = newNodes(1, 10)
-                def sliceNodes = [wayNodes[8], wayNodes[9], newNode(11)]
-                def way = newWay(1, *wayNodes)
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
-                assertThat(waySlice.isPresent(), equalTo(false))
-            }
-
-            @Test
-            void rejectOverlappingSliceAtEndOfReversedWay() {
-                def wayNodes = newNodes(1, 10)
-                def sliceNodes = [wayNodes[8], wayNodes[9], newNode(11)]
-                def way = newWay(1, *wayNodes.reverse())
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
-                assertThat(waySlice.isPresent(), equalTo(false))
-            }
-        }
-
-        static class fromClosedWay extends TestCaseWithJOSMFixture {
-
-            @Test
-            void acceptSliceOfMinimalLengthAtBeginning() {
-                def wayNodes = newNodes(1, 10)
-                wayNodes += wayNodes[0] // close the way
-                def sliceNodes = [wayNodes[0], wayNodes[1]]
-                def way = newWay(1, *wayNodes)
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
-                assertThat(waySlice, isSliceForWay(way))
-                assertThat(waySlice, isSliceWithBoundary(0, 1))
-            }
-
-            @Test
-            void acceptSliceOfMinimalLengthAtBeginningOfReversedWay() {
-                def wayNodes = newNodes(1, 10)
-                wayNodes += wayNodes[0] // close the way
-                def sliceNodes = [wayNodes[0], wayNodes[1]]
-                def way = newWay(1, *wayNodes.reverse())
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
-                assertThat(waySlice, isSliceForWay(way))
-                assertThat(waySlice, isSliceWithBoundary(9, 10))
-            }
-
-            @Test
-            void acceptSliceOfMinimalLengthAtEnd() {
-                def wayNodes = newNodes(1, 10)
-                wayNodes += wayNodes[0] // close the way
-                def sliceNodes = [wayNodes[9], wayNodes[10]]
-                def way = newWay(1, *wayNodes)
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
-                assertThat(waySlice, isSliceForWay(way))
-                assertThat(waySlice, isSliceWithBoundary(9, 10))
-            }
-
-            @Test
-            void acceptSliceOfMinimalLengthAtEndOfReversedWay() {
-                def wayNodes = newNodes(1, 10)
-                wayNodes += wayNodes[0] // close the way
-                def sliceNodes = [wayNodes[9], wayNodes[10]]
-                def way = newWay(1, *wayNodes.reverse())
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
-                assertThat(waySlice, isSliceForWay(way))
-                assertThat(waySlice, isSliceWithBoundary(0, 1))
-            }
-
-            @Test
-            void acceptSliceOfMinimalLengthInTheMiddle() {
-                def wayNodes = newNodes(1, 10)
-                wayNodes += wayNodes[0] // close the way
-                def sliceNodes = [wayNodes[4], wayNodes[5]]
-                def way = newWay(1, *wayNodes)
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
-                assertThat(waySlice, isSliceForWay(way))
-                assertThat(waySlice, isSliceWithBoundary(4, 5))
-            }
-
-            @Test
-            void acceptSliceOfMinimalLengthInTheMiddleOfReversedWay() {
-                def wayNodes = newNodes(1, 10)
-                wayNodes += wayNodes[0] // close the way
-                def sliceNodes = [wayNodes[2], wayNodes[3]]
-                def way = newWay(1, *wayNodes.reverse())
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
-                assertThat(waySlice, isSliceForWay(way))
-                assertThat(waySlice, isSliceWithBoundary(10-3, 10-2))
-            }
-
-            @Test
-            void rejectFullyDisjointSlice() {
-                def wayNodes = newNodes(1, 10)
-                wayNodes += wayNodes[0] // close the way
-                def sliceNodes = (11..14).collect { newNode(it) }
-                def way = newWay(1, *wayNodes)
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
-                assertThat(waySlice.isPresent(), equalTo(false))
-            }
-
-
-            @Test
-            void rejectFullyDisjointSliceOfReversedWay() {
-                def wayNodes = newNodes(1, 10)
-                wayNodes += wayNodes[0] // close the way
-                def sliceNodes = (11..14).collect { newNode(it) }
-                def way = newWay(1, *wayNodes.reverse())
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
-                assertThat(waySlice.isPresent(), equalTo(false))
-            }
-
-            @Test
-            void rejectPartiallyDisjointSlice() {
-                def wayNodes = newNodes(1, 10)
-                wayNodes += wayNodes[0] // close the way
-                def sliceNodes = [wayNodes[1], wayNodes[2], newNode(11)]
-                def way = newWay(1, *wayNodes)
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
-                assertThat(waySlice.isPresent(), equalTo(false))
-            }
-
-            @Test
-            void rejectPartiallyDisjointSliceOfReversedWay() {
-                def wayNodes = newNodes(1, 10)
-                wayNodes += wayNodes[0] // close the way
-                def sliceNodes = [wayNodes[1], wayNodes[2], newNode(11)]
-                def way = newWay(1, *wayNodes.reverse())
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
-                assertThat(waySlice.isPresent(), equalTo(false))
-            }
-
-            @Test
-            void rejectOverlappingSliceAtBeginning() {
-                def wayNodes = newNodes(1, 10)
-                wayNodes += wayNodes[0] // close the way
-                def sliceNodes = [newNode(11), wayNodes[0], wayNodes[1]]
-                def way = newWay(1, *wayNodes)
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
-                assertThat(waySlice.isPresent(), equalTo(false))
-            }
-
-            @Test
-            void rejectOverlappingSliceAtBeginningOfReversedWay() {
-                def wayNodes = newNodes(1, 10)
-                wayNodes += wayNodes[0] // close the way
-                def sliceNodes = [newNode(11), wayNodes[0], wayNodes[1]]
-                def way = newWay(1, *wayNodes.reverse())
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
-                assertThat(waySlice.isPresent(), equalTo(false))
-            }
-
-            @Test
-            void rejectOverlappingSliceAtEnd() {
-                def wayNodes = newNodes(1, 10)
-                wayNodes += wayNodes[0] // close the way
-                def sliceNodes = [wayNodes[8], wayNodes[9], newNode(11)]
-                def way = newWay(1, *wayNodes)
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
-                assertThat(waySlice.isPresent(), equalTo(false))
-            }
-
-            @Test
-            void rejectOverlappingSliceAtEndOfReversedWay() {
-                def wayNodes = newNodes(1, 10)
-                wayNodes += wayNodes[0] // close the way
-                def sliceNodes = [wayNodes[8], wayNodes[9], newNode(11)]
-                def way = newWay(1, *wayNodes.reverse())
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
-                assertThat(waySlice.isPresent(), equalTo(false))
-            }
-
-            @Test
-            void acceptMinimalSliceWrappingAroundJoinNode() {
-                def wayNodes = newNodes(1, 10)
-                wayNodes += wayNodes[0] // close the way
-                def sliceNodes = [wayNodes[9], wayNodes[10], wayNodes[1]]
-                def way = newWay(1, *wayNodes)
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
-                assertThat(waySlice.isPresent(), equalTo(true))
-                assertThat(waySlice, isSliceWithBoundary(1, 9))
-                assertThat(waySlice.get().inDirection, equalTo(false))
-            }
-
-            @Test
-            void acceptMinimalSliceWrappingAroundJoinNodeOfReversedWay() {
-                def wayNodes = newNodes(1, 10)
-                wayNodes += wayNodes[0] // close the way
-                def sliceNodes = [wayNodes[9], wayNodes[10], wayNodes[1]]
-                def way = newWay(1, *wayNodes.reverse())
-                def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
-                assertThat(waySlice.isPresent(), equalTo(true))
-                assertThat(waySlice, isSliceWithBoundary(1, 9))
-                assertThat(waySlice.get().inDirection, equalTo(false))
-            }
+    @Test
+    void rejectNullSlice() {
+        def way = newWay(1, newNode(1), newNode(2))
+        def slice = null
+        shouldFail(NullPointerException) {
+            WaySlice.buildWaySlice(way, slice)
         }
     }
 
-    static class findOtherWaySlices extends TestCaseWithJOSMFixture {
-
-        protected DataSet ds
-
-        def newNode(int id){
-            Node n = new Node(id)
-            ds.addPrimitive(n)
-            return n
+    @Test
+    void rejectIncompleteWay() {
+        def way = new Way(1)
+        def slice = (0..1).collect {newNode(it)}
+        shouldFail(IllegalArgumentException) {
+            WaySlice.buildWaySlice(way, slice)
         }
+    }
 
-        def newWay(int id, Node... nodes){
-            return newWay(id,Arrays.asList(nodes))
+    @Test
+    void rejectSliceIfToShort() {
+        def way = newWay(1, newNode(1), newNode(2))
+        def slice = [newNode(3)]
+        shouldFail(IllegalArgumentException) {
+            WaySlice.buildWaySlice(way, slice)
         }
+    }
+}
 
-        def newWay(int id, List<Node> nodes){
-            Way w = new Way(id,1)
-            w.setNodes(nodes)
-            ds.addPrimitive(w)
-            return w
-        }
+class FromOpenWayTest extends TestCaseWithJOSMFixture {
 
-        @BeforeEach
-        void setUp() {
-            ds = new DataSet()
-        }
+    @Test
+    void acceptSliceOfMinimalLengthAtBeginning() {
+        def wayNodes = newNodes(1, 10)
+        def sliceNodes = [wayNodes[0], wayNodes[1]]
+        def way = newWay(1, *wayNodes)
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
+        assertThat(waySlice, isSliceForWay(way))
+        assertThat(waySlice, isSliceWithBoundary(0, 1))
+    }
 
-        @Test
-        void shouldFindThisAsWaySlice() {
-            def nodes = (1..10).collect {newNode(it)}
-            def way = newWay(1, *nodes)
-            def waySlice = new WaySlice(way, 2, 3)
-            def otherWaySlices = waySlice.findAllEquivalentWaySlices()
+    @Test
+    void acceptSliceOfMinimalLengthAtBeginningOfReversedWay() {
+        def wayNodes = newNodes(1, 10)
+        def sliceNodes = [wayNodes[0], wayNodes[1]]
+        def way = newWay(1, *wayNodes.reverse())
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
+        assertThat(waySlice, isSliceForWay(way))
+        assertThat(waySlice, isSliceWithBoundary(8, 9))
+    }
+
+    @Test
+    void acceptSliceOfMinimalLengthAtEnd() {
+        def wayNodes = newNodes(1, 10)
+        def sliceNodes = [wayNodes[8], wayNodes[9]]
+        def way = newWay(1, *wayNodes)
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
+        assertThat(waySlice, isSliceForWay(way))
+        assertThat(waySlice, isSliceWithBoundary(8, 9))
+    }
+
+    @Test
+    void acceptSliceOfMinimalLengthAtEndOfReversedWay() {
+        def wayNodes = newNodes(1, 10)
+        def sliceNodes = [wayNodes[8], wayNodes[9]]
+        def way = newWay(1, *wayNodes.reverse())
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
+        assertThat(waySlice, isSliceForWay(way))
+        assertThat(waySlice, isSliceWithBoundary(0, 1))
+    }
+
+    @Test
+    void acceptSliceOfMinimalLengthInTheMiddle() {
+        def wayNodes = newNodes(1, 10)
+        def sliceNodes = [wayNodes[4], wayNodes[5]]
+        def way = newWay(1, *wayNodes)
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
+        assertThat(waySlice, isSliceForWay(way))
+        assertThat(waySlice, isSliceWithBoundary(4, 5))
+    }
+
+    @Test
+    void acceptSliceOfMinimalLengthInTheMiddleOfReversedWay() {
+        def wayNodes = newNodes(1, 10)
+        def sliceNodes = [wayNodes[2], wayNodes[3]]
+        def way = newWay(1, *wayNodes.reverse())
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
+        assertThat(waySlice, isSliceForWay(way))
+        assertThat(waySlice, isSliceWithBoundary(9-3, 9-2))
+    }
+
+    @Test
+    void acceptCompleteWayAsSlice() {
+        def wayNodes = newNodes(1, 10)
+        def sliceNodes = wayNodes
+        def way = newWay(1, *wayNodes)
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
+        assertThat(waySlice, isSliceForWay(way))
+        assertThat(waySlice, isSliceWithBoundary(0, 9))
+    }
+
+    @Test
+    void acceptCompleteWayAsSliceOfReversedWay() {
+        def wayNodes = newNodes(1, 10)
+        def sliceNodes = wayNodes
+        def way = newWay(1, *wayNodes.reverse())
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
+        assertThat(waySlice, isSliceForWay(way))
+        assertThat(waySlice, isSliceWithBoundary(0, 9))
+    }
+
+    @Test
+    void rejectFullyDisjointSlice() {
+        def wayNodes = newNodes(1, 10)
+        def sliceNodes = (11..14).collect { newNode(it) }
+        def way = newWay(1, *wayNodes)
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
+        assertThat(waySlice.isPresent(), equalTo(false))
+    }
+
+    @Test
+    void rejectFullyDisjointSliceOfReversedWay() {
+        def wayNodes = newNodes(1, 10)
+        def sliceNodes = (11..14).collect { newNode(it) }
+        def way = newWay(1, *wayNodes.reverse())
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
+        assertThat(waySlice.isPresent(), equalTo(false))
+    }
+
+    @Test
+    void rejectPartiallyDisjointSlice() {
+        def wayNodes = newNodes(1, 10)
+        def sliceNodes = [wayNodes[1], wayNodes[2], newNode(11)]
+        def way = newWay(1, *wayNodes)
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
+        assertThat(waySlice.isPresent(), equalTo(false))
+    }
+
+    @Test
+    void rejectPartiallyDisjointSliceOfReversedWay() {
+        def wayNodes = newNodes(1, 10)
+        def sliceNodes = [wayNodes[1], wayNodes[2], newNode(11)]
+        def way = newWay(1, *wayNodes.reverse())
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
+        assertThat(waySlice.isPresent(), equalTo(false))
+    }
+
+    @Test
+    void rejectOverlappingSliceAtBeginning() {
+        def wayNodes = newNodes(1, 10)
+        def sliceNodes = [newNode(11), wayNodes[0], wayNodes[1]]
+        def way = newWay(1, *wayNodes)
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
+        assertThat(waySlice.isPresent(), equalTo(false))
+    }
+
+    @Test
+    void rejectOverlappingSliceAtBeginningOfReversedWay() {
+        def wayNodes = newNodes(1, 10)
+        def sliceNodes = [newNode(11), wayNodes[0], wayNodes[1]]
+        def way = newWay(1, *wayNodes.reverse())
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
+        assertThat(waySlice.isPresent(), equalTo(false))
+    }
+
+    @Test
+    void rejectOverlappingSliceAtEnd() {
+        def wayNodes = newNodes(1, 10)
+        def sliceNodes = [wayNodes[8], wayNodes[9], newNode(11)]
+        def way = newWay(1, *wayNodes)
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
+        assertThat(waySlice.isPresent(), equalTo(false))
+    }
+
+    @Test
+    void rejectOverlappingSliceAtEndOfReversedWay() {
+        def wayNodes = newNodes(1, 10)
+        def sliceNodes = [wayNodes[8], wayNodes[9], newNode(11)]
+        def way = newWay(1, *wayNodes.reverse())
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
+        assertThat(waySlice.isPresent(), equalTo(false))
+    }
+}
+
+class FromClosedWayTest extends TestCaseWithJOSMFixture {
+
+    @Test
+    void acceptSliceOfMinimalLengthAtBeginning() {
+        def wayNodes = newNodes(1, 10)
+        wayNodes += wayNodes[0] // close the way
+        def sliceNodes = [wayNodes[0], wayNodes[1]]
+        def way = newWay(1, *wayNodes)
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
+        assertThat(waySlice, isSliceForWay(way))
+        assertThat(waySlice, isSliceWithBoundary(0, 1))
+    }
+
+    @Test
+    void acceptSliceOfMinimalLengthAtBeginningOfReversedWay() {
+        def wayNodes = newNodes(1, 10)
+        wayNodes += wayNodes[0] // close the way
+        def sliceNodes = [wayNodes[0], wayNodes[1]]
+        def way = newWay(1, *wayNodes.reverse())
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
+        assertThat(waySlice, isSliceForWay(way))
+        assertThat(waySlice, isSliceWithBoundary(9, 10))
+    }
+
+    @Test
+    void acceptSliceOfMinimalLengthAtEnd() {
+        def wayNodes = newNodes(1, 10)
+        wayNodes += wayNodes[0] // close the way
+        def sliceNodes = [wayNodes[9], wayNodes[10]]
+        def way = newWay(1, *wayNodes)
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
+        assertThat(waySlice, isSliceForWay(way))
+        assertThat(waySlice, isSliceWithBoundary(9, 10))
+    }
+
+    @Test
+    void acceptSliceOfMinimalLengthAtEndOfReversedWay() {
+        def wayNodes = newNodes(1, 10)
+        wayNodes += wayNodes[0] // close the way
+        def sliceNodes = [wayNodes[9], wayNodes[10]]
+        def way = newWay(1, *wayNodes.reverse())
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
+        assertThat(waySlice, isSliceForWay(way))
+        assertThat(waySlice, isSliceWithBoundary(0, 1))
+    }
+
+    @Test
+    void acceptSliceOfMinimalLengthInTheMiddle() {
+        def wayNodes = newNodes(1, 10)
+        wayNodes += wayNodes[0] // close the way
+        def sliceNodes = [wayNodes[4], wayNodes[5]]
+        def way = newWay(1, *wayNodes)
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
+        assertThat(waySlice, isSliceForWay(way))
+        assertThat(waySlice, isSliceWithBoundary(4, 5))
+    }
+
+    @Test
+    void acceptSliceOfMinimalLengthInTheMiddleOfReversedWay() {
+        def wayNodes = newNodes(1, 10)
+        wayNodes += wayNodes[0] // close the way
+        def sliceNodes = [wayNodes[2], wayNodes[3]]
+        def way = newWay(1, *wayNodes.reverse())
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
+        assertThat(waySlice, isSliceForWay(way))
+        assertThat(waySlice, isSliceWithBoundary(10-3, 10-2))
+    }
+
+    @Test
+    void rejectFullyDisjointSlice() {
+        def wayNodes = newNodes(1, 10)
+        wayNodes += wayNodes[0] // close the way
+        def sliceNodes = (11..14).collect { newNode(it) }
+        def way = newWay(1, *wayNodes)
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
+        assertThat(waySlice.isPresent(), equalTo(false))
+    }
+
+
+    @Test
+    void rejectFullyDisjointSliceOfReversedWay() {
+        def wayNodes = newNodes(1, 10)
+        wayNodes += wayNodes[0] // close the way
+        def sliceNodes = (11..14).collect { newNode(it) }
+        def way = newWay(1, *wayNodes.reverse())
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
+        assertThat(waySlice.isPresent(), equalTo(false))
+    }
+
+    @Test
+    void rejectPartiallyDisjointSlice() {
+        def wayNodes = newNodes(1, 10)
+        wayNodes += wayNodes[0] // close the way
+        def sliceNodes = [wayNodes[1], wayNodes[2], newNode(11)]
+        def way = newWay(1, *wayNodes)
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
+        assertThat(waySlice.isPresent(), equalTo(false))
+    }
+
+    @Test
+    void rejectPartiallyDisjointSliceOfReversedWay() {
+        def wayNodes = newNodes(1, 10)
+        wayNodes += wayNodes[0] // close the way
+        def sliceNodes = [wayNodes[1], wayNodes[2], newNode(11)]
+        def way = newWay(1, *wayNodes.reverse())
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
+        assertThat(waySlice.isPresent(), equalTo(false))
+    }
+
+    @Test
+    void rejectOverlappingSliceAtBeginning() {
+        def wayNodes = newNodes(1, 10)
+        wayNodes += wayNodes[0] // close the way
+        def sliceNodes = [newNode(11), wayNodes[0], wayNodes[1]]
+        def way = newWay(1, *wayNodes)
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
+        assertThat(waySlice.isPresent(), equalTo(false))
+    }
+
+    @Test
+    void rejectOverlappingSliceAtBeginningOfReversedWay() {
+        def wayNodes = newNodes(1, 10)
+        wayNodes += wayNodes[0] // close the way
+        def sliceNodes = [newNode(11), wayNodes[0], wayNodes[1]]
+        def way = newWay(1, *wayNodes.reverse())
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
+        assertThat(waySlice.isPresent(), equalTo(false))
+    }
+
+    @Test
+    void rejectOverlappingSliceAtEnd() {
+        def wayNodes = newNodes(1, 10)
+        wayNodes += wayNodes[0] // close the way
+        def sliceNodes = [wayNodes[8], wayNodes[9], newNode(11)]
+        def way = newWay(1, *wayNodes)
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
+        assertThat(waySlice.isPresent(), equalTo(false))
+    }
+
+    @Test
+    void rejectOverlappingSliceAtEndOfReversedWay() {
+        def wayNodes = newNodes(1, 10)
+        wayNodes += wayNodes[0] // close the way
+        def sliceNodes = [wayNodes[8], wayNodes[9], newNode(11)]
+        def way = newWay(1, *wayNodes.reverse())
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
+        assertThat(waySlice.isPresent(), equalTo(false))
+    }
+
+    @Test
+    void acceptMinimalSliceWrappingAroundJoinNode() {
+        def wayNodes = newNodes(1, 10)
+        wayNodes += wayNodes[0] // close the way
+        def sliceNodes = [wayNodes[9], wayNodes[10], wayNodes[1]]
+        def way = newWay(1, *wayNodes)
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes)
+        assertThat(waySlice.isPresent(), equalTo(true))
+        assertThat(waySlice, isSliceWithBoundary(1, 9))
+        assertThat(waySlice.get().inDirection, equalTo(false))
+    }
+
+    @Test
+    void acceptMinimalSliceWrappingAroundJoinNodeOfReversedWay() {
+        def wayNodes = newNodes(1, 10)
+        wayNodes += wayNodes[0] // close the way
+        def sliceNodes = [wayNodes[9], wayNodes[10], wayNodes[1]]
+        def way = newWay(1, *wayNodes.reverse())
+        def waySlice = WaySlice.buildWaySlice(way, sliceNodes.reverse())
+        assertThat(waySlice.isPresent(), equalTo(true))
+        assertThat(waySlice, isSliceWithBoundary(1, 9))
+        assertThat(waySlice.get().inDirection, equalTo(false))
+    }
+}
+
+class FindOtherWaySlicesTest extends TestCaseWithJOSMFixture {
+
+    protected DataSet ds
+
+    def newNode(int id){
+        Node n = new Node(id)
+        ds.addPrimitive(n)
+        return n
+    }
+
+    def newWay(int id, Node... nodes){
+        return newWay(id,Arrays.asList(nodes))
+    }
+
+    def newWay(int id, List<Node> nodes){
+        Way w = new Way(id,1)
+        w.setNodes(nodes)
+        ds.addPrimitive(w)
+        return w
+    }
+
+    @BeforeEach
+    void setUp() {
+        ds = new DataSet()
+    }
+
+    @Test
+    void shouldFindThisAsWaySlice() {
+        def nodes = (1..10).collect {newNode(it)}
+        def way = newWay(1, *nodes)
+        def waySlice = new WaySlice(way, 2, 3)
+        def otherWaySlices = waySlice.findAllEquivalentWaySlices()
                 .collect(Collectors.toList())
-            assertThat(otherWaySlices.size(), equalTo(1))
-            assertThat(otherWaySlices[0].way, equalTo(way))
-            assertThat(otherWaySlices[0].start, equalTo(2))
-            assertThat(otherWaySlices[0].end, equalTo(3))
-        }
+        assertThat(otherWaySlices.size(), equalTo(1))
+        assertThat(otherWaySlices[0].way, equalTo(way))
+        assertThat(otherWaySlices[0].start, equalTo(2))
+        assertThat(otherWaySlices[0].end, equalTo(3))
+    }
 
-        @Test
-        void shouldFindOtherOpenWaySliceInSameDirection() {
-            def nodes = (1..10).collect {newNode(it)}
-            def repWay = newWay(1, *nodes)
-            def representative = new WaySlice(repWay, 2, 3)
+    @Test
+    void shouldFindOtherOpenWaySliceInSameDirection() {
+        def nodes = (1..10).collect {newNode(it)}
+        def repWay = newWay(1, *nodes)
+        def representative = new WaySlice(repWay, 2, 3)
 
-            def otherNodes = (11..13).collect {newNode(it)} +
+        def otherNodes = (11..13).collect {newNode(it)} +
                 // these are the shared nodes and the shared slice with
                 // the representative ...
                 [nodes[2], nodes[3]] +
                 // ... followed by some other nodes
                 (14..16).collect {newNode(it)}
-            def otherWay = newWay(2, *otherNodes)
+        def otherWay = newWay(2, *otherNodes)
 
-            def waySlices = representative.findAllEquivalentWaySlices()
-                    .collect(Collectors.toList())
+        def waySlices = representative.findAllEquivalentWaySlices()
+                .collect(Collectors.toList())
 
-            assertThat(waySlices.size(), equalTo(2))
-            def otherWaySlice = waySlices.find {it.way == otherWay}
-            assertThat(otherWaySlice, not(equalTo(null)))
-            assertThat(Optional.of(otherWaySlice), isSliceWithBoundary(3,4))
+        assertThat(waySlices.size(), equalTo(2))
+        def otherWaySlice = waySlices.find {it.way == otherWay}
+        assertThat(otherWaySlice, not(equalTo(null)))
+        assertThat(Optional.of(otherWaySlice), isSliceWithBoundary(3,4))
 
-            def repWaySlice = waySlices.find {it.way == repWay}
-            assertThat(repWaySlice, not(equalTo(null)))
-            assertThat(Optional.of(repWaySlice), isSliceWithBoundary(2,3))
-        }
+        def repWaySlice = waySlices.find {it.way == repWay}
+        assertThat(repWaySlice, not(equalTo(null)))
+        assertThat(Optional.of(repWaySlice), isSliceWithBoundary(2,3))
+    }
 
-        @Test
-        void shouldFindOtherOpenWaySliceInReversedOrder() {
-            def nodes = (1..10).collect {newNode(it)}
-            def repWay = newWay(1, *nodes)
-            def representative = new WaySlice(repWay, 2, 3)
+    @Test
+    void shouldFindOtherOpenWaySliceInReversedOrder() {
+        def nodes = (1..10).collect {newNode(it)}
+        def repWay = newWay(1, *nodes)
+        def representative = new WaySlice(repWay, 2, 3)
 
-            def otherNodes = (11..13).collect {newNode(it)} +
+        def otherNodes = (11..13).collect {newNode(it)} +
                 // these are the shared nodes and the shared slice with
                 // the representative ...
                 [nodes[2], nodes[3]] +
                 // ... followed by some other nodes
                 (14..18).collect {newNode(it)}.reverse()
-            def otherWay = newWay(2, *otherNodes)
+        def otherWay = newWay(2, *otherNodes)
 
-            def waySlices = representative.findAllEquivalentWaySlices()
-                    .collect(Collectors.toList())
+        def waySlices = representative.findAllEquivalentWaySlices()
+                .collect(Collectors.toList())
 
-            assertThat(waySlices.size(), equalTo(2))
-            def otherWaySlice = waySlices.find {it.way == otherWay}
-            assertThat(otherWaySlice, not(equalTo(null)))
-            assertThat(Optional.of(otherWaySlice), isSliceWithBoundary(3,4))
+        assertThat(waySlices.size(), equalTo(2))
+        def otherWaySlice = waySlices.find {it.way == otherWay}
+        assertThat(otherWaySlice, not(equalTo(null)))
+        assertThat(Optional.of(otherWaySlice), isSliceWithBoundary(3,4))
 
-            def repWaySlice = waySlices.find {it.way == repWay}
-            assertThat(repWaySlice, not(equalTo(null)))
-            assertThat(Optional.of(repWaySlice), isSliceWithBoundary(2,3))
-        }
+        def repWaySlice = waySlices.find {it.way == repWay}
+        assertThat(repWaySlice, not(equalTo(null)))
+        assertThat(Optional.of(repWaySlice), isSliceWithBoundary(2,3))
+    }
 
 
-        @Test
-        void forClosedWayShouldFindOtherOpenWaySliceInSameDirection() {
-            def nodes = (1..10).collect {newNode(it)}
-            nodes += nodes[0] // close the way
+    @Test
+    void forClosedWayShouldFindOtherOpenWaySliceInSameDirection() {
+        def nodes = (1..10).collect {newNode(it)}
+        nodes += nodes[0] // close the way
 
-            def repWay = newWay(1, *nodes)
-            def representative = new WaySlice(repWay, 2, 3)
+        def repWay = newWay(1, *nodes)
+        def representative = new WaySlice(repWay, 2, 3)
 
-            def otherNodes = (11..13).collect {newNode(it)} +
-                    // these are the shared nodes and the shared slice with
-                    // the representative ...
-                    [nodes[2], nodes[3]] +
-                    // ... followed by some other nodes
-                    (14..18).collect {newNode(it)}.reverse()
-            def otherWay = newWay(2, *otherNodes)
+        def otherNodes = (11..13).collect {newNode(it)} +
+                // these are the shared nodes and the shared slice with
+                // the representative ...
+                [nodes[2], nodes[3]] +
+                // ... followed by some other nodes
+                (14..18).collect {newNode(it)}.reverse()
+        def otherWay = newWay(2, *otherNodes)
 
-            def waySlices = representative.findAllEquivalentWaySlices()
-                    .collect(Collectors.toList())
+        def waySlices = representative.findAllEquivalentWaySlices()
+                .collect(Collectors.toList())
 
-            assertThat(waySlices.size(), equalTo(2))
-            def otherWaySlice = waySlices.find {it.way == otherWay}
-            assertThat(otherWaySlice, not(equalTo(null)))
-            assertThat(Optional.of(otherWaySlice), isSliceWithBoundary(3,4))
+        assertThat(waySlices.size(), equalTo(2))
+        def otherWaySlice = waySlices.find {it.way == otherWay}
+        assertThat(otherWaySlice, not(equalTo(null)))
+        assertThat(Optional.of(otherWaySlice), isSliceWithBoundary(3,4))
 
-            def repWaySlice = waySlices.find {it.way == repWay}
-            assertThat(repWaySlice, not(equalTo(null)))
-            assertThat(Optional.of(repWaySlice), isSliceWithBoundary(2,3))
-        }
+        def repWaySlice = waySlices.find {it.way == repWay}
+        assertThat(repWaySlice, not(equalTo(null)))
+        assertThat(Optional.of(repWaySlice), isSliceWithBoundary(2,3))
+    }
 
-        @Test
-        void forClosedWayShouldFindOtherClosedWaySliceInReversedOrder() {
-            def nodes = (1..10).collect {newNode(it)}
-            nodes += nodes[0] // close the way
-            def repWay = newWay(1, *nodes)
-            def representative = new WaySlice(repWay, 2, 3)
+    @Test
+    void forClosedWayShouldFindOtherClosedWaySliceInReversedOrder() {
+        def nodes = (1..10).collect {newNode(it)}
+        nodes += nodes[0] // close the way
+        def repWay = newWay(1, *nodes)
+        def representative = new WaySlice(repWay, 2, 3)
 
-            def otherNodes = (11..13).collect {newNode(it)} +
+        def otherNodes = (11..13).collect {newNode(it)} +
                 // these are the shared nodes and the shared slice with
                 // the representative ...
                 [nodes[2], nodes[3]] +
                 // ... followed by some other nodes
                 (14..18).collect {newNode(it)}
-            otherNodes += otherNodes[0] // close the other way
-            otherNodes = otherNodes.reverse()  // reverse its direction
-            def otherWay = newWay(2, *otherNodes)
+        otherNodes += otherNodes[0] // close the other way
+        otherNodes = otherNodes.reverse()  // reverse its direction
+        def otherWay = newWay(2, *otherNodes)
 
-            def waySlices = representative.findAllEquivalentWaySlices()
-                    .collect(Collectors.toList())
+        def waySlices = representative.findAllEquivalentWaySlices()
+                .collect(Collectors.toList())
 
-            assertThat(waySlices.size(), equalTo(2))
-            def otherWaySlice = waySlices.find {it.way == otherWay}
-            assertThat(otherWaySlice, not(equalTo(null)))
-            assertThat(Optional.of(otherWaySlice), isSliceWithBoundary(6,7))
+        assertThat(waySlices.size(), equalTo(2))
+        def otherWaySlice = waySlices.find {it.way == otherWay}
+        assertThat(otherWaySlice, not(equalTo(null)))
+        assertThat(Optional.of(otherWaySlice), isSliceWithBoundary(6,7))
 
-            def repWaySlice = waySlices.find {it.way == repWay}
-            assertThat(repWaySlice, not(equalTo(null)))
-            assertThat(Optional.of(repWaySlice), isSliceWithBoundary(2,3))
-        }
+        def repWaySlice = waySlices.find {it.way == repWay}
+        assertThat(repWaySlice, not(equalTo(null)))
+        assertThat(Optional.of(repWaySlice), isSliceWithBoundary(2,3))
+    }
 
-        @Test
-        void forClosedWayShouldFindOtherOpenWaySliceWrappingAroundJoinNode() {
-            def nodes = (1..10).collect {newNode(it)}
-            nodes += nodes[0] // close the way
-            def repWay = newWay(1, *nodes)
-            def representative = new WaySlice(repWay, 1, 9,
-                    false /* indirection = false */)
+    @Test
+    void forClosedWayShouldFindOtherOpenWaySliceWrappingAroundJoinNode() {
+        def nodes = (1..10).collect {newNode(it)}
+        nodes += nodes[0] // close the way
+        def repWay = newWay(1, *nodes)
+        def representative = new WaySlice(repWay, 1, 9,
+                false /* indirection = false */)
 
-            def otherNodes = (11..13).collect {newNode(it)} +
-                    // these are the shared nodes and the shared slice with
-                    // the representative. They include the join node
-                    // of the repWay as sub sequence
-                    [nodes[9], nodes[0], nodes[1]] +
-                    // ... followed by some other nodes
-                    (14..18).collect {newNode(it)}
-            def otherWay = newWay(2, *otherNodes)
+        def otherNodes = (11..13).collect {newNode(it)} +
+                // these are the shared nodes and the shared slice with
+                // the representative. They include the join node
+                // of the repWay as sub sequence
+                [nodes[9], nodes[0], nodes[1]] +
+                // ... followed by some other nodes
+                (14..18).collect {newNode(it)}
+        def otherWay = newWay(2, *otherNodes)
 
-            def waySlices = representative.findAllEquivalentWaySlices()
-                    .collect(Collectors.toList())
+        def waySlices = representative.findAllEquivalentWaySlices()
+                .collect(Collectors.toList())
 
-            assertThat(waySlices.size(), equalTo(2))
-            def otherWaySlice = waySlices.find {it.way == otherWay}
-            assertThat(otherWaySlice, not(equalTo(null)))
-            assertThat(Optional.of(otherWaySlice), isSliceWithBoundary(3,5))
+        assertThat(waySlices.size(), equalTo(2))
+        def otherWaySlice = waySlices.find {it.way == otherWay}
+        assertThat(otherWaySlice, not(equalTo(null)))
+        assertThat(Optional.of(otherWaySlice), isSliceWithBoundary(3,5))
 
-            def repWaySlice = waySlices.find {it.way == repWay}
-            assertThat(repWaySlice, not(equalTo(null)))
-            assertThat(Optional.of(repWaySlice), isSliceWithBoundary(1,9))
-            assertThat(repWaySlice.inDirection, equalTo(false))
-        }
+        def repWaySlice = waySlices.find {it.way == repWay}
+        assertThat(repWaySlice, not(equalTo(null)))
+        assertThat(Optional.of(repWaySlice), isSliceWithBoundary(1,9))
+        assertThat(repWaySlice.inDirection, equalTo(false))
     }
 }
