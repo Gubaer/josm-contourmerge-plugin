@@ -37,6 +37,7 @@ public class ContourMergeMode extends MapMode {
 
     private Collection<OsmPrimitive> selection;
 
+    @SuppressWarnings("unused")
     public ContourMergeMode(MapFrame mapFrame) {
         super(
             tr("Contour Merge"),  // name

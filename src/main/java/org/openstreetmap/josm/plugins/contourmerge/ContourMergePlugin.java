@@ -10,8 +10,6 @@ import org.openstreetmap.josm.plugins.PluginInformation;
  * <tt>contourmerge</tt> plugin.
  */
 public class ContourMergePlugin extends Plugin {
-//    static private Logger logger = Logger
-//            .getLogger(ContourMergePlugin.class.getName());
 
     public ContourMergePlugin(PluginInformation info) {
         super(info);
@@ -35,10 +33,6 @@ public class ContourMergePlugin extends Plugin {
 
     static public ContourMergeModelManager getModelManager() {
         return ContourMergeModelManager.getInstance();
-    }
-
-    static public ContourMergeView getView() {
-        return ContourMergeView.getInstance();
     }
 
     static public boolean isEnabled() {
