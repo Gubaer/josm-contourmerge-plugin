@@ -23,7 +23,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * <strong>ContourMergeModel</strong> keeps the current edit state for a
- * specific edit layer, if the <tt>contourmerge</tt> map mode is enabled.</p>
+ * specific edit layer, if the <tt>contourmerge</tt> map mode is enabled.
  */
 @SuppressWarnings("unused")
 public class ContourMergeModel implements DataSetListener{
@@ -56,7 +56,7 @@ public class ContourMergeModel implements DataSetListener{
     private Point dragOffset = null;
 
     /**
-     * <p>Creates a new contour merge model for the layer {@code layer}.</p>
+     * Creates a new contour merge model for the layer {@code layer}.
      *
      * @param layer the data layer. Must not be null.
      * @throws NullPointerException thrown if {@code layer} is null
@@ -67,7 +67,7 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Replies the data layer this model operates on.</p>
+     * Replies the data layer this model operates on.
      *
      * @return the data layer
      */
@@ -76,7 +76,7 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Replies the node the mouse is currently hovering over.</p>
+     * Replies the node the mouse is currently hovering over.
      *
      * @return the node
      */
@@ -85,7 +85,7 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Sets the node the mouse is currently hovering over.</p>
+     * Sets the node the mouse is currently hovering over.
      *
      * @param node the node
      */
@@ -101,8 +101,8 @@ public class ContourMergeModel implements DataSetListener{
     /* selecting nodes and way segments                                      */
     /* --------------------------------------------------------------------- */
     /**
-     * <p>Replies true, if {@code node} is currently selected in the contour
-     *  merge mode.</p>
+     * Replies true, if {@code node} is currently selected in the contour
+     *  merge mode.
      *
      * @param node the node. Must not be null. Must be owned by this models
      * layer.
@@ -118,7 +118,7 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Selects the node {@code node}.</p>
+     * Selects the node {@code node}.
      *
      * @param node the node. Must not be null. Must be owned by this models
      * layer.
@@ -132,7 +132,7 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Deselects the node {@code node}.</p>
+     * Deselects the node {@code node}.
      *
      * @param node the node. Must not be null. Must be owned by this models
      *  layer.
@@ -146,7 +146,7 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Toggles whether the node {@code node} is selected or not.</p>
+     * Toggles whether the node {@code node} is selected or not.
      *
      * @param node the node. Must not be null. Must be owned by this models
      *  layer.
@@ -164,15 +164,15 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Deselects all nodes.</p>
+     * Deselects all nodes.
      */
     public void deselectAllNodes(){
         selectedNodes.clear();
     }
 
     /**
-     * <p>Replies an <strong>unmodifiable</strong> list of the currently
-     * selected nodes.</p>
+     * Replies an <strong>unmodifiable</strong> list of the currently
+     * selected nodes.
      *
      * @return an <strong>unmodifiable</strong> list of the currently
      * selected nodes.</p>
@@ -182,8 +182,8 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Sets the way segment which would be affected by the next drag/drop
-     * operation.</p>
+     * Sets the way segment which would be affected by the next drag/drop
+     * operation.
      *
      * @param segment the way segment. null, if there is no feedback
          segment
@@ -193,7 +193,7 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Replies the current feedback way segment or null, if there is
+     * Replies the current feedback way segment or null, if there is
      * currently no such segment
      *
      * @return the feedback way segment
@@ -211,8 +211,8 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Replies the set of selected ways, i.e. the set of all parent ways of
-     * the selected nodes.</p>
+     * Replies the set of selected ways, i.e. the set of all parent ways of
+     * the selected nodes.
      *
      * @return the set of selected ways
      */
@@ -225,7 +225,7 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Replies the set of selected nodes on the way {@code way}.</p>
+     * Replies the set of selected nodes on the way {@code way}.
      *
      * @param way the way
      * @return the set of selected nodes
@@ -239,9 +239,9 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Replies true, if we can start a drag/drop operation on way slice
+     * Replies true, if we can start a drag/drop operation on way slice
      * which is given by the currently selected nodes and the way segment
-     * {@code ws}.</p>
+     * {@code ws}.
      *
      *  @return true, if we can start a drag/drop operation. false, otherwise
      */
@@ -251,7 +251,7 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Replies true, if {@code ws} is part of a potential drop target.</p>
+     * Replies true, if {@code ws} is part of a potential drop target.
      *
      * @param ws the way segment. If null, replies false.
      * @return  true, if {@code ws} is part of a potential drop target
@@ -346,7 +346,7 @@ public class ContourMergeModel implements DataSetListener{
              * is selected, the way segment determines whether we drag the
              * first or the second half. If more than 1 nodes are selected,
              * we drag the way slice between two selected, or the first or the
-             * last node respectively.
+             * last node, respectively.
              */
             List<Integer> selIndices = computeSelectedNodeIndicesOnWay(
                     referenceSegment.getWay());
@@ -366,8 +366,8 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Replies the way slice we are currently dragging, or null, if we
-     * aren't in a drag operation.</p>
+     * Replies the way slice we are currently dragging, or null, if we
+     * aren't in a drag operation.
      *
      * @return the way slice or null
      */
@@ -377,9 +377,9 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Replies the way slice we are currently hovering over and which is
+     * Replies the way slice we are currently hovering over and which is
      * suitable as drop target, or null, if no such way slice is currently
-     * known.</p>
+     * known.
      *
      * @return the way slice or null
      */
@@ -389,9 +389,9 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Sets the current drag offset, relative to the point where the
+     * Sets the current drag offset, relative to the point where the
      * drag operation started. Set null to indicate, that there is currently
-     * no drag operation. </p>
+     * no drag operation.
      *
      * @param offset the drag offset
      */
@@ -400,8 +400,8 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Replies the current drag offset or null, if we aren't in a drag
-     *  operation.</p>
+     * Replies the current drag offset or null, if we aren't in a drag
+     * operation.
      *
      * @return the drag offset
      */
@@ -410,7 +410,7 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Replies true, if we are currently in a drag operation.</p>
+     * Replies true, if we are currently in a drag operation.
      *
      * @return true, if we are currently in a drag operation
      */
@@ -487,9 +487,9 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Builds the command to align the two contours. Replies null, if the
+     * Builds the command to align the two contours. Replies null, if the
      * command can't be created, i.e. because there is no defined drag source
-     * or drop target.</p>
+     * or drop target.
      *
      * @return the contour align command
      */
@@ -529,10 +529,10 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * <p>Replies true, if the two polylines given by the node lists {@code n1}
+     * Replies true, if the two poly-lines given by the node lists {@code n1}
      * and {@code n2} are "direction aligned". Their direction is aligned,
      * if the two lines between the two start nodes and the two end nodes
-     * of {@code n1} and code {@code n2} respectively, do not intersect.</p>
+     * of {@code n1} and code {@code n2} respectively, do not intersect.
      *
      * @param n1 the first list of nodes
      * @param n2 the second list of nodes
@@ -564,11 +564,11 @@ public class ContourMergeModel implements DataSetListener{
     }
 
     /**
-     * Replies true, if the two way slices are "direction aligned".
+     * Replies true, if both the slices are "direction aligned".
      *
      * @param dragSource the first way slice
      * @param dropTarget the second way slice
-     * @return  true, if the two way slices are "direction aligned"
+     * @return  true, if both the slices are "direction aligned"
      * @see #areDirectionAligned(List, List)
      */
     protected boolean areDirectionAligned(WaySlice dragSource,

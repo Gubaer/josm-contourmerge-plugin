@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
- * A <strong>WaySlice</strong> is a sub sequence of a ways sequence of
+ * A <strong>WaySlice</strong> is a sub-sequence of a ways sequence of
  * nodes.
  */
 @EqualsAndHashCode()
@@ -61,10 +61,10 @@ public class WaySlice {
 
     /**
      * Creates a new way slice for the way {@code w}.
-     *
+     * <p>
      * If {@code inDirection==true}, it consists of the nodes at the
      * positions <code>[start, start+1, ..., end]</code>.
-     *
+     * <p>
      * If {@code inDirection==false} <strong>and w is
      * {@link Way#isClosed() closed}</strong>, it consists of the nodes at the
      * positions <code>[end, end+1,...,0,1,...,start]</code>.
@@ -142,6 +142,7 @@ public class WaySlice {
 
     /**
      * Replies true if this slice contains the node <code>node</code>
+     *
      * @param node the node
      * @return true if this slice contains the node <code>node</code>
      */
@@ -152,7 +153,7 @@ public class WaySlice {
     /**
      * Replies the lower node idx of the node from which this way slice is
      * torn off.
-     *
+     * <p>
      * <strong>Example</strong>
      * <pre>
      *     n0 ------------- n1 ---------- n2 --------- n3 -------------- n4
@@ -163,7 +164,7 @@ public class WaySlice {
      * </pre>
      *
      * Replies -1, if there is no such index.
-     *
+     * <p>
      * <strong>Example</strong>
      * <pre>
      *     n0 ------------- n1 ---------- n2 --------- n3 -------------- n4
@@ -205,7 +206,7 @@ public class WaySlice {
     /**
      * Replies the upper node idx of the node from which this way slice is
      * torn off.
-     *
+     * <p>
      * <strong>Example</strong>
      * <pre>
      *     n0 ------------- n1 ---------- n2 --------- n3 -------------- n4
@@ -217,7 +218,7 @@ public class WaySlice {
      * </pre>
      *
      * Replies -1, if there is no such index.
-     *
+     * <p>
      * <strong>Example</strong>
      * <pre>
      *     n0 ------------- n1 ---------- n2 --------- n3 -------------- n4
@@ -523,12 +524,11 @@ public class WaySlice {
     }
 
     /**
-     * Checks whether a list of way nodes includes the sub sequence
+     * Checks whether a list of way nodes includes the sub-sequence
      * of nods in <code>sliceNodes</code>. If yes, replies the
-     * {@link SliceBoundary}, i.e. the start and end index of the sub
-     * sequence
+     * {@link SliceBoundary}, i.e. the start and end index of the sub-     * sequence
      *
-     * @param wayNodes   the way nodes where we look for a sub sequence.
+     * @param wayNodes   the way nodes where we look for a sub-sequence.
      *                   Must not be null. At least 2 nodes required.
      * @param sliceNodes the sub sequence. Mot not be nul. At least 2
      *                   nodes required.

@@ -78,8 +78,8 @@ public class ContourMergeView implements MapViewPaintable{
     }
 
     /**
-     * <p>Highlights a way slice, i.e. the current drag source or a potential
-     * drop target.</p>
+     * Highlights a way slice, i.e. the current drag source or a potential
+     * drop target.
      *
      * @param g graphics context
      * @param mv map view
@@ -94,8 +94,8 @@ public class ContourMergeView implements MapViewPaintable{
     }
 
     /**
-     * <p>Projects this way slice onto the map view {@code mv}. Replies a
-     * polyline representing the way slice on screen.</p>
+     * Projects this way slice onto the map view {@code mv}. Replies a
+     * polyline representing the way slice on screen.
      *
      * @param mv the map view. Must not be null.
      * @param ws the way slice. Must not be null.
@@ -145,10 +145,10 @@ public class ContourMergeView implements MapViewPaintable{
     }
 
     /**
-     * <p>Projects this way slice onto the map view {@code mv}. Replies a
+     * Projects this way slice onto the map view {@code mv}. Replies a
      * polyline representing the way slice on screen, displaced by the offset
      * {@code displacement.x} in x-direction and {@code displacement.y}
-     * in y-direction. </p>
+     * in y-direction.
      *
      * @param mv the map view. Must not be null.
      * @param ws the way slice. Must not be null.
@@ -203,12 +203,12 @@ public class ContourMergeView implements MapViewPaintable{
     }
 
     /**
-     * <p>Checks whether the two helper lines from the drag source to the
+     * Checks whether the two helper lines from the drag source to the
      * drop target intersect, because the ways of the drag source and the
-     * drop target don't have the same direction.</p>
-     *
-     * <p>If the helpers intersect, we will reverse the two end points of
-     * the drop target, when we paint the helper lines.</p>
+     * drop target don't have the same direction.
+     * <p>
+     * If the helpers intersect, we will reverse the two end points of
+     * the drop target, when we paint the helper lines.
      *
      * @param mv the map view
      * @param dragSource the drag source
@@ -238,12 +238,12 @@ public class ContourMergeView implements MapViewPaintable{
     }
 
     /**
-     * <p>Checks whether the two helper lines from the drag source to the
+     * Checks whether the two helper lines from the drag source to the
      * currently painted drag object offset by {@code dragOffset}
-     * intersect.</p>
-     *
-     * <p>If the helpers intersect, we will reverse the two end points of the
-     * drop target, when we paint the helper lines.</p>
+     * intersect.
+     * <p>
+     * If the helpers intersect, we will reverse the two end points of the
+     * drop target, when we paint the helper lines.
      *
      * @param mv the map view
      * @param dragSource the drag source

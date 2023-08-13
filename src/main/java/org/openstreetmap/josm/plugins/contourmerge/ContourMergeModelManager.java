@@ -18,7 +18,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 /**
  * Manages a set of {@link ContourMergeModel}s for each available data
  * layer.
- *
+ * <p>
  * Listens to layer change events and creates new contour merge models
  * for newly added layer, or removes contour merge models, if a layer is deleted.
  */
