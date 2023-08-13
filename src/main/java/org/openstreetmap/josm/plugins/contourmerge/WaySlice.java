@@ -472,7 +472,7 @@ public class WaySlice {
                  * way.
                  * Make sure we look only once at the common start/end node.
                  */
-                for (int i=start; i > 0 /* don't add the the start node */; i--){
+                for (int i=start; i > 0 /* don't add the start node */; i--){
                     nodeSet.add(w.getNode(i));
                 }
                 for (int i=w.getNodesCount()-1 /* add the end node */;
