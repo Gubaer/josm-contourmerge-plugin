@@ -137,23 +137,17 @@ class TestCaseWithJOSMFixture {
         return new WaySliceBoundaryMatcher(start, end)
     }
 
-    static def newNode(id){
+    static def newNode(long id){
         return new Node(id)
     }
 
-    static def newWay(id, Node... nodes){
+    static Way newWay(long id, Node... nodes){
         Way w = new Way(id,1)
         w.setNodes(Arrays.asList(nodes))
         return w
     }
 
-    static def newWay(id, List<Node> nodes){
-        Way w = new Way(id,1)
-        w.setNodes(nodes)
-        return w
-    }
-
-    static def newNodes(int from, int to) {
+    static List<Node> newNodes(int from, int to) {
         return (from..to).collect {newNode(it)}.toList()
     }
 }
@@ -267,7 +261,7 @@ class WaySliceTest extends TestCaseWithJOSMFixture {
 
     @Test
     void getStartTearOffIndex() {
-        def w = newWay(1, newNodes(1,5)) // an open way
+        def w = newWay(1, *newNodes(1,5)) // an open way
 
         WaySlice ws
         ws = new WaySlice(w, 2,3)
@@ -324,7 +318,7 @@ class WaySliceTest extends TestCaseWithJOSMFixture {
 
     @Test
     void getEndTearOffIndex() {
-        def w = newWay(1, newNodes(1, 5)) // an open way
+        def w = newWay(1, *newNodes(1, 5)) // an open way
 
         WaySlice ws
         ws = new WaySlice(w, 1,2)
@@ -391,7 +385,7 @@ class WaySliceTest extends TestCaseWithJOSMFixture {
 
     @Test
     void getNumSegments() {
-        def w = newWay(1, newNodes(1, 5)) // an open way
+        def w = newWay(1, *newNodes(1, 5)) // an open way
 
         def ws = new WaySlice(w, 0, 3)
         assert ws.getNumSegments() == 3
@@ -413,13 +407,13 @@ class WaySliceTest extends TestCaseWithJOSMFixture {
         assert ws.getNumSegments() == 4
     }
 
-    static def n(i){
+    static def n(long i){
         return new Node(i)
     }
 
     @Test
     void replaceNodes_OpenWay() {
-        def w = newWay(1, newNodes(1, 5)) // an open way
+        def w = newWay(1, *newNodes(1, 5)) // an open way
         def newnodes = newNodes(10,12)
 
         def ws = new WaySlice(w, 1, 2)
