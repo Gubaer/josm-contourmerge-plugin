@@ -1,9 +1,9 @@
 The `contourmerge` plugin provides an editing mode to merge (or align) two
 contours on an OSM map, i.e.
 
-* a section of a lake outline and an a section of neighboring area representing
+* a section of a lake outline and a section of a neighboring area representing
   a forest
-* a section of a coast line and a section of a residential area
+* a section of a coastline and a section of a residential area
 * two border sections
 
 ## Install
