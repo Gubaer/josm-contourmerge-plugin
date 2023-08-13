@@ -26,7 +26,10 @@ dependencies {
 }
 
 
-archivesBaseName = "contourmerge"
+base {
+    archivesName = "contourmerge"
+}
+
 
 import org.openstreetmap.josm.plugins.contourmerge.build.Releases
 def releases = Releases.fromFile(file("releases.yml"))
