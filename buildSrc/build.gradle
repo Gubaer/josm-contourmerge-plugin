@@ -5,6 +5,12 @@ plugins {
 group 'org.openstreetmap.josm'
 version 'v0.1.8'
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 repositories {
     mavenCentral()
 }
