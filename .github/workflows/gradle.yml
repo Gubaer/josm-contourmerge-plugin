@@ -23,7 +23,6 @@ jobs:
           - tested
           - release
         jdk:
-          - 11
           - 17
         platform:
           - ubuntu-latest
