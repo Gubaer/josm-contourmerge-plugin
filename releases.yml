@@ -1,4 +1,9 @@
 releases:
+  - label: v0.2.0
+    minJosmVersion: 18218
+    description: |
+      *Major*: starting with this release, the plugin is only available for Java 17 (and later versions)
+
   - label: v0.1.9
     minJosmVersion: 18218
     description: |

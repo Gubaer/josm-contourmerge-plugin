@@ -71,6 +71,7 @@ logger.info("Compiling for JOSM ${configuredJosmCompileVersion}")
 josm {
     josmCompileVersion = configuredJosmCompileVersion
     manifest {
+        minJavaVersion = 17
         includeLinksToGithubReleases = true
         minJosmVersion = releases.highestJosmVersion
     }
