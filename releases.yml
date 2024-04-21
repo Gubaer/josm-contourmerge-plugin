@@ -1,4 +1,9 @@
 releases:
+  - label: v0.2.1
+    minJosmVersion: 18218
+    description: |
+      *Minor*: dependency upgrades
+
   - label: v0.2.0
     minJosmVersion: 18218
     description: |
