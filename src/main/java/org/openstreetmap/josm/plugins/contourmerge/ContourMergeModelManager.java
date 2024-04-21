@@ -75,8 +75,7 @@ public class ContourMergeModelManager implements LayerChangeListener{
     @Override
     public void layerAdded(LayerAddEvent event) {
         Layer newLayer = event.getAddedLayer();
-        if (! (newLayer instanceof OsmDataLayer)) return;
-        OsmDataLayer dl = (OsmDataLayer)newLayer;
+        if (! (newLayer instanceof OsmDataLayer dl)) return;
         ContourMergeModel model = new  ContourMergeModel(dl);
         dl.data.addDataSetListener(model);
         models.put((OsmDataLayer)newLayer, model);
@@ -90,8 +89,7 @@ public class ContourMergeModelManager implements LayerChangeListener{
     @Override
     public void layerRemoving(LayerRemoveEvent event) {
         Layer oldLayer = event.getRemovedLayer();
-        if (! (oldLayer instanceof OsmDataLayer)) return;
-        OsmDataLayer dl = (OsmDataLayer)oldLayer;
+        if (! (oldLayer instanceof OsmDataLayer dl)) return;
         ContourMergeModel model = models.get(dl);
         dl.data.removeDataSetListener(model);
         models.remove(dl);
