@@ -15,20 +15,20 @@ java {
 }
 
 dependencies {
-    compileOnly 'org.projectlombok:lombok:1.18.28'
-    annotationProcessor "org.projectlombok:lombok:1.18.28"
-    packIntoJar "org.apache.commons:commons-lang3:3.12.0"
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor "org.projectlombok:lombok:1.18.32"
+    packIntoJar "org.apache.commons:commons-lang3:3.13.0"
 
     implementation "javax.validation:validation-api:2.0.1.Final"
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
-    testImplementation 'org.apache.groovy:groovy-all:4.0.13'
-    testImplementation 'org.apache.groovy:groovy-test:4.0.13'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+    testImplementation 'org.apache.groovy:groovy-all:4.0.21'
+    testImplementation 'org.apache.groovy:groovy-test:4.0.21'
     testImplementation "org.hamcrest:hamcrest-library:2.2"
 
     testImplementation('org.openstreetmap.josm:josm-unittest:latest'){
         changing=true
     }
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
 }
 
 
