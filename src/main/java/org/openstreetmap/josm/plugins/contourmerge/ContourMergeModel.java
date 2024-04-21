@@ -62,7 +62,7 @@ public class ContourMergeModel implements DataSetListener{
      * @throws NullPointerException thrown if {@code layer} is null
      */
     public ContourMergeModel(@NotNull OsmDataLayer layer){
-        Validate.notNull(layer);
+        Objects.requireNonNull(layer);
         this.layer = layer;
     }
 
@@ -110,7 +110,7 @@ public class ContourMergeModel implements DataSetListener{
      *  mode.
      */
     public boolean isSelected(@NotNull Node node) {
-        Validate.notNull(node);
+        Objects.requireNonNull(node);
         Validate.isTrue(node.getDataSet() == layer.data,
             // don't translate
             "Node must be owned by this contour merge models layer");
@@ -124,7 +124,7 @@ public class ContourMergeModel implements DataSetListener{
      * layer.
      */
     public void selectNode(@NotNull Node node) {
-        Validate.notNull(node);
+        Objects.requireNonNull(node);
         Validate.isTrue(node.getDataSet() == layer.data,
             // don't translate
             "Node must be owned by this contour merge models layer");
@@ -138,7 +138,7 @@ public class ContourMergeModel implements DataSetListener{
      *  layer.
      */
     public void deselectNode(@NotNull Node node) {
-        Validate.notNull(node);
+        Objects.requireNonNull(node);
         Validate.isTrue(node.getDataSet() == layer.data,
             //don't translate
            "Node must be owned by this contour merge models layer");
@@ -152,7 +152,7 @@ public class ContourMergeModel implements DataSetListener{
      *  layer.
      */
     public void toggleSelected(Node node) {
-        Validate.notNull(node);
+        Objects.requireNonNull(node);
         Validate.isTrue(node.getDataSet() == layer.data,
             // don't translate
            "Node must be owned by this contour merge models layer");

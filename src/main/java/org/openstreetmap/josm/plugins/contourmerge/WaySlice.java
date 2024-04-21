@@ -47,7 +47,7 @@ public class WaySlice {
      *  isn't valid
      */
     public WaySlice(@NotNull final Way w, final int start, final int end){
-        Validate.notNull(w);
+        Objects.requireNonNull(w);
         Validate.isTrue(start >= 0 && start < w.getNodesCount(),
                 "start out of range, got %s", start);
         Validate.isTrue(end >= 0 && end < w.getNodesCount(),
