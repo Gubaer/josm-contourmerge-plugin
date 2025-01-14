@@ -76,9 +76,9 @@ public class ContourMergeModelManager implements LayerChangeListener{
     public void layerAdded(LayerAddEvent event) {
         Layer newLayer = event.getAddedLayer();
         if (! (newLayer instanceof OsmDataLayer dl)) return;
-        ContourMergeModel model = new  ContourMergeModel(dl);
+        final var model = new ContourMergeModel(dl);
         dl.data.addDataSetListener(model);
-        models.put((OsmDataLayer)newLayer, model);
+        models.put(dl, model);
     }
 
     @Override

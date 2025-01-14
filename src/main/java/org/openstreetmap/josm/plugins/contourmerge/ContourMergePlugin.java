@@ -35,6 +35,7 @@ public class ContourMergePlugin extends Plugin {
         return ContourMergeModelManager.getInstance();
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     static public boolean isEnabled() {
         return modeEnabled;
     }
