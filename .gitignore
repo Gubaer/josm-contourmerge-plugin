@@ -9,3 +9,4 @@
 /dist/
 github.env
 *.env
+/src/test/resources/josm.home/cache
