@@ -116,7 +116,7 @@ public class WaySlice {
     /**
      * Replies the index of the last node of this way slice.
      *
-     * @return the index of the first node of this way slice
+     * @return the index of the last node of this way slice
      */
     public int getEnd() {
         return end;
@@ -525,12 +525,13 @@ public class WaySlice {
 
     /**
      * Checks whether a list of way nodes includes the sub-sequence
-     * of nods in <code>sliceNodes</code>. If yes, replies the
-     * {@link SliceBoundary}, i.e. the start and end index of the sub-     * sequence
+     * of nodes in <code>sliceNodes</code>. If yes, replies the
+     * {@link SliceBoundary}, i.e. the start and end index of the
+     * sub-sequence
      *
      * @param wayNodes   the way nodes where we look for a sub-sequence.
      *                   Must not be null. At least 2 nodes required.
-     * @param sliceNodes the sub sequence. Mot not be nul. At least 2
+     * @param sliceNodes the sub sequence. Must not be null. At least 2
      *                   nodes required.
      */
     public static Optional<SliceBoundary> findSliceBoundary(

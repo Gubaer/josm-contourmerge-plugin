@@ -185,8 +185,7 @@ public class ContourMergeModel implements DataSetListener{
      * Sets the way segment which would be affected by the next drag/drop
      * operation.
      *
-     * @param segment the way segment. null, if there is no feedback
-         segment
+     * @param segment the way segment. null, if there is no feedback segment
      */
     public void setDragStartFeedbackWaySegment(IWaySegment<Node, Way> segment){
         this.dragStartFeedbackSegment = segment;
@@ -532,7 +531,7 @@ public class ContourMergeModel implements DataSetListener{
      * Replies true, if the two poly-lines given by the node lists {@code n1}
      * and {@code n2} are "direction aligned". Their direction is aligned,
      * if the two lines between the two start nodes and the two end nodes
-     * of {@code n1} and code {@code n2} respectively, do not intersect.
+     * of {@code n1} and {@code n2} respectively, do not intersect.
      *
      * @param n1 the first list of nodes
      * @param n2 the second list of nodes

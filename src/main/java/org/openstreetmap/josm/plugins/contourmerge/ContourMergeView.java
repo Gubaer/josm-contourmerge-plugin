@@ -122,7 +122,7 @@ public class ContourMergeView implements MapViewPaintable{
         } else {
             /*
              * a way slice of a closed way, between two nodes in the
-             * direction *opposite* to the ways direction
+             * direction *opposite* to the way's direction
              */
             for (int i = ws.getStart(); i >= 0; i--){
                 Point p = mv.getPoint(ws.getWay().getNode(i).getCoor());
