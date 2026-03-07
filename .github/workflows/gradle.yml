@@ -18,27 +18,23 @@ jobs:
   build:
     strategy:
       matrix:
-        josm-versions:
-          - latest
-          - tested
-          - release
         jdk:
           - 17
+          - 21
         platform:
           - ubuntu-latest
           - windows-latest
 
-
-    name: Build plugin on ${{ matrix.platform }} - JDK ${{ matrix.jdk }}, JOSM Version ${{ matrix.josm-version }}
+    name: Build plugin on ${{ matrix.platform }} - JDK ${{ matrix.jdk }}
     runs-on: ${{ matrix.platform }}
 
     env:
       JAVA_OPTS: "-Xmx6G"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6.0.2
       - name: Set up JDK ${{ matrix.jdk }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v5.2.0
         with:
           java-version: '${{ matrix.jdk }}'
           distribution: 'microsoft'
@@ -51,9 +47,9 @@ jobs:
         if: ${{ matrix.platform == 'ubuntu-latest' }}
         run: Xvfb :19 -screen 0 1024x768x16 &
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@v2.7.0
+        uses: gradle/actions/setup-gradle@v5.0.2
         env:
           DISPLAY: ":19"
         with:
-          arguments: build -Pplugin.josmCompileVersion=${{ matrix.josm-version }}
+          arguments: build
           
