@@ -17,13 +17,13 @@ java {
 dependencies {
     compileOnly "org.projectlombok:lombok:${lombok_version}"
     annotationProcessor "org.projectlombok:lombok:${lombok_version}"
-    packIntoJar "org.apache.commons:commons-lang3:3.17.0"
+    packIntoJar "org.apache.commons:commons-lang3:${commons_lang3_version}"
 
     implementation "javax.validation:validation-api:2.0.1.Final"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${jupiter_version}"
     testImplementation "org.apache.groovy:groovy-all:${groovy_version}"
     testImplementation "org.apache.groovy:groovy-test:${groovy_version}"
-    testImplementation "org.hamcrest:hamcrest-library:3.0"
+    testImplementation "org.hamcrest:hamcrest-library:${hamcrest_version}"
 
     testImplementation('org.openstreetmap.josm:josm-unittest:latest'){
         changing=true
