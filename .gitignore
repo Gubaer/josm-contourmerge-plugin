@@ -10,4 +10,5 @@
 github.env
 *.env
 /src/test/resources/josm.home/cache
+/software/
 .direnv/

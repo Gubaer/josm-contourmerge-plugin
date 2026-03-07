@@ -116,6 +116,28 @@ class Releases {
     }
 
     /**
+     * Replies the current plugin version
+     *
+     * @return the current plugin version
+     */
+    String getCurrentPluginLabel() {
+        return config.releases.collect {it.label}
+                .sort(this.&comparePluginLabels)
+                .reverse()
+                .first()
+    }
+
+    /**
+     * Replies the description of the current release
+     *
+     * @return the description of the current release, or null if not set
+     */
+    String getCurrentReleaseDescription() {
+        final label = getCurrentPluginLabel()
+        return config.releases.find {it.label == label}?.description
+    }
+
+    /**
      * Replies the highest JOSM version for which a release is available.
      * This is the JOSM version for which the current release is published.
      *
@@ -141,17 +163,6 @@ class Releases {
         } else {
             return SemanticVersion.fromLabel(v1) <=> SemanticVersion.fromLabel(v2)
         }
-    }
-    /**
-     * Replies the current plugin version
-     *
-     * @return the current plugin version
-     */
-    String getCurrentPluginLabel() {
-        return config.releases.collect {it.label}
-                .sort(this.&comparePluginLabels)
-                .reverse()
-                .first()
     }
 
     /**

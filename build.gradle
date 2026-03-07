@@ -1,11 +1,29 @@
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import org.openstreetmap.josm.plugins.contourmerge.build.Releases
+import org.openstreetmap.josm.plugins.contourmerge.release.CreateGithubReleaseTask
+import org.openstreetmap.josm.plugins.contourmerge.release.PublishToGithubReleaseTask
+
 plugins {
-    id "org.openstreetmap.josm" version "$gradle_josm_plugin_version"
     id 'java'
     id 'groovy'
 }
 
 repositories {
     mavenCentral()
+}
+
+configurations {
+    packIntoJar
+}
+
+def releases = Releases.fromFile(file("releases.yml"))
+version = releases.currentPluginLabel
+
+base {
+    archivesName = "contourmerge"
 }
 
 java {
@@ -25,78 +43,93 @@ dependencies {
     testImplementation "org.apache.groovy:groovy-test:${groovy_version}"
     testImplementation "org.hamcrest:hamcrest-library:${hamcrest_version}"
 
-    testImplementation('org.openstreetmap.josm:josm-unittest:latest'){
-        changing=true
-    }
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jupiter_version}"
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    compileOnly files("software/josm/josm-latest.jar")
+    testImplementation files("software/josm/josm-latest.jar")
+    testImplementation files("software/josm/josm-unittest.jar")
 }
 
-
-base {
-    archivesName = "contourmerge"
-}
-
-
-import org.openstreetmap.josm.plugins.contourmerge.build.Releases
-def releases = Releases.fromFile(file("releases.yml"))
-version=releases.currentPluginLabel
-
-def deriveJosmCompileVersion(releases) {
-    final value = project.hasProperty("plugin.josmCompileVersion")
-            ? project.property("plugin.josmCompileVersion")
-            : null
-    def josmCompileVersion
-    //noinspection GroovyFallthrough
-    switch (value) {
-        case null:
-            josmCompileVersion = "latest"
-            break
-        case "latest":
-        case "tested":
-            josmCompileVersion = value
-            break
-        case "release":
-            josmCompileVersion = releases.getLastCompatibleJosmVersion()
-            break
-        default:
-            josmCompileVersion = value.isInteger() ? value as Integer : "latest"
+tasks.register("downloadJosmJar") {
+    def josmJar = file("software/josm/josm-latest.jar")
+    def josmUnittestJar = file("software/josm/josm-unittest.jar")
+    outputs.file(josmJar)
+    outputs.file(josmUnittestJar)
+    doLast {
+        josmJar.parentFile.mkdirs()
+        new URL("https://josm.openstreetmap.de/josm-latest.jar").withInputStream { is ->
+            Files.copy(is, josmJar.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        }
+        new URL("https://josm.openstreetmap.de/download/josm-unittest.jar").withInputStream { is ->
+            Files.copy(is, josmUnittestJar.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        }
     }
-    return josmCompileVersion
 }
 
-def configuredJosmCompileVersion = deriveJosmCompileVersion(releases)
-logger.info("Compiling for JOSM ${configuredJosmCompileVersion}")
+compileJava.dependsOn("downloadJosmJar")
+compileTestJava.dependsOn("downloadJosmJar")
+compileTestGroovy.dependsOn("downloadJosmJar")
 
+tasks.named('jar') {
+    archiveVersion = ""
+    configurations.packIntoJar.each { dep ->
+        from(zipTree(dep)) {
+            eachFile { fcd ->
+                if (fcd.path.startsWith("META-INF/LICENSE") || fcd.path.startsWith("META-INF/NOTICE")) {
+                    def jarBaseName = dep.name.replaceAll(/\.jar$/, "")
+                    fcd.path = fcd.path.replaceFirst("META-INF/", "META-INF/${jarBaseName}-")
+                }
+            }
+        }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-josm {
-    josmCompileVersion = configuredJosmCompileVersion
     manifest {
-        minJavaVersion = 17
-        includeLinksToGithubReleases = true
-        minJosmVersion = releases.highestJosmVersion
-    }
+        attributes("Plugin-Class": project.property("plugin.class"))
+        attributes("Plugin-Link": project.property("plugin.link"))
+        attributes("Plugin-Canloadatruntime": project.property("plugin.canloadatruntime"))
+        attributes("Plugin-Date": ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+        attributes("Plugin-Description": project.property("plugin.description"))
+        attributes("Plugin-Icon": project.property("plugin.icon"))
+        attributes("Plugin-Minium-Java-Version": "17")
+        attributes("Plugin-Mainversion": releases.highestJosmVersion)
+        attributes("Plugin-Version": releases.currentPluginLabel)
 
-    github {
-        repositoryName = "josm-contourmerge-plugin"
-        repositoryOwner = "gubaer"
-        targetCommitish = "master"
+        releases.josmVersions.each { josmVersion ->
+            final label = releases.highestPluginLabelForJosmVersion(josmVersion)
+            final key = "${josmVersion}_Plugin-Url".toString()
+            if (label.isNumber()) {
+                final downloadUrl = new URL("https://raw.github.com/${project.property('github.user')}/josm-contourmerge-plugin/for-josm-${josmVersion}/dist/contourmerge.jar")
+                attributes((key): "${label};${downloadUrl}")
+            } else {
+                final downloadUrl = new URL("https://github.com/${project.property('github.user')}/josm-contourmerge-plugin/releases/download/${label}/contourmerge.jar")
+                attributes((key): "${label};${downloadUrl}")
+            }
+        }
     }
 }
 
 compileJava {
-  sourceCompatibility = JavaVersion.VERSION_17
-  targetCompatibility = JavaVersion.VERSION_17
-  options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "-Werror"
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "-Werror"
 }
+
+final JVM_ARGS = [
+    '--add-opens', 'java.prefs/java.util.prefs=ALL-UNNAMED',
+    '--add-exports', 'java.base/sun.security.action=ALL-UNNAMED',
+    '--add-exports', 'java.desktop/com.sun.imageio.plugins.jpeg=ALL-UNNAMED',
+    '--add-exports', 'java.desktop/com.sun.imageio.spi=ALL-UNNAMED'
+]
 
 test {
     useJUnitPlatform()
+    jvmArgs JVM_ARGS
     scanForTestClasses = false
     systemProperty "josm.home", file("src/test/resources/josm.home").absolutePath
-
-    afterTest { desc, result ->
-        println "Executing test ${desc.name} [${desc.className}] with " +
-                "result: ${result.resultType}"
+    testLogging {
+        events "passed", "failed"
     }
 }
 
@@ -111,6 +144,12 @@ processResources {
     from("$projectDir/LICENSE")
 }
 
-publishToGithubRelease {
+tasks.register("createGithubRelease", CreateGithubReleaseTask) {
+    releaseTag = releases.currentPluginLabel
+    releaseDescription = releases.currentReleaseDescription ?: ""
+}
+
+tasks.register("publishToGithubRelease", PublishToGithubReleaseTask) {
+    localJarName = "contourmerge.jar"
     remoteJarName = "contourmerge.jar"
 }
