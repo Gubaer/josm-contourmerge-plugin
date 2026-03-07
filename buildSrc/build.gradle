@@ -10,8 +10,8 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'org.apache.groovy', name: 'groovy', version: '4.0.30'
-    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.15.2'
-    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '5.3.2'
+    implementation group: 'org.apache.groovy', name: 'groovy', version: project.property('groovy_version')
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: project.property('jackson_version')
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: project.property('okhttp3_version')
     implementation gradleApi()
 }
