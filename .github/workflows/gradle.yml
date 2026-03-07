@@ -46,10 +46,10 @@ jobs:
       - name: Start virtual frame buffer
         if: ${{ matrix.platform == 'ubuntu-latest' }}
         run: Xvfb :19 -screen 0 1024x768x16 &
-      - name: Build with Gradle
+      - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5.0.2
+      - name: Build with Gradle
         env:
           DISPLAY: ":19"
-        with:
-          arguments: build
-          
+        run: ./gradlew build
+
